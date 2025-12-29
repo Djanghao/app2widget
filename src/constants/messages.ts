@@ -11,8 +11,8 @@ export const ASSISTANT_MESSAGES = {
     "Based on your description, I'll generate mock data for the widget.",
 
   // Widget 生成
-  START_WIDGET:
-    "Based on the mock data and style, I'll generate the widget code.",
+  START_WIDGET: (styleName: string) =>
+    `Based on the mock data and style (${styleName}), I'll generate the widget code.`,
 
   // 错误消息
   ERROR_INVALID_APP_ID:

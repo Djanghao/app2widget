@@ -230,7 +230,7 @@ export async function POST(request: NextRequest) {
             sessionId: session.id,
             role: 'assistant',
             messageType: 'text',
-            content: ASSISTANT_MESSAGES.START_WIDGET,
+            content: ASSISTANT_MESSAGES.START_WIDGET(uiStylePreset.displayName),
           },
         })
         await sendMessage(widgetStartMessage)
