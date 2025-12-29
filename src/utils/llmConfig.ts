@@ -3,8 +3,8 @@ import { LLMConfig, Provider } from '@/types/chat'
 export const PROVIDER_CONFIGS = {
   doubao: {
     name: 'Doubao',
-    baseUrl: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions',
-    models: ['doubao-seed-1-8-251215'],
+    baseUrl: 'https://ark.cn-beijing.volces.com/api/v3',
+    models: ['doubao-seed-1-8-251215', 'doubao-seed-1-6-251015'],
   },
   qwen: {
     name: 'Qwen',
