@@ -35,7 +35,7 @@ const ChatContext = createContext<ChatContextType | undefined>(undefined)
 
 export function ChatProvider({ children, apiKey, llmConfig, setLLMConfig }: ChatProviderProps) {
   const [currentMode, setCurrentMode] = useState<ChatMode>('description')
-  const [currentUIStyle, setCurrentUIStyle] = useState<UIStyle>('modern-minimal')
+  const [currentUIStyle, setCurrentUIStyle] = useState<UIStyle>('ios-stock-widget')
   const [messages, setMessages] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)

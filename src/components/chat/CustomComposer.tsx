@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Box,
   TextField,
@@ -16,6 +16,12 @@ import {
 import SendIcon from '@mui/icons-material/Send'
 import { useChatContext } from './ChatProvider'
 import { ChatRequest } from '@/types/chat'
+
+interface UIStylePreset {
+  name: string
+  displayName: string
+  description: string
+}
 
 export function CustomComposer() {
   const {
@@ -33,6 +39,27 @@ export function CustomComposer() {
   } = useChatContext()
 
   const [input, setInput] = useState('')
+  const [stylePresets, setStylePresets] = useState<UIStylePreset[]>([])
+  const [isLoadingStyles, setIsLoadingStyles] = useState(true)
+
+  // Fetch UI style presets on mount
+  useEffect(() => {
+    const fetchStylePresets = async () => {
+      try {
+        const response = await fetch('/api/ui-styles')
+        if (response.ok) {
+          const presets = await response.json()
+          setStylePresets(presets)
+        }
+      } catch (error) {
+        console.error('Failed to fetch style presets:', error)
+      } finally {
+        setIsLoadingStyles(false)
+      }
+    }
+
+    fetchStylePresets()
+  }, [])
 
   const handleModeChange = (event: SelectChangeEvent) => {
     setMode(event.target.value as 'appId' | 'description')
@@ -189,7 +216,7 @@ export function CustomComposer() {
         <FormControl
           size="small"
           sx={{
-            minWidth: 110,
+            minWidth: 150,
             flexShrink: 0,
             '& .MuiOutlinedInput-root': {
               bgcolor: '#40414f',
@@ -202,13 +229,47 @@ export function CustomComposer() {
             '& .MuiInputLabel-root': { color: '#8e8ea0', fontSize: 13 },
             '& .MuiInputLabel-root.Mui-focused': { color: '#10a37f' }
           }}
-          disabled={isLoading}
+          disabled={isLoading || isLoadingStyles}
         >
           <InputLabel>Style</InputLabel>
-          <Select value={uiStyle} label="Style" onChange={handleStyleChange}>
-            <MenuItem value="modern-minimal">Modern</MenuItem>
-            <MenuItem value="enterprise-dashboard">Enterprise</MenuItem>
-            <MenuItem value="vibrant-product">Vibrant</MenuItem>
+          <Select
+            value={uiStyle}
+            label="Style"
+            onChange={handleStyleChange}
+            renderValue={(selected) => {
+              const preset = stylePresets.find(p => p.name === selected)
+              return preset?.displayName || selected
+            }}
+          >
+            {stylePresets.map((preset) => (
+              <MenuItem
+                key={preset.name}
+                value={preset.name}
+                sx={{
+                  fontSize: 13,
+                  py: 1,
+                  '&:hover': {
+                    bgcolor: 'rgba(16, 163, 127, 0.1)',
+                  }
+                }}
+              >
+                <Box>
+                  <Box sx={{ fontWeight: 500 }}>{preset.displayName}</Box>
+                  <Box
+                    sx={{
+                      fontSize: 11,
+                      color: '#8e8ea0',
+                      mt: 0.3,
+                      maxWidth: 280,
+                      whiteSpace: 'normal',
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {preset.description}
+                  </Box>
+                </Box>
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
 

@@ -1,6 +1,21 @@
 export type ChatMode = 'appId' | 'description'
 
-export type UIStyle = 'modern-minimal' | 'enterprise-dashboard' | 'vibrant-product'
+export type UIStyle =
+  | 'ios-stock-widget'
+  | 'material-you'
+  | 'neomorphism'
+  | 'glassmorphism'
+  | 'modern-minimal'
+  | 'dark-mode-amoled'
+  | 'gradient-vibrant'
+  | 'retro-brutal'
+  | 'widget-compact-info'
+  | 'playful-rounded'
+  | 'fitness-sport'
+  | 'productivity-focus'
+  | 'weather-atmospheric'
+  | 'finance-stock'
+  | 'social-engagement'
 
 export type Provider = 'doubao' | 'qwen' | 'openai' | 'custom'
 

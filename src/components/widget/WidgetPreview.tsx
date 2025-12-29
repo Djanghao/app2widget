@@ -97,6 +97,10 @@ function SandpackContent() {
                   minHeight: { xs: 350, lg: 0 },
                   maxHeight: { xs: 400, lg: 'none' },
                   position: 'relative',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'center',
+                  p: 2,
                   '& .sp-loading': {
                     background: '#f9fafb !important',
                   },
@@ -120,12 +124,19 @@ function SandpackContent() {
                     '0%': { transform: 'translate(-50%, -50%) rotate(0deg)' },
                     '100%': { transform: 'translate(-50%, -50%) rotate(360deg)' },
                   },
+                  '& iframe': {
+                    border: 'none !important',
+                  },
                 }}
               >
                 <SandpackPreview
                   showNavigator={false}
                   showRefreshButton={true}
-                  style={{ height: '100%', width: '100%' }}
+                  style={{
+                    height: '100%',
+                    width: '100%',
+                    border: 'none',
+                  }}
                   showOpenInCodeSandbox={false}
                 />
               </Box>

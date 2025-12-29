@@ -18,10 +18,11 @@ You MUST:
 ## Widget Definition
 
 ✅ A widget IS:
-- Small and compact (300-360px wide)
+- Small and compact (adapts to content, typically 300-500px wide)
 - iOS/Android mobile widget style
 - Focused on ONE use case or metric
 - Optimized for quick glance consumption
+- **Content-adaptive sizing**: Use `width: 'fit-content'` with appropriate min/max bounds
 
 ❌ A widget is NOT:
 - A dashboard
@@ -50,7 +51,42 @@ You MUST:
 - Status: CircularProgress, Skeleton
 - Interaction: IconButton, Tooltip
 - Icons: TrendingUp, TrendingDown, ArrowUpward, ArrowDownward, Info
-- Charts: LineChart, BarChart, PieChart
+- Charts: LineChart, BarChart, PieChart, ResponsiveChartContainer, LinePlot, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath
+
+**Chart Best Practices:**
+- PREFER using ResponsiveChartContainer with composition API for better control over layout and preventing label clipping
+- For simple charts with hidden axes (sparklines), LineChart/BarChart/PieChart are acceptable
+- When using ResponsiveChartContainer:
+  * Wrap it in a Box with explicit height: `<Box sx={{ width: '100%', height: 200 }}>`
+  * Use ChartsClipPath to prevent overflow: `<ChartsClipPath id={clipPathId} />`
+  * Wrap plots in clipPath group: `<g clipPath={\`url(#\${clipPathId})\`}>`
+  * Generate unique clipPathId with useId() hook
+- For standalone chart components (LineChart/BarChart):
+  * Provide adequate margin for axis labels: { top: 10, bottom: 30, left: 40, right: 10 }
+  * Minimum bottom margin of 30px and left margin of 40px when showing axes
+- Ensure tickLabelStyle has appropriate fontSize (10-12) and fill color
+- For charts showing trends with values, ALWAYS show axis labels
+
+**Layout Best Practices:**
+- Widgets are for display only - NO scrolling allowed
+- **Widget sizing**: Use content-adaptive width with min/max bounds
+  * Card should use: `width: 'fit-content', minWidth: [estimated], maxWidth: [estimated]`
+  * Estimate minWidth/maxWidth based on content:
+    - Short text content: minWidth: 280, maxWidth: 380
+    - Medium content with tags/chips: minWidth: 320, maxWidth: 450
+    - Wide content (long labels, charts): minWidth: 350, maxWidth: 500
+    - Dense data tables: minWidth: 400, maxWidth: 600
+  * This ensures content fits perfectly without clipping or overflow
+- For lists of tags/chips/items, choose layout based on data characteristics:
+  * **Few items (2-5 short texts)**: Use Stack direction="row" WITHOUT flexWrap
+    - Example: `<Stack direction="row" spacing={0.5}>{items.map(...)}</Stack>`
+    - DO NOT add flexWrap="wrap" - items should stay in one line
+    - Adjust fontSize/padding if needed to fit (fontSize: 10-12px)
+  * **Many items (6+)**: Use Grid for multi-row layout (2x2, 2x3, 3x3, etc.)
+    - Example: `<Grid container spacing={1}><Grid item xs={6}>{item}</Grid></Grid>`
+    - This creates intentional 2-column or 3-column grid layout
+- The choice should be made at code generation time based on the actual data
+- All content MUST fit within widget boundaries without scrolling or unexpected wrapping
 
 **Forbidden:**
 - Tailwind CSS
@@ -108,7 +144,7 @@ export default function Widget() {
   const weatherData = data.data as WeatherData;
 
   return (
-    <Card sx={{ width: 350, bgcolor: '#F5F7FA' }} elevation={2}>
+    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 400, bgcolor: '#F5F7FA' }} elevation={2}>
       <CardContent sx={{ p: 2.5 }}>
         <Stack spacing={2}>
           <Box>
@@ -198,7 +234,7 @@ export default function Widget() {
   const isPositive = portfolio.todayChange >= 0;
 
   return (
-    <Card sx={{ width: 360, bgcolor: '#1E293B' }} elevation={3}>
+    <Card sx={{ width: 'fit-content', minWidth: 340, maxWidth: 420, bgcolor: '#1E293B' }} elevation={3}>
       <CardContent sx={{ p: 2.5 }}>
         <Stack spacing={2}>
           <Box>
@@ -293,7 +329,7 @@ export default function Widget() {
   const { weeklyGoal, dailySteps } = fitnessData;
 
   return (
-    <Card sx={{ width: 350, bgcolor: '#FFFFFF' }} elevation={2}>
+    <Card sx={{ width: 'fit-content', minWidth: 330, maxWidth: 420, bgcolor: '#FFFFFF' }} elevation={2}>
       <CardContent sx={{ p: 3 }}>
         <Stack spacing={2.5}>
           <Box>
@@ -362,6 +398,131 @@ export default function Widget() {
     </Card>
   );
 }
+
+### Example 4: Sales Chart Widget (using ResponsiveChartContainer for better label handling)
+
+import React, { useId } from 'react';
+import { Card, CardContent, Box, Typography, Stack } from '@mui/material';
+import { ResponsiveChartContainer, LinePlot, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';
+import data from './response.json';
+
+interface MonthlySales {
+  month: string;
+  revenue: number;
+  target: number;
+}
+
+interface SalesData {
+  totalRevenue: number;
+  growth: number;
+  monthlySales: MonthlySales[];
+}
+
+export default function Widget() {
+  const salesData = data.data as SalesData;
+  const clipPathId = useId();
+
+  return (
+    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF' }} elevation={2}>
+      <CardContent sx={{ p: 2.5 }}>
+        <Stack spacing={2}>
+          <Box>
+            <Typography variant="body2" color="text.secondary">
+              Total Revenue
+            </Typography>
+            <Typography variant="h4" fontWeight={700} sx={{ color: '#10B981' }}>
+              ${salesData.totalRevenue.toLocaleString()}
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#10B981' }}>
+              +{salesData.growth}% vs last month
+            </Typography>
+          </Box>
+
+          <Box sx={{ width: '100%', height: 250 }}>
+            <ResponsiveChartContainer
+              series={[
+                {
+                  type: 'bar',
+                  data: salesData.monthlySales.map(m => m.revenue),
+                  color: '#E0E7FF',
+                  label: 'Revenue',
+                },
+                {
+                  type: 'line',
+                  data: salesData.monthlySales.map(m => m.target),
+                  color: '#6366F1',
+                  label: 'Target',
+                  curve: 'linear',
+                },
+              ]}
+              xAxis={[
+                {
+                  scaleType: 'band',
+                  data: salesData.monthlySales.map(m => m.month),
+                  id: 'months',
+                },
+              ]}
+              yAxis={[{ id: 'revenue' }]}
+            >
+              <g clipPath={`url(#${clipPathId})`}>
+                <BarPlot />
+                <LinePlot />
+              </g>
+              <ChartsXAxis
+                axisId="months"
+                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}
+              />
+              <ChartsYAxis
+                axisId="revenue"
+                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}
+              />
+              <ChartsClipPath id={clipPathId} />
+            </ResponsiveChartContainer>
+          </Box>
+        </Stack>
+      </CardContent>
+    </Card>
+  );
+}
+
+### Example 5: Tag/Chip Layout Examples
+
+#### 5a. Few Items - Single Row (CORRECT)
+```tsx
+// For 3-5 short text items - NO flexWrap
+<Stack direction="row" spacing={0.5}>
+  {['BURGUNDY', 'OREGON', 'NEW ZEALAND'].map((region, index) => (
+    <Chip
+      key={index}
+      label={region}
+      sx={{ fontSize: '11px', px: 1, py: 0.5 }}
+    />
+  ))}
+</Stack>
+```
+
+#### 5b. Many Items - Grid Layout (CORRECT)
+```tsx
+// For 6+ items - Use Grid for 2x3 or 3x3 layout
+<Grid container spacing={1}>
+  {manyCategories.map((category, index) => (
+    <Grid item xs={6} key={index}>
+      <Chip
+        label={category}
+        sx={{ width: '100%', fontSize: '10px' }}
+      />
+    </Grid>
+  ))}
+</Grid>
+```
+
+#### 5c. INCORRECT - Don't Do This
+```tsx
+// ❌ WRONG: Using flexWrap for few items causes unwanted wrapping
+<Stack direction="row" spacing={0.5} flexWrap="wrap">
+  {['BURGUNDY', 'OREGON', 'NEW ZEALAND'].map(...)}
+</Stack>
+```
 
 ## Your Task
 
