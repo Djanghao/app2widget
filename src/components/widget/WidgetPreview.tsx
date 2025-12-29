@@ -155,6 +155,7 @@ export function WidgetPreview({ code, mockData }: WidgetPreviewProps) {
       files={files}
       options={{
         activeFile: '/App.tsx',
+        bundlerTimeOut: 60000, // Increased timeout for local bundler
       }}
       customSetup={{
         dependencies: {
