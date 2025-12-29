@@ -17,6 +17,8 @@ export const ASSISTANT_MESSAGES = {
   // 错误消息
   ERROR_INVALID_APP_ID:
     "The provided App ID doesn't exist in our database.",
+  ERROR_EMPTY_API_KEY:
+    "API key is required. Please configure your API key in the settings.",
   ERROR_LLM_FAILED:
     "Failed to communicate with the LLM API. Please check your API key and configuration.",
   ERROR_APP_METADATA_FETCH:

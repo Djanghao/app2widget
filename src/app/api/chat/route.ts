@@ -8,9 +8,16 @@ export async function POST(request: NextRequest) {
     const body: ChatRequest = await request.json()
     const { mode, input, uiStyle, apiKey, llmConfig } = body
 
-    if (!mode || !input || !uiStyle || !apiKey || !llmConfig) {
+    if (!mode || !input || !uiStyle || !llmConfig) {
       return NextResponse.json(
         { error: 'Missing required fields' },
+        { status: 400 }
+      )
+    }
+
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: ASSISTANT_MESSAGES.ERROR_EMPTY_API_KEY },
         { status: 400 }
       )
     }
