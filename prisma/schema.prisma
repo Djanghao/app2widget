@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Chat Session - represents one complete widget generation flow
+model ChatSession {
+  id            String        @id @default(cuid())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // User input context
+  mode          String        // "appId" or "description"
+  inputContent  String        @db.Text
+  uiStyle       String        // "modern-minimal", "enterprise-dashboard", "vibrant-product"
+
+  // App metadata (for appId mode)
+  appId         String?
+  appMetadata   Json?         // Stores filtered app data (without screenshots)
+
+  // Generation artifacts
+  mockData      Json?         // Generated mock data JSON
+  widgetCode    String?       @db.Text // Generated widget TSX code
+
+  // Status tracking
+  status        String        @default("pending") // "pending", "generating-data", "generating-widget", "completed", "failed"
+  error         String?       @db.Text
+
+  // Relations
+  messages      ChatMessage[]
+
+  @@index([createdAt])
+  @@index([mode])
+  @@index([status])
+}
+
+// Chat Message - individual messages in the conversation
+model ChatMessage {
+  id            String        @id @default(cuid())
+  createdAt     DateTime      @default(now())
+
+  sessionId     String
+  session       ChatSession   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  // Message metadata
+  role          String        // "user", "assistant"
+  messageType   String        // "input", "text", "mock-data", "widget-code", "error"
+
+  // Content
+  content       String        @db.Text
+
+  // For structured content
+  data          Json?
+
+  @@index([sessionId, createdAt])
+  @@index([messageType])
+}
+
+// UI Style Preset
+model UIStylePreset {
+  id             String  @id @default(cuid())
+  name           String  @unique
+  displayName    String
+  description    String  @db.Text
+  promptAddition String  @db.Text  // Injected into widget generation prompt
+  isActive       Boolean @default(true)
+  sortOrder      Int     @default(0)
+
+  @@index([isActive, sortOrder])
+}
+
+// App Metadata - Application data from app_data_v4.6.json
+model AppMetadata {
+  id              String   @id // Original app ID from JSON
+  createdAt       DateTime @default(now())
+
+  // Basic info
+  title           String
+  icon            String?  @db.Text
+  description     String   @db.Text
+
+  // Categories
+  osSystem        String[] // ["ios", "android", etc]
+  category        String[] // ["productivity", "social", etc]
+  geometricDomain String[] // Optional
+
+  // Pricing
+  price           Float    @default(0)
+  currency        String   @default("USD")
+
+  // Language
+  lang            String
+  wordCount       Int      @default(0)
+
+  // Screenshots (stored but not returned by default API)
+  screenshots     String[] // Array of screenshot URLs
+
+  @@index([title])
+  @@index([category])
+  @@index([osSystem])
+}
