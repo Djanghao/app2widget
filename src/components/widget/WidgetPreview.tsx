@@ -155,7 +155,7 @@ export function WidgetPreview({ code, mockData }: WidgetPreviewProps) {
       active: true,
     },
     '/response.json': {
-      code: JSON.stringify(mockData || {}, null, 2),
+      code: JSON.stringify(mockData || { widget: null, data: null, meta: null }, null, 2),
       hidden: true,
     },
   }

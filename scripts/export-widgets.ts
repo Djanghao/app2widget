@@ -48,7 +48,8 @@ async function exportWidgets() {
         console.log(`Exported widget code: ${widgetPath}`)
       }
 
-      // Build response.json with all relevant data
+      // Build response.json with flattened structure
+      const mockData = session.mockData as any || {}
       const response = {
         sessionId: session.id,
         createdAt: session.createdAt.toISOString(),
@@ -58,7 +59,10 @@ async function exportWidgets() {
         uiStyle: session.uiStyle,
         appId: session.appId,
         appMetadata: session.appMetadata,
-        mockData: session.mockData,
+        // Flatten mockData structure to top level
+        widget: mockData.widget || null,
+        data: mockData.data || null,
+        meta: mockData.meta || null,
         status: session.status,
         messages: session.messages.map((msg) => ({
           id: msg.id,

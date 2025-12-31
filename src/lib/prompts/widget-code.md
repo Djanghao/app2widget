@@ -4,14 +4,17 @@ You are a senior front-end engineer generating mobile-style React Widget compone
 
 ## Data Source
 
-The file \`response.json\` contains the following data:
+The file \`response.json\` contains the following flattened structure:
 
 {
-  "data": {{MOCK_DATA_SCHEMA}}
+  "widget": { "id": "...", "app": "...", "version": "..." },
+  "data": {{MOCK_DATA_SCHEMA}},
+  "meta": { "theme": "...", "layout": "...", ... }
 }
 
 You MUST:
-- Import data from \`./response.json\`
+- Import response from \`./response.json\`
+- Access data via \`response.data\` and metadata via \`response.meta\`
 - Strictly follow the data structure above
 - NOT invent, rename, or infer fields
 
@@ -121,7 +124,7 @@ Implement using MUI:
 import React from 'react';
 import { Card, CardContent, Box, Typography, Stack } from '@mui/material';
 import { LineChart } from '@mui/x-charts';
-import data from './response.json';
+import response from './response.json';
 
 interface HourlyForecast {
   hour: string;
@@ -141,7 +144,7 @@ interface WeatherData {
 }
 
 export default function Widget() {
-  const weatherData = data.data as WeatherData;
+  const weatherData = response.data as WeatherData;
 
   return (
     <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 400, bgcolor: '#F5F7FA' }} elevation={2}>
@@ -208,7 +211,7 @@ import React from 'react';
 import { Card, CardContent, Box, Typography, Stack } from '@mui/material';
 import { TrendingUp, TrendingDown } from '@mui/icons-material';
 import { LineChart } from '@mui/x-charts';
-import data from './response.json';
+import response from './response.json';
 
 interface Stock {
   symbol: string;
@@ -229,7 +232,7 @@ interface StocksData {
 }
 
 export default function Widget() {
-  const stocksData = data.data as StocksData;
+  const stocksData = response.data as StocksData;
   const { portfolio, topStocks } = stocksData;
   const isPositive = portfolio.todayChange >= 0;
 
@@ -308,7 +311,7 @@ export default function Widget() {
 import React from 'react';
 import { Card, CardContent, Box, Typography, Stack, LinearProgress } from '@mui/material';
 import { BarChart } from '@mui/x-charts';
-import data from './response.json';
+import response from './response.json';
 
 interface DailySteps {
   day: string;
@@ -325,7 +328,7 @@ interface FitnessData {
 }
 
 export default function Widget() {
-  const fitnessData = data.data as FitnessData;
+  const fitnessData = response.data as FitnessData;
   const { weeklyGoal, dailySteps } = fitnessData;
 
   return (
@@ -404,7 +407,7 @@ export default function Widget() {
 import React, { useId } from 'react';
 import { Card, CardContent, Box, Typography, Stack } from '@mui/material';
 import { ResponsiveChartContainer, LinePlot, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';
-import data from './response.json';
+import response from './response.json';
 
 interface MonthlySales {
   month: string;
@@ -419,7 +422,7 @@ interface SalesData {
 }
 
 export default function Widget() {
-  const salesData = data.data as SalesData;
+  const salesData = response.data as SalesData;
   const clipPathId = useId();
 
   return (
