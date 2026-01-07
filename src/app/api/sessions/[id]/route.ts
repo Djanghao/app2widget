@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -41,13 +43,13 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    await prisma.chatSession.delete({
+    const result = await prisma.chatSession.deleteMany({
       where: {
         id: params.id
       }
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, deleted: result.count > 0 });
   } catch (error) {
     console.error('Error deleting session:', error);
     return NextResponse.json(

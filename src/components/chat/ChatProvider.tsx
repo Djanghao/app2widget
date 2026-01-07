@@ -49,7 +49,16 @@ export function ChatProvider({ children, apiKey, llmConfig, setLLMConfig }: Chat
       setMessages([])
       setIsLoading(true)
 
-      const response = await fetch(`/api/sessions/${sessionId}`)
+      const response = await fetch(`/api/sessions/${sessionId}`, { cache: 'no-store' })
+      if (!response.ok) {
+        if (response.status === 404) {
+          createNewSession()
+          return
+        }
+        const errorBody = await response.json().catch(() => null)
+        throw new Error(errorBody?.error || 'Failed to fetch session')
+      }
+
       const data = await response.json()
 
       if (data.session) {

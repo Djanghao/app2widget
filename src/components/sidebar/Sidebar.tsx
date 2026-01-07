@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Drawer,
@@ -29,14 +29,10 @@ import {
 
 interface ChatSession {
   id: string;
-  mode: string;
   inputContent: string;
   status: string;
   createdAt: string;
-  messages: Array<{
-    content: string;
-    messageType: string;
-  }>;
+  updatedAt: string;
 }
 
 interface SidebarProps {
@@ -62,22 +58,31 @@ export default function Sidebar({
   const [sessionToDelete, setSessionToDelete] = useState<string | null>(null)
   const [clearAllDialogOpen, setClearAllDialogOpen] = useState(false)
 
-  const fetchSessions = React.useCallback(async () => {
+  const fetchSessions = useCallback(async (signal?: AbortSignal) => {
     try {
       setLoading(true);
-      const response = await fetch('/api/sessions');
+      const response = await fetch('/api/sessions', { cache: 'no-store', signal });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch sessions (${response.status})`);
+      }
       const data = await response.json();
-      setSessions(data.sessions || []);
+      setSessions(Array.isArray(data.sessions) ? data.sessions : []);
     } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') return;
       console.error('Failed to fetch sessions:', error);
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) {
+        setLoading(false);
+      }
     }
   }, []);
 
   useEffect(() => {
-    fetchSessions();
-  }, [fetchSessions]);
+    if (!open) return;
+    const controller = new AbortController();
+    fetchSessions(controller.signal);
+    return () => controller.abort();
+  }, [fetchSessions, open, currentSessionId]);
 
   const getSessionTitle = (session: ChatSession) => {
     const content = session.inputContent;
@@ -87,7 +92,8 @@ export default function Sidebar({
     return content || 'New Chat';
   };
 
-  const getSessionDate = (dateString: string) => {
+  const getSessionDate = (session: ChatSession) => {
+    const dateString = session.updatedAt || session.createdAt;
     const date = new Date(dateString);
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -99,7 +105,7 @@ export default function Sidebar({
     return date.toLocaleDateString();
   };
 
-  const handleDeleteClick = React.useCallback((sessionId: string) => {
+  const handleDeleteClick = useCallback((sessionId: string) => {
     setSessionToDelete(sessionId);
     setDeleteDialogOpen(true);
   }, []);
@@ -107,13 +113,20 @@ export default function Sidebar({
   const handleDeleteConfirm = async () => {
     if (!sessionToDelete) return;
 
+    const targetId = sessionToDelete;
+    setSessions((prev) => prev.filter((session) => session.id !== targetId));
+
     try {
-      await fetch(`/api/sessions/${sessionToDelete}`, {
-        method: 'DELETE'
+      const response = await fetch(`/api/sessions/${targetId}`, {
+        method: 'DELETE',
+        cache: 'no-store'
       });
+      if (!response.ok) {
+        throw new Error(`Failed to delete session (${response.status})`);
+      }
 
       // If deleting current session, create new session
-      if (currentSessionId === sessionToDelete) {
+      if (currentSessionId === targetId) {
         onNewChat();
       }
 
@@ -121,23 +134,27 @@ export default function Sidebar({
       await fetchSessions();
     } catch (error) {
       console.error('Failed to delete session:', error);
+      await fetchSessions();
     } finally {
       setDeleteDialogOpen(false);
       setSessionToDelete(null);
     }
   };
 
-  const handleClearAllClick = React.useCallback(() => {
+  const handleClearAllClick = useCallback(() => {
     if (sessions.length === 0) return;
     setClearAllDialogOpen(true);
   }, [sessions.length]);
 
   const handleClearAllConfirm = async () => {
+    const sessionIds = sessions.map((session) => session.id);
+    setSessions([]);
+
     try {
       // Delete all sessions
-      await Promise.all(
-        sessions.map(session =>
-          fetch(`/api/sessions/${session.id}`, { method: 'DELETE' })
+      await Promise.allSettled(
+        sessionIds.map((sessionId) =>
+          fetch(`/api/sessions/${sessionId}`, { method: 'DELETE', cache: 'no-store' })
         )
       );
 
@@ -148,6 +165,7 @@ export default function Sidebar({
       await fetchSessions();
     } catch (error) {
       console.error('Failed to clear all sessions:', error);
+      await fetchSessions();
     } finally {
       setClearAllDialogOpen(false);
     }
@@ -255,7 +273,7 @@ export default function Sidebar({
                     <ChatIcon sx={{ mr: 1.5, fontSize: 18, color: 'rgba(255,255,255,0.5)', flexShrink: 0 }} />
                     <ListItemText
                       primary={getSessionTitle(session)}
-                      secondary={getSessionDate(session.createdAt)}
+                      secondary={getSessionDate(session)}
                       primaryTypographyProps={{
                         fontSize: 14,
                         fontWeight: currentSessionId === session.id ? 500 : 400,

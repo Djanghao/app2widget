@@ -1,30 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const sessions = await prisma.chatSession.findMany({
       orderBy: {
-        createdAt: 'desc'
+        updatedAt: 'desc'
       },
       select: {
         id: true,
-        mode: true,
         inputContent: true,
-        uiStyle: true,
         status: true,
         createdAt: true,
-        updatedAt: true,
-        messages: {
-          take: 1,
-          orderBy: {
-            createdAt: 'asc'
-          },
-          select: {
-            content: true,
-            messageType: true
-          }
-        }
+        updatedAt: true
       }
     });
 
