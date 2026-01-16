@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import {
   SandpackProvider,
   SandpackLayout,
@@ -7,21 +8,47 @@ import {
   SandpackPreview,
   useSandpack,
 } from '@codesandbox/sandpack-react'
-import { Box } from '@mui/material'
+import { Box, Button } from '@mui/material'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 
 interface WidgetPreviewProps {
   code: string
   mockData?: any // Not used anymore, kept for backward compatibility
+  prompt?: string
 }
 
-function SandpackContent() {
+function SandpackContent({ prompt }: { prompt?: string }) {
   const { sandpack } = useSandpack()
+  const [copied, setCopied] = useState(false)
 
   // Get the active file from sandpack
   const activeFile = sandpack.activeFile
 
   // Determine if we should show preview (only for App.tsx)
   const showPreview = activeFile === '/App.tsx'
+
+  const handleCopyPrompt = async () => {
+    if (!prompt) return
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(prompt)
+      } else {
+        const textarea = document.createElement('textarea')
+        textarea.value = prompt
+        textarea.setAttribute('readonly', 'true')
+        textarea.style.position = 'fixed'
+        textarea.style.top = '-9999px'
+        document.body.appendChild(textarea)
+        textarea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textarea)
+      }
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 1500)
+    } catch {
+      setCopied(false)
+    }
+  }
 
   return (
     <Box
@@ -86,9 +113,32 @@ function SandpackContent() {
                   fontSize: 12,
                   fontWeight: 600,
                   color: '#6b7280',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 1,
                 }}
               >
-                Preview
+                <Box component="span">Preview</Box>
+                <Button
+                  size="small"
+                  variant="text"
+                  onClick={handleCopyPrompt}
+                  disabled={!prompt}
+                  startIcon={<ContentCopyIcon sx={{ fontSize: 14 }} />}
+                  sx={{
+                    textTransform: 'none',
+                    fontSize: 11,
+                    minHeight: 0,
+                    padding: '2px 6px',
+                    color: copied ? '#059669' : '#6b7280',
+                    '&.Mui-disabled': {
+                      color: '#9ca3af',
+                    },
+                  }}
+                >
+                  {copied ? 'Copied' : 'Copy prompt'}
+                </Button>
               </Box>
               <Box
                 sx={{
@@ -148,7 +198,7 @@ function SandpackContent() {
   )
 }
 
-export function WidgetPreview({ code, mockData }: WidgetPreviewProps) {
+export function WidgetPreview({ code, mockData, prompt }: WidgetPreviewProps) {
   const files = {
     '/App.tsx': {
       code,
@@ -208,7 +258,7 @@ export function WidgetPreview({ code, mockData }: WidgetPreviewProps) {
         },
       }}
     >
-      <SandpackContent />
+      <SandpackContent prompt={prompt} />
     </SandpackProvider>
   )
 }

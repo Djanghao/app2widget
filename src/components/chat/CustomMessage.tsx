@@ -72,7 +72,14 @@ export function CustomMessage({ message, mockData }: CustomMessageProps) {
   }
 
   if (message.messageType === 'widget-code' && message.data) {
-    return <WidgetCodeMessage code={message.data.code} mockData={mockData} provider={provider} />
+    return (
+      <WidgetCodeMessage
+        code={message.data.code}
+        prompt={message.data.prompt}
+        mockData={mockData}
+        provider={provider}
+      />
+    )
   }
 
   if (message.messageType === 'error') {
@@ -202,7 +209,17 @@ function MockDataMessage({ mockData, provider }: { mockData: MockDataResponse; p
   )
 }
 
-function WidgetCodeMessage({ code, mockData, provider }: { code: string; mockData?: MockDataResponse; provider: Provider }) {
+function WidgetCodeMessage({
+  code,
+  prompt,
+  mockData,
+  provider,
+}: {
+  code: string
+  prompt?: string
+  mockData?: MockDataResponse
+  provider: Provider
+}) {
   return (
     <Box sx={{ bgcolor: '#2f2f2f', py: { xs: 2, md: 2.5 }, px: { xs: 3, md: 4 } }}>
       <Box sx={{ maxWidth: '90%', width: '90%', mx: 'auto', display: 'flex', gap: 2 }}>
@@ -211,7 +228,7 @@ function WidgetCodeMessage({ code, mockData, provider }: { code: string; mockDat
           <Typography sx={{ color: '#ececec', fontSize: 14, mb: 1.5, fontWeight: 500 }}>
             Here's your widget:
           </Typography>
-          <WidgetPreview code={code} mockData={mockData} />
+          <WidgetPreview code={code} mockData={mockData} prompt={prompt} />
         </Box>
       </Box>
     </Box>

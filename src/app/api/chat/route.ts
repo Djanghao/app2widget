@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { ChatRequest } from '@/types/chat'
 import { ASSISTANT_MESSAGES } from '@/constants/messages'
+import { buildWidgetPrompt } from '@/lib/llm/prompt-builder'
 
 export async function POST(request: NextRequest) {
   try {
@@ -313,6 +314,11 @@ export async function POST(request: NextRequest) {
           }
         }
 
+        const widgetPrompt = buildWidgetPrompt(
+          mockData,
+          uiStylePreset.promptAddition
+        )
+
         // 7. Assistant starts widget generation
         if (
           !(await createAndSend({
@@ -355,7 +361,7 @@ export async function POST(request: NextRequest) {
             role: 'assistant',
             messageType: 'widget-code',
             content: widgetCode,
-            data: { code: widgetCode },
+            data: { code: widgetCode, prompt: widgetPrompt },
           }))
         ) {
           return
