@@ -56,7 +56,7 @@ AI-powered mobile widget generator with live preview and multiple LLM provider s
    npm run dev
    ```
 
-   Open http://localhost:3000
+   Open http://localhost:3080
 
 ## Configuration
 
@@ -110,10 +110,10 @@ pm2 save
 
 ### Access
 
-- **Local**: http://localhost:3000
-- **Server**: http://YOUR_SERVER_IP:3000
+- **Local**: http://localhost:3080
+- **Server**: http://YOUR_SERVER_IP:3080
 
-**Note**: Ensure port 3000 is open in your firewall and cloud security group.
+**Note**: Ensure port 3080 is open in your firewall and cloud security group.
 
 ## Project Structure
 
@@ -177,7 +177,8 @@ docker start app2widget-postgres
 
 ### Port Already in Use
 
-Next.js automatically tries port 3001 if 3000 is occupied.
+If port 3080 is occupied, use a different one:
+`npm run dev -- -p 3081` or `npm run start -- -p 3081`
 
 ### Build Errors
 

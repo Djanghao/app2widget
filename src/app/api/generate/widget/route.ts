@@ -1,22 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { buildWidgetPrompt } from '@/lib/llm/prompt-builder'
+import { buildWidgetPrompt, buildWidgetRefineMessages } from '@/lib/llm/prompt-builder'
 import { callLLM } from '@/lib/llm/client'
 import { LLMConfig } from '@/types/chat'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { mockData, uiStylePrompt, apiKey, llmConfig } = body
+    const { mockData, uiStylePrompt, apiKey, llmConfig, previousCode, refinePrompt } = body
 
-    if (!mockData || !uiStylePrompt || !apiKey || !llmConfig) {
+    if (!apiKey || !llmConfig) {
       return NextResponse.json(
-        { error: 'Missing required fields: mockData, uiStylePrompt, apiKey, llmConfig' },
+        { error: 'Missing required fields: apiKey, llmConfig' },
         { status: 400 }
       )
     }
 
-    // Build prompt
-    const prompt = buildWidgetPrompt(mockData, uiStylePrompt)
+    const isRefine = Boolean(previousCode && refinePrompt)
+    if (!isRefine && (!mockData || !uiStylePrompt)) {
+      return NextResponse.json(
+        { error: 'Missing required fields: mockData, uiStylePrompt' },
+        { status: 400 }
+      )
+    }
 
     // Call LLM
     const config: LLMConfig = {
@@ -24,13 +29,23 @@ export async function POST(request: NextRequest) {
       modelName: llmConfig.modelName,
     }
 
+    const messages = isRefine
+      ? (() => {
+          const refineMessages = buildWidgetRefineMessages(previousCode, refinePrompt)
+          return [
+            { role: 'system', content: refineMessages.system },
+            { role: 'user', content: refineMessages.user },
+          ]
+        })()
+      : [
+          {
+            role: 'user',
+            content: buildWidgetPrompt(mockData, uiStylePrompt),
+          },
+        ]
+
     const response = await callLLM(config, apiKey, {
-      messages: [
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
+      messages,
       temperature: 0.7,
       max_tokens: 4000,
     })

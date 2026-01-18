@@ -36,6 +36,7 @@ export function CustomComposer() {
     isLoading,
     setIsLoading,
     setCurrentSessionId,
+    currentSessionId,
   } = useChatContext()
 
   const [input, setInput] = useState('')
@@ -85,7 +86,7 @@ export function CustomComposer() {
       createdAt: new Date().toISOString(),
       sessionId: '',
     }
-    setMessages([tempUserMessage])
+    setMessages((prev) => [...prev, tempUserMessage])
 
     const request: ChatRequest = {
       mode,
@@ -93,6 +94,7 @@ export function CustomComposer() {
       uiStyle,
       apiKey,
       llmConfig,
+      sessionId: currentSessionId || undefined,
     }
 
     try {

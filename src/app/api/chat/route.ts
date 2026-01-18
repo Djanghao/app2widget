@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { ChatRequest } from '@/types/chat'
+import { ChatRequest, ChatMode, UIStyle } from '@/types/chat'
 import { ASSISTANT_MESSAGES } from '@/constants/messages'
-import { buildWidgetPrompt } from '@/lib/llm/prompt-builder'
+import { buildWidgetPrompt, buildWidgetRefineMessages } from '@/lib/llm/prompt-builder'
 
 export async function POST(request: NextRequest) {
   try {
     const body: ChatRequest = await request.json()
-    const { mode, input, uiStyle, apiKey, llmConfig } = body
+    const { mode, input, uiStyle, apiKey, llmConfig, sessionId } = body
 
     if (!mode || !input || !uiStyle || !llmConfig) {
       return NextResponse.json(
@@ -28,15 +28,26 @@ export async function POST(request: NextRequest) {
     const stream = new TransformStream()
     const writer = stream.writable.getWriter()
 
-    // Create new chat session
-    const session = await prisma.chatSession.create({
-      data: {
-        mode,
-        inputContent: input,
-        uiStyle,
-        status: 'pending',
-      },
-    })
+    let session = sessionId
+      ? await prisma.chatSession.findUnique({
+          where: { id: sessionId },
+        })
+      : null
+
+    if (!session) {
+      session = await prisma.chatSession.create({
+        data: {
+          mode,
+          inputContent: input,
+          uiStyle,
+          status: 'pending',
+        },
+      })
+    }
+
+    const effectiveMode = (session.mode || mode) as ChatMode
+    const effectiveUIStyle = (session.uiStyle || uiStyle) as UIStyle
+    const isRefine = Boolean(session.widgetCode)
 
     let writerClosed = false
 
@@ -129,23 +140,96 @@ export async function POST(request: NextRequest) {
           sessionId: session.id,
           role: 'user',
           messageType: 'input',
-          content: mode === 'appId' ? `App ID: ${input}` : input,
+          content: isRefine
+            ? input
+            : effectiveMode === 'appId'
+              ? `App ID: ${input}`
+              : input,
         })
         if (!userMessage) return
 
+        if (isRefine) {
+          if (
+            !(await createAndSend({
+              sessionId: session.id,
+              role: 'assistant',
+              messageType: 'text',
+              content: ASSISTANT_MESSAGES.START_WIDGET_REFINE,
+            }))
+          ) {
+            return
+          }
+
+          if (!(await ensureSession())) return
+          const previousCode = session.widgetCode || ''
+          const widgetResponse = await fetch(
+            `${request.nextUrl.origin}/api/generate/widget`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                previousCode,
+                refinePrompt: input,
+                apiKey,
+                llmConfig,
+              }),
+            }
+          )
+
+          if (!widgetResponse.ok) {
+            const error = await widgetResponse.json()
+            throw new Error(error.error || 'Widget generation failed')
+          }
+
+          const { code: widgetCode } = await widgetResponse.json()
+          const refineMessages = buildWidgetRefineMessages(previousCode, input)
+          const refinePromptPayload = JSON.stringify(
+            [
+              { role: 'system', content: refineMessages.system },
+              { role: 'user', content: refineMessages.user },
+            ],
+            null,
+            2
+          )
+
+          if (
+            !(await createAndSend({
+              sessionId: session.id,
+              role: 'assistant',
+              messageType: 'widget-code',
+              content: widgetCode,
+              data: { code: widgetCode, prompt: refinePromptPayload },
+            }))
+          ) {
+            return
+          }
+
+          if (
+            !(await safeUpdateSession({
+              widgetCode,
+              status: 'completed',
+            }))
+          ) {
+            return
+          }
+
+          await closeWriter()
+          return
+        }
+
         // 2. Get UI style preset
         const uiStylePreset = await prisma.uIStylePreset.findUnique({
-          where: { name: uiStyle },
+          where: { name: effectiveUIStyle },
         })
         if (!uiStylePreset) {
-          throw new Error(`UI style preset not found: ${uiStyle}`)
+          throw new Error(`UI style preset not found: ${effectiveUIStyle}`)
         }
 
         // 3. Handle different flows based on mode
         let mockData: any
         let appMetadata: any = null
 
-        if (mode === 'appId') {
+        if (effectiveMode === 'appId') {
           // appId mode: fetch metadata, display it, then generate mock data
 
           // 3a. Announce metadata fetch
@@ -216,7 +300,7 @@ export async function POST(request: NextRequest) {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                mode,
+                mode: effectiveMode,
                 input,
                 apiKey,
                 llmConfig,
@@ -280,7 +364,7 @@ export async function POST(request: NextRequest) {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                mode,
+                mode: effectiveMode,
                 input,
                 apiKey,
                 llmConfig,
@@ -317,6 +401,11 @@ export async function POST(request: NextRequest) {
         const widgetPrompt = buildWidgetPrompt(
           mockData,
           uiStylePreset.promptAddition
+        )
+        const widgetPromptPayload = JSON.stringify(
+          [{ role: 'user', content: widgetPrompt }],
+          null,
+          2
         )
 
         // 7. Assistant starts widget generation
@@ -361,7 +450,7 @@ export async function POST(request: NextRequest) {
             role: 'assistant',
             messageType: 'widget-code',
             content: widgetCode,
-            data: { code: widgetCode, prompt: widgetPrompt },
+            data: { code: widgetCode, prompt: widgetPromptPayload },
           }))
         ) {
           return

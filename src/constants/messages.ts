@@ -13,6 +13,8 @@ export const ASSISTANT_MESSAGES = {
   // Widget 生成
   START_WIDGET: (styleName: string) =>
     `Based on the mock data and style (${styleName}), I'll generate the widget code.`,
+  START_WIDGET_REFINE:
+    "I'll refine the widget based on your latest instructions.",
 
   // 错误消息
   ERROR_INVALID_APP_ID:

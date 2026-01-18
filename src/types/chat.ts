@@ -25,6 +25,7 @@ export interface ChatRequest {
   uiStyle: UIStyle
   apiKey: string
   llmConfig: LLMConfig
+  sessionId?: string
 }
 
 export interface LLMConfig {
