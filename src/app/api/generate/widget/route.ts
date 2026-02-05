@@ -50,22 +50,69 @@ export async function POST(request: NextRequest) {
       max_tokens: 4000,
     })
 
-    // Extract code from markdown code blocks
+    // Extract JSON from optional markdown fences (the model should output raw JSON)
     let widgetCode = response
-    const codeMatch = response.match(/```(?:typescript|tsx|ts)?\n([\s\S]*?)\n```/)
+    const codeMatch = response.match(/```(?:json)?\n([\s\S]*?)\n```/)
     if (codeMatch) {
       widgetCode = codeMatch[1]
     }
 
-    // Validate widget code contains required imports and export
-    if (!widgetCode.includes('export default')) {
+    // Parse and validate A2UI message array shape
+    let a2uiPayload: unknown
+    try {
+      a2uiPayload = JSON.parse(widgetCode)
+    } catch {
       return NextResponse.json(
-        { error: 'Invalid widget code. Missing "export default" statement' },
+        { error: 'Invalid A2UI JSON. Could not parse model output.' },
         { status: 500 }
       )
     }
 
-    return NextResponse.json({ code: widgetCode })
+    if (!Array.isArray(a2uiPayload) || a2uiPayload.length < 2) {
+      return NextResponse.json(
+        { error: 'Invalid A2UI payload. Expected an array with surfaceUpdate and beginRendering.' },
+        { status: 500 }
+      )
+    }
+
+    const hasSurfaceUpdate = a2uiPayload.some(
+      (item) => typeof item === 'object' && item !== null && 'surfaceUpdate' in item
+    )
+    const hasBeginRendering = a2uiPayload.some(
+      (item) => typeof item === 'object' && item !== null && 'beginRendering' in item
+    )
+
+    if (!hasSurfaceUpdate || !hasBeginRendering) {
+      return NextResponse.json(
+        { error: 'Invalid A2UI payload. Missing surfaceUpdate or beginRendering message.' },
+        { status: 500 }
+      )
+    }
+
+    // Validate surfaceUpdate components basic shape (adjacency list with id + component).
+    const surfaceUpdate = a2uiPayload.find(
+      (item) => typeof item === 'object' && item !== null && 'surfaceUpdate' in item
+    ) as { surfaceUpdate?: { components?: Array<{ id?: string; component?: unknown }> } } | undefined
+
+    const components = surfaceUpdate?.surfaceUpdate?.components
+    if (!Array.isArray(components) || components.length === 0) {
+      return NextResponse.json(
+        { error: 'Invalid A2UI payload. surfaceUpdate.components must be a non-empty array.' },
+        { status: 500 }
+      )
+    }
+
+    const hasInvalidComponent = components.some(
+      (entry) => !entry || typeof entry.id !== 'string' || !entry.component
+    )
+    if (hasInvalidComponent) {
+      return NextResponse.json(
+        { error: 'Invalid A2UI payload. Each component must include id and component.' },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({ code: a2uiPayload })
   } catch (error) {
     console.error('Error in /api/generate/widget:', error)
     return NextResponse.json(

@@ -27,7 +27,8 @@ model ChatSession {
 
   // Generation artifacts
   mockData      Json?         // Generated mock data JSON
-  widgetCode    String?       @db.Text // Generated widget TSX code
+  widgetCode    String?       @db.Text // Generated widget code (legacy TSX or A2UI JSON string)
+  widgetUI      Json?         // Generated A2UI JSON (preferred)
 
   // Status tracking
   status        String        @default("pending") // "pending", "generating-data", "generating-widget", "completed", "failed"

@@ -74,7 +74,7 @@ export function CustomMessage({ message, mockData }: CustomMessageProps) {
   if (message.messageType === 'widget-code' && message.data) {
     return (
       <WidgetCodeMessage
-        code={message.data.code}
+        code={message.data.code ?? message.content}
         prompt={message.data.prompt}
         mockData={mockData}
         provider={provider}
@@ -215,7 +215,7 @@ function WidgetCodeMessage({
   mockData,
   provider,
 }: {
-  code: string
+  code: unknown
   prompt?: string
   mockData?: MockDataResponse
   provider: Provider

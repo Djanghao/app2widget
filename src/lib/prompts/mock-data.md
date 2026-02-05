@@ -32,11 +32,15 @@ You are an API data simulator, creating realistic API response data for a widget
 ## Critical Rules
 
 1. **Simulate Real API**: Data structure should resemble real backend API responses
-2. **Chart Data Formats**:
-   - Line/Area charts: Provide complete arrays like \`"temperatures": [20, 22, 24, 23, 21, 19, 18]\`
-   - Bar charts: Provide complete arrays like \`"sales": [{"day": "Mon", "value": 120}, ...]\`
-   - Pie charts: Provide complete category data \`"categories": [{"name": "A", "value": 30}, ...]\`
-3. **Use hex color codes**: e.g., \`"#1976D2"\`, \`"#4CAF50"\`
+2. **Chart Data Formats** (aligned to A2UI chart schema):
+   - Line charts:
+     * Provide a numeric array for the series, e.g. `"tempTrend": [20, 22, 24, 23, 21]`
+     * Provide optional string labels array, e.g. `"hourlyForecastLabels": ["9AM", "12PM", "3PM", "6PM", "9PM"]`
+   - Bar charts:
+     * Provide object arrays with label/value keys, e.g. `"dailySteps": [{"day": "Mon", "steps": 120}, ...]`
+   - Pie charts:
+     * Provide object arrays with label/value keys, e.g. `"categories": [{"name": "A", "value": 30}, ...]`
+3. **Use hex color codes**: e.g., `"#1976D2"`, `"#4CAF50"`
 4. **Array Lengths**:
    - Rich mode: 3-7 data items
    - Compact mode: 1-3 data items
@@ -70,7 +74,8 @@ You are an API data simulator, creating realistic API response data for a widget
       { "hour": "6PM", "temp": 70 },
       { "hour": "9PM", "temp": 66 }
     ],
-    "tempTrend": [64, 66, 68, 72, 70, 66, 62]
+    "hourlyForecastLabels": ["9AM", "12PM", "3PM", "6PM", "9PM"],
+    "tempTrend": [64, 66, 68, 72, 70]
   },
   "meta": {
     "theme": "light",

@@ -43,6 +43,7 @@ export interface ChatSession {
   appMetadata?: any
   mockData?: any
   widgetCode?: string
+  widgetUI?: any
   status: string
   error?: string
 }

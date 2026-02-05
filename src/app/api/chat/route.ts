@@ -191,13 +191,18 @@ export async function POST(request: NextRequest) {
             null,
             2
           )
+          // Store A2UI output as a string in the message content to keep DB schema stable.
+          const widgetCodeContent =
+            typeof widgetCode === 'string' ? widgetCode : JSON.stringify(widgetCode, null, 2)
+          // Store a structured JSON copy for the new widgetUI column when available.
+          const widgetUI = typeof widgetCode === 'string' ? undefined : widgetCode
 
           if (
             !(await createAndSend({
               sessionId: session.id,
               role: 'assistant',
               messageType: 'widget-code',
-              content: widgetCode,
+              content: widgetCodeContent,
               data: { code: widgetCode, prompt: refinePromptPayload },
             }))
           ) {
@@ -206,7 +211,10 @@ export async function POST(request: NextRequest) {
 
           if (
             !(await safeUpdateSession({
-              widgetCode,
+              // Persist A2UI output as a string for backwards compatibility.
+              widgetCode: widgetCodeContent,
+              // Persist A2UI output as JSON for forward compatibility.
+              widgetUI,
               status: 'completed',
             }))
           ) {
@@ -442,6 +450,11 @@ export async function POST(request: NextRequest) {
         }
 
         const { code: widgetCode } = await widgetResponse.json()
+        // Store A2UI output as a string in the message content to keep DB schema stable.
+        const widgetCodeContent =
+          typeof widgetCode === 'string' ? widgetCode : JSON.stringify(widgetCode, null, 2)
+        // Store a structured JSON copy for the new widgetUI column when available.
+        const widgetUI = typeof widgetCode === 'string' ? undefined : widgetCode
 
         // 9. Save widget code message
         if (
@@ -449,7 +462,7 @@ export async function POST(request: NextRequest) {
             sessionId: session.id,
             role: 'assistant',
             messageType: 'widget-code',
-            content: widgetCode,
+            content: widgetCodeContent,
             data: { code: widgetCode, prompt: widgetPromptPayload },
           }))
         ) {
@@ -459,7 +472,10 @@ export async function POST(request: NextRequest) {
         // 10. Update session with widget code and complete status
         if (
           !(await safeUpdateSession({
-            widgetCode,
+            // Persist A2UI output as a string for backwards compatibility.
+            widgetCode: widgetCodeContent,
+            // Persist A2UI output as JSON for forward compatibility.
+            widgetUI,
             status: 'completed',
           }))
         ) {
