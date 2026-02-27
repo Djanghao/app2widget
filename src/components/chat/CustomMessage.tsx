@@ -72,14 +72,18 @@ export function CustomMessage({ message, mockData }: CustomMessageProps) {
   }
 
   if (message.messageType === 'widget-code' && message.data) {
-    return (
-      <WidgetCodeMessage
-        code={message.data.code}
-        prompt={message.data.prompt}
-        mockData={mockData}
-        provider={provider}
-      />
-    )
+    // Support both new schema format and legacy code format
+    const schema = message.data.schema ?? (message.data.code ? null : null)
+    if (schema) {
+      return (
+        <WidgetCodeMessage
+          schema={schema}
+          prompt={message.data.prompt}
+          mockData={mockData}
+          provider={provider}
+        />
+      )
+    }
   }
 
   if (message.messageType === 'error') {
@@ -210,12 +214,12 @@ function MockDataMessage({ mockData, provider }: { mockData: MockDataResponse; p
 }
 
 function WidgetCodeMessage({
-  code,
+  schema,
   prompt,
   mockData,
   provider,
 }: {
-  code: string
+  schema: import('@/lib/a2ui/types').A2UIWidgetSchema
   prompt?: string
   mockData?: MockDataResponse
   provider: Provider
@@ -228,7 +232,7 @@ function WidgetCodeMessage({
           <Typography sx={{ color: '#ececec', fontSize: 14, mb: 1.5, fontWeight: 500 }}>
             Here's your widget:
           </Typography>
-          <WidgetPreview code={code} mockData={mockData} prompt={prompt} />
+          <WidgetPreview schema={schema} mockData={mockData} prompt={prompt} />
         </Box>
       </Box>
     </Box>

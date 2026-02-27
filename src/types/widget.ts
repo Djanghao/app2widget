@@ -19,6 +19,8 @@ export interface MockDataResponse {
   meta: WidgetMeta
 }
 
+export type { A2UIWidgetSchema } from '@/lib/a2ui/types'
+
 export interface WidgetCodeResponse {
-  code: string
+  schema: import('@/lib/a2ui/types').A2UIWidgetSchema
 }

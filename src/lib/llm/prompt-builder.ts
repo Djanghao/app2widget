@@ -20,6 +20,16 @@ const WIDGET_REFINE_SYSTEM_PROMPT = fs.readFileSync(
   'utf-8'
 )
 
+const A2UI_WIDGET_PROMPT = fs.readFileSync(
+  path.join(PROMPTS_DIR, 'a2ui-widget.md'),
+  'utf-8'
+)
+
+const A2UI_REFINE_SYSTEM_PROMPT = fs.readFileSync(
+  path.join(PROMPTS_DIR, 'a2ui-refine-system.md'),
+  'utf-8'
+)
+
 export function buildMockDataPrompt(
   mode: ChatMode,
   input: string,
@@ -67,5 +77,31 @@ export function buildWidgetRefineMessages(
   return {
     system: WIDGET_REFINE_SYSTEM_PROMPT,
     user: `${previousCode}\n\n${refinePrompt}`,
+  }
+}
+
+export function buildA2UIWidgetPrompt(
+  mockData: Record<string, any>,
+  uiStylePrompt: string
+): string {
+  let prompt = A2UI_WIDGET_PROMPT
+
+  prompt = prompt.replace(
+    '{{MOCK_DATA_SCHEMA}}',
+    JSON.stringify(mockData, null, 2)
+  )
+
+  prompt = prompt.replace('{{UI_STYLE_PROMPT}}', uiStylePrompt)
+
+  return prompt
+}
+
+export function buildA2UIRefineMessages(
+  previousSchema: string,
+  refinePrompt: string
+): { system: string; user: string } {
+  return {
+    system: A2UI_REFINE_SYSTEM_PROMPT,
+    user: `${previousSchema}\n\n${refinePrompt}`,
   }
 }

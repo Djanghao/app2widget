@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { ChatRequest, ChatMode, UIStyle } from '@/types/chat'
 import { ASSISTANT_MESSAGES } from '@/constants/messages'
-import { buildWidgetPrompt, buildWidgetRefineMessages } from '@/lib/llm/prompt-builder'
+import { buildA2UIWidgetPrompt, buildA2UIRefineMessages } from '@/lib/llm/prompt-builder'
 
 export async function POST(request: NextRequest) {
   try {
@@ -161,14 +161,14 @@ export async function POST(request: NextRequest) {
           }
 
           if (!(await ensureSession())) return
-          const previousCode = session.widgetCode || ''
+          const previousSchema = session.widgetCode || ''
           const widgetResponse = await fetch(
             `${request.nextUrl.origin}/api/generate/widget`,
             {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                previousCode,
+                previousCode: previousSchema,
                 refinePrompt: input,
                 apiKey,
                 llmConfig,
@@ -181,8 +181,9 @@ export async function POST(request: NextRequest) {
             throw new Error(error.error || 'Widget generation failed')
           }
 
-          const { code: widgetCode } = await widgetResponse.json()
-          const refineMessages = buildWidgetRefineMessages(previousCode, input)
+          const { schema: widgetSchema } = await widgetResponse.json()
+          const widgetSchemaStr = JSON.stringify(widgetSchema)
+          const refineMessages = buildA2UIRefineMessages(previousSchema, input)
           const refinePromptPayload = JSON.stringify(
             [
               { role: 'system', content: refineMessages.system },
@@ -197,8 +198,8 @@ export async function POST(request: NextRequest) {
               sessionId: session.id,
               role: 'assistant',
               messageType: 'widget-code',
-              content: widgetCode,
-              data: { code: widgetCode, prompt: refinePromptPayload },
+              content: widgetSchemaStr,
+              data: { schema: widgetSchema, prompt: refinePromptPayload },
             }))
           ) {
             return
@@ -206,7 +207,7 @@ export async function POST(request: NextRequest) {
 
           if (
             !(await safeUpdateSession({
-              widgetCode,
+              widgetCode: widgetSchemaStr,
               status: 'completed',
             }))
           ) {
@@ -398,7 +399,7 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        const widgetPrompt = buildWidgetPrompt(
+        const widgetPrompt = buildA2UIWidgetPrompt(
           mockData,
           uiStylePreset.promptAddition
         )
@@ -441,25 +442,26 @@ export async function POST(request: NextRequest) {
           throw new Error(error.error || 'Widget generation failed')
         }
 
-        const { code: widgetCode } = await widgetResponse.json()
+        const { schema: widgetSchema } = await widgetResponse.json()
+        const widgetSchemaStr = JSON.stringify(widgetSchema)
 
-        // 9. Save widget code message
+        // 9. Save widget schema message
         if (
           !(await createAndSend({
             sessionId: session.id,
             role: 'assistant',
             messageType: 'widget-code',
-            content: widgetCode,
-            data: { code: widgetCode, prompt: widgetPromptPayload },
+            content: widgetSchemaStr,
+            data: { schema: widgetSchema, prompt: widgetPromptPayload },
           }))
         ) {
           return
         }
 
-        // 10. Update session with widget code and complete status
+        // 10. Update session with widget schema and complete status
         if (
           !(await safeUpdateSession({
-            widgetCode,
+            widgetCode: widgetSchemaStr,
             status: 'completed',
           }))
         ) {
