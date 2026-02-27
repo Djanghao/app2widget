@@ -1,5 +1,4 @@
 'use client'
-
 import { Box, Typography } from '@mui/material'
 import { MockDataResponse } from '@/types/widget'
 import { WidgetPreview } from '../widget/WidgetPreview'
@@ -50,9 +49,16 @@ function AIIcon({ provider }: { provider: Provider }) {
 interface CustomMessageProps {
   message: ChatMessage
   mockData?: MockDataResponse
+  enableLivePreview?: boolean
+  onRequestLivePreview?: (messageId: string) => void
 }
 
-export function CustomMessage({ message, mockData }: CustomMessageProps) {
+export function CustomMessage({
+  message,
+  mockData,
+  enableLivePreview = false,
+  onRequestLivePreview,
+}: CustomMessageProps) {
   const { provider } = useChatContext()
 
   if (message.role === 'user') {
@@ -72,12 +78,24 @@ export function CustomMessage({ message, mockData }: CustomMessageProps) {
   }
 
   if (message.messageType === 'widget-code' && message.data) {
+    const fallbackCode =
+      typeof message.content === 'string' ? message.content : ''
+    const codeFromData =
+      typeof message.data?.code === 'string' ? message.data.code : ''
+    const code = codeFromData || fallbackCode
+
     return (
       <WidgetCodeMessage
-        code={message.data.code}
+        code={code}
         prompt={message.data.prompt}
         mockData={mockData}
         provider={provider}
+        enableLivePreview={enableLivePreview}
+        onRequestLivePreview={
+          typeof onRequestLivePreview === 'function'
+            ? () => onRequestLivePreview(message.id)
+            : undefined
+        }
       />
     )
   }
@@ -214,12 +232,18 @@ function WidgetCodeMessage({
   prompt,
   mockData,
   provider,
+  enableLivePreview,
+  onRequestLivePreview,
 }: {
   code: string
   prompt?: string
   mockData?: MockDataResponse
   provider: Provider
+  enableLivePreview: boolean
+  onRequestLivePreview?: () => void
 }) {
+  const canRenderCode = typeof code === 'string' && code.trim().length > 0
+
   return (
     <Box sx={{ bgcolor: '#2f2f2f', py: { xs: 2, md: 2.5 }, px: { xs: 3, md: 4 } }}>
       <Box sx={{ maxWidth: '90%', width: '90%', mx: 'auto', display: 'flex', gap: 2 }}>
@@ -228,7 +252,66 @@ function WidgetCodeMessage({
           <Typography sx={{ color: '#ececec', fontSize: 14, mb: 1.5, fontWeight: 500 }}>
             Here's your widget:
           </Typography>
-          <WidgetPreview code={code} mockData={mockData} prompt={prompt} />
+          {enableLivePreview && canRenderCode ? (
+            <WidgetPreview code={code} mockData={mockData} prompt={prompt} />
+          ) : (
+            <Box
+              sx={{
+                border: '1px solid #4d4d4d',
+                borderRadius: 1,
+                overflow: 'hidden',
+                bgcolor: '#1e1e1e',
+              }}
+            >
+              <Box
+                sx={{
+                  px: 2,
+                  py: 1,
+                  bgcolor: '#2a2a2a',
+                  borderBottom: '1px solid #4d4d4d',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 2,
+                }}
+              >
+                <Typography sx={{ color: '#c5c5d2', fontSize: 12 }}>
+                  Live preview paused to reduce Sandpack timeouts
+                </Typography>
+                <Box
+                  component="button"
+                  onClick={onRequestLivePreview}
+                  sx={{
+                    border: '1px solid #10a37f',
+                    background: 'transparent',
+                    color: '#10a37f',
+                    borderRadius: 1,
+                    px: 1.5,
+                    py: 0.5,
+                    fontSize: 12,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Load live preview
+                </Box>
+              </Box>
+              <Box
+                component="pre"
+                sx={{
+                  m: 0,
+                  p: 2,
+                  maxHeight: 300,
+                  overflow: 'auto',
+                  fontSize: 12,
+                  lineHeight: 1.5,
+                  color: '#d4d4d4',
+                  fontFamily: '"Fira Code", "Fira Mono", Consolas, Monaco, monospace',
+                }}
+              >
+                {canRenderCode ? code : 'No widget code found in this message.'}
+              </Box>
+            </Box>
+          )}
         </Box>
       </Box>
     </Box>

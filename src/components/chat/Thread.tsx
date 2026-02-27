@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Box, Typography, CircularProgress } from '@mui/material'
 import { CustomMessage } from './CustomMessage'
 import { CustomComposer } from './CustomComposer'
@@ -35,6 +35,22 @@ export function Thread({ onToggleSidebar, onSettingsClick }: ThreadProps) {
     }
     return undefined
   }
+
+  // Only mount one live Sandpack runtime at a time.
+  const latestWidgetMessageId = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].messageType === 'widget-code') {
+        return messages[i].id as string
+      }
+    }
+    return null
+  }, [messages])
+  const [activeLivePreviewMessageId, setActiveLivePreviewMessageId] = useState<string | null>(null)
+
+  // Default active preview to the latest widget whenever messages change.
+  useEffect(() => {
+    setActiveLivePreviewMessageId(latestWidgetMessageId)
+  }, [latestWidgetMessageId])
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -131,6 +147,8 @@ export function Thread({ onToggleSidebar, onSettingsClick }: ThreadProps) {
                 key={message.id}
                 message={message}
                 mockData={getMockDataForMessage(index)}
+                enableLivePreview={message.id === activeLivePreviewMessageId}
+                onRequestLivePreview={(messageId) => setActiveLivePreviewMessageId(messageId)}
               />
             ))}
             {isLoading && messages.length > 0 && (
