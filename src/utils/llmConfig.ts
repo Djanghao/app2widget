@@ -9,12 +9,12 @@ export const PROVIDER_CONFIGS = {
   qwen: {
     name: 'Qwen',
     baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
-    models: ['qwen3-max', 'qwen3-coder-plus'],
+    models: ['qwen3.5-plus', 'qwen3-max', 'qwen3-coder-plus'],
   },
   openai: {
     name: 'OpenAI',
     baseUrl: 'https://api.openai.com/v1',
-    models: ['GPT-5.2', 'GPT-5.2 pro', 'GPT-5 mini'],
+    models: ['gpt-5.2-2025-12-11', 'gpt-5.3-codex'],
   },
   custom: {
     name: 'Custom',

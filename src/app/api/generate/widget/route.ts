@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     const response = await callLLM(config, apiKey, {
       messages,
       temperature: 0.7,
-      max_tokens: 4000,
+      max_tokens: 8000,
     })
 
     // Extract code from markdown code blocks

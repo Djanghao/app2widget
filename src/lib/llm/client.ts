@@ -26,11 +26,16 @@ export async function callLLM(
   })
 
   try {
+    const isOpenAI = config.baseUrl.includes('api.openai.com')
+    const maxTokens = request.max_tokens ?? 4000
+
     const completion = await client.chat.completions.create({
       model: config.modelName,
       messages: request.messages as any,
       temperature: request.temperature ?? 0.7,
-      max_tokens: request.max_tokens ?? 4000,
+      ...(isOpenAI
+        ? { max_completion_tokens: maxTokens }
+        : { max_tokens: maxTokens }),
     })
 
     if (!completion.choices || completion.choices.length === 0) {

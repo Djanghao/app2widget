@@ -492,6 +492,8 @@ export async function POST(request: NextRequest) {
           errorContent = ASSISTANT_MESSAGES.ERROR_LLM_FAILED
         } else if (errorMessage.includes('Mock data generation failed')) {
           errorContent = ASSISTANT_MESSAGES.ERROR_APP_METADATA_FETCH
+        } else {
+          errorContent = `${ASSISTANT_MESSAGES.ERROR_GENERIC}\n\nError detail: ${errorMessage}`
         }
 
         const errorChatMessage = await safeCreateMessage({

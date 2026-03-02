@@ -66,6 +66,6 @@ export function buildWidgetRefineMessages(
 ): { system: string; user: string } {
   return {
     system: WIDGET_REFINE_SYSTEM_PROMPT,
-    user: `${previousCode}\n\n${refinePrompt}`,
+    user: `[Current Code]\n${previousCode}\n\n[User Task]\n${refinePrompt}\n\nPlease output the modified full code based on the above task:`,
   }
 }
