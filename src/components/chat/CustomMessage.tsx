@@ -1,7 +1,6 @@
 'use client'
 import { Box, Typography } from '@mui/material'
 import { MockDataResponse } from '@/types/widget'
-import { WidgetPreview } from '../widget/WidgetPreview'
 import { MockDataPreview } from '../widget/MockDataPreview'
 import { AppMetadataPreview } from '../widget/AppMetadataPreview'
 import { ChatMessage, Provider } from '@/types/chat'
@@ -87,8 +86,6 @@ export function CustomMessage({
     return (
       <WidgetCodeMessage
         code={code}
-        prompt={message.data.prompt}
-        mockData={mockData}
         provider={provider}
         enableLivePreview={enableLivePreview}
         onRequestLivePreview={
@@ -229,15 +226,11 @@ function MockDataMessage({ mockData, provider }: { mockData: MockDataResponse; p
 
 function WidgetCodeMessage({
   code,
-  prompt,
-  mockData,
   provider,
   enableLivePreview,
   onRequestLivePreview,
 }: {
   code: string
-  prompt?: string
-  mockData?: MockDataResponse
   provider: Provider
   enableLivePreview: boolean
   onRequestLivePreview?: () => void
@@ -252,9 +245,9 @@ function WidgetCodeMessage({
           <Typography sx={{ color: '#ececec', fontSize: 14, mb: 1.5, fontWeight: 500 }}>
             Here's your widget:
           </Typography>
-          {enableLivePreview && canRenderCode ? (
-            <WidgetPreview code={code} mockData={mockData} prompt={prompt} />
-          ) : (
+          {/* Live preview is rendered by Thread with a stable key —
+              only show the static code block for inactive widgets. */}
+          {!enableLivePreview && (
             <Box
               sx={{
                 border: '1px solid #4d4d4d',

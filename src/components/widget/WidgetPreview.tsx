@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   SandpackProvider,
   SandpackLayout,
@@ -198,6 +198,29 @@ function SandpackContent({ prompt }: { prompt?: string }) {
   )
 }
 
+// Imperatively update Sandpack files when props change, so the
+// SandpackProvider never needs to unmount/remount.
+function FileUpdater({ code, mockData }: { code: string; mockData: any }) {
+  const { sandpack } = useSandpack()
+  const isFirstRender = useRef(true)
+
+  useEffect(() => {
+    // Skip the initial render — SandpackProvider already has the right files.
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
+    sandpack.updateFile('/App.tsx', code)
+    sandpack.updateFile(
+      '/response.json',
+      JSON.stringify(mockData || { widget: null, data: null, meta: null }, null, 2)
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [code, mockData])
+
+  return null
+}
+
 export function WidgetPreview({ code, mockData, prompt }: WidgetPreviewProps) {
   const files = {
     '/App.tsx': {
@@ -258,6 +281,7 @@ export function WidgetPreview({ code, mockData, prompt }: WidgetPreviewProps) {
         },
       }}
     >
+      <FileUpdater code={code} mockData={mockData} />
       <SandpackContent prompt={prompt} />
     </SandpackProvider>
   )
