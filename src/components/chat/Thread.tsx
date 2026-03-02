@@ -16,7 +16,7 @@ interface ThreadProps {
 }
 
 export function Thread({ onToggleSidebar, onSettingsClick }: ThreadProps) {
-  const { messages, isLoading, provider } = useChatContext()
+  const { messages, isLoading, provider, setActivePreview, activePreview } = useChatContext()
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const iconMap: Record<Provider, string> = {
@@ -55,6 +55,21 @@ export function Thread({ onToggleSidebar, onSettingsClick }: ThreadProps) {
   // Default active preview to the latest widget whenever messages change.
   useEffect(() => {
     setActiveLivePreviewMessageId(latestWidgetMessageId)
+  }, [latestWidgetMessageId])
+
+  // Auto-open panel preview for the latest widget
+  useEffect(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const msg = messages[i]
+      if (msg.messageType === 'widget-code' && msg.data) {
+        const code = typeof msg.data?.code === 'string' ? msg.data.code : (typeof msg.content === 'string' ? msg.content : '')
+        if (code.trim()) {
+          setActivePreview({ code, mockData: getMockDataForMessage(i), prompt: msg.data.prompt })
+        }
+        break
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [latestWidgetMessageId])
 
   // Auto-scroll to bottom when new messages arrive
@@ -181,7 +196,7 @@ export function Thread({ onToggleSidebar, onSettingsClick }: ThreadProps) {
             {/* Single WidgetPreview at a fixed DOM position.
                 CSS order places it visually after the active message.
                 FileUpdater swaps the code without remounting Sandpack. */}
-            {activeWidgetData && (
+            {activeWidgetData && !activePreview && (
               <Box
                 sx={{
                   order: activeWidgetData.index * 2 + 1,
