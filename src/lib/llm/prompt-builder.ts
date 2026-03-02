@@ -62,10 +62,15 @@ export function buildWidgetPrompt(
 
 export function buildWidgetRefineMessages(
   previousCode: string,
-  refinePrompt: string
+  refinePrompt: string,
+  uiStylePrompt?: string
 ): { system: string; user: string } {
+  let system = WIDGET_REFINE_SYSTEM_PROMPT
+  if (uiStylePrompt) {
+    system += `\n\nUI Style Guide:\n${uiStylePrompt}`
+  }
   return {
-    system: WIDGET_REFINE_SYSTEM_PROMPT,
+    system,
     user: `${previousCode}\n\n${refinePrompt}`,
   }
 }

@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
 
     const messages = isRefine
       ? (() => {
-          const refineMessages = buildWidgetRefineMessages(previousCode, refinePrompt)
+          const refineMessages = buildWidgetRefineMessages(previousCode, refinePrompt, uiStylePrompt)
           return [
             { role: 'system', content: refineMessages.system },
             { role: 'user', content: refineMessages.user },

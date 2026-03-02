@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     }
 
     const effectiveMode = (session.mode || mode) as ChatMode
-    const effectiveUIStyle = (session.uiStyle || uiStyle) as UIStyle
+    const effectiveUIStyle = (uiStyle || session.uiStyle) as UIStyle
     const isRefine = Boolean(session.widgetCode)
 
     let writerClosed = false
@@ -149,6 +149,14 @@ export async function POST(request: NextRequest) {
         if (!userMessage) return
 
         if (isRefine) {
+          // Fetch UI style preset for refinement
+          const uiStylePreset = await prisma.uIStylePreset.findUnique({
+            where: { name: effectiveUIStyle },
+          })
+          if (!uiStylePreset) {
+            throw new Error(`UI style preset not found: ${effectiveUIStyle}`)
+          }
+
           if (
             !(await createAndSend({
               sessionId: session.id,
@@ -170,6 +178,7 @@ export async function POST(request: NextRequest) {
               body: JSON.stringify({
                 previousCode,
                 refinePrompt: input,
+                uiStylePrompt: uiStylePreset.promptAddition,
                 apiKey,
                 llmConfig,
               }),
@@ -182,7 +191,7 @@ export async function POST(request: NextRequest) {
           }
 
           const { code: widgetCode } = await widgetResponse.json()
-          const refineMessages = buildWidgetRefineMessages(previousCode, input)
+          const refineMessages = buildWidgetRefineMessages(previousCode, input, uiStylePreset.promptAddition)
           const refinePromptPayload = JSON.stringify(
             [
               { role: 'system', content: refineMessages.system },
@@ -207,6 +216,7 @@ export async function POST(request: NextRequest) {
           if (
             !(await safeUpdateSession({
               widgetCode,
+              uiStyle: effectiveUIStyle,
               status: 'completed',
             }))
           ) {
