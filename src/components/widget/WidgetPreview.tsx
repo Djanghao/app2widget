@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   SandpackProvider,
   SandpackLayout,
@@ -18,8 +18,22 @@ interface WidgetPreviewProps {
 }
 
 function SandpackContent({ prompt }: { prompt?: string }) {
-  const { sandpack } = useSandpack()
+  const { sandpack, dispatch } = useSandpack()
   const [copied, setCopied] = useState(false)
+
+  // Recover Sandpack when the user switches back to this tab.
+  // Browsers throttle/suspend backgrounded iframes, which causes
+  // the Sandpack bundler to time out and show an error.
+  const handleVisibilityChange = useCallback(() => {
+    if (document.visibilityState === 'visible' && sandpack.status === 'timeout') {
+      dispatch({ type: 'refresh' })
+    }
+  }, [sandpack.status, dispatch])
+
+  useEffect(() => {
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [handleVisibilityChange])
 
   // Get the active file from sandpack
   const activeFile = sandpack.activeFile
