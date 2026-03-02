@@ -89,7 +89,7 @@ export function ChatProvider({ children, apiKey, llmConfig, setLLMConfig }: Chat
     setCurrentSessionId(null)
     setMessages([])
     setCurrentMode('description')
-    setCurrentUIStyle('modern-minimal')
+    setCurrentUIStyle('ios-stock-widget')
   }
 
   return (
