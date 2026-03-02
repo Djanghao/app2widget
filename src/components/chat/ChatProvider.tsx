@@ -11,6 +11,12 @@ interface ChatProviderProps {
   setLLMConfig: (config: LLMConfig) => void
 }
 
+export interface ActivePreview {
+  code: string
+  mockData?: any
+  prompt?: string
+}
+
 interface ChatContextType {
   mode: ChatMode
   setMode: (mode: ChatMode) => void
@@ -29,6 +35,8 @@ interface ChatContextType {
   setCurrentSessionId: (id: string | null) => void
   loadSession: (sessionId: string) => Promise<void>
   createNewSession: () => void
+  activePreview: ActivePreview | null
+  setActivePreview: (preview: ActivePreview | null) => void
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined)
@@ -39,6 +47,7 @@ export function ChatProvider({ children, apiKey, llmConfig, setLLMConfig }: Chat
   const [messages, setMessages] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
+  const [activePreview, setActivePreview] = useState<ActivePreview | null>(null)
   const [currentProvider, setCurrentProvider] = useState<Provider>(
     getProviderFromModel(llmConfig.modelName)
   )
@@ -112,6 +121,8 @@ export function ChatProvider({ children, apiKey, llmConfig, setLLMConfig }: Chat
         setCurrentSessionId,
         loadSession,
         createNewSession,
+        activePreview,
+        setActivePreview,
       }}
     >
       {children}

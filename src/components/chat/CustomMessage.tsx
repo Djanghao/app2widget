@@ -58,7 +58,7 @@ export function CustomMessage({
   enableLivePreview = false,
   onRequestLivePreview,
 }: CustomMessageProps) {
-  const { provider } = useChatContext()
+  const { provider, setActivePreview } = useChatContext()
 
   if (message.role === 'user') {
     return <UserMessage content={message.content} />
@@ -93,6 +93,7 @@ export function CustomMessage({
             ? () => onRequestLivePreview(message.id)
             : undefined
         }
+        onViewPreview={() => setActivePreview({ code, mockData, prompt: message.data.prompt })}
       />
     )
   }
@@ -229,11 +230,13 @@ function WidgetCodeMessage({
   provider,
   enableLivePreview,
   onRequestLivePreview,
+  onViewPreview,
 }: {
   code: string
   provider: Provider
   enableLivePreview: boolean
   onRequestLivePreview?: () => void
+  onViewPreview: () => void
 }) {
   const canRenderCode = typeof code === 'string' && code.trim().length > 0
 
@@ -273,7 +276,7 @@ function WidgetCodeMessage({
                 </Typography>
                 <Box
                   component="button"
-                  onClick={onRequestLivePreview}
+                  onClick={onViewPreview}
                   sx={{
                     border: '1px solid #10a37f',
                     background: 'transparent',
@@ -283,9 +286,10 @@ function WidgetCodeMessage({
                     py: 0.5,
                     fontSize: 12,
                     cursor: 'pointer',
+                    '&:hover': { bgcolor: 'rgba(16,163,127,0.1)' },
                   }}
                 >
-                  Load live preview
+                  View preview
                 </Box>
               </Box>
               <Box
