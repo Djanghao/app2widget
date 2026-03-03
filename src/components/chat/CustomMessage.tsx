@@ -48,15 +48,11 @@ function AIIcon({ provider }: { provider: Provider }) {
 interface CustomMessageProps {
   message: ChatMessage
   mockData?: MockDataResponse
-  enableLivePreview?: boolean
-  onRequestLivePreview?: (messageId: string) => void
 }
 
 export function CustomMessage({
   message,
   mockData,
-  enableLivePreview = false,
-  onRequestLivePreview,
 }: CustomMessageProps) {
   const { provider, setActivePreview } = useChatContext()
 
@@ -87,12 +83,6 @@ export function CustomMessage({
       <WidgetCodeMessage
         code={code}
         provider={provider}
-        enableLivePreview={enableLivePreview}
-        onRequestLivePreview={
-          typeof onRequestLivePreview === 'function'
-            ? () => onRequestLivePreview(message.id)
-            : undefined
-        }
         onViewPreview={() => setActivePreview({ code, mockData, prompt: message.data.prompt })}
       />
     )
@@ -228,14 +218,10 @@ function MockDataMessage({ mockData, provider }: { mockData: MockDataResponse; p
 function WidgetCodeMessage({
   code,
   provider,
-  enableLivePreview,
-  onRequestLivePreview,
   onViewPreview,
 }: {
   code: string
   provider: Provider
-  enableLivePreview: boolean
-  onRequestLivePreview?: () => void
   onViewPreview: () => void
 }) {
   const canRenderCode = typeof code === 'string' && code.trim().length > 0
@@ -248,67 +234,63 @@ function WidgetCodeMessage({
           <Typography sx={{ color: '#ececec', fontSize: 14, mb: 1.5, fontWeight: 500 }}>
             Here's your widget:
           </Typography>
-          {/* Live preview is rendered by Thread with a stable key —
-              only show the static code block for inactive widgets. */}
-          {!enableLivePreview && (
+          <Box
+            sx={{
+              border: '1px solid #4d4d4d',
+              borderRadius: 1,
+              overflow: 'hidden',
+              bgcolor: '#1e1e1e',
+            }}
+          >
             <Box
               sx={{
-                border: '1px solid #4d4d4d',
-                borderRadius: 1,
-                overflow: 'hidden',
-                bgcolor: '#1e1e1e',
+                px: 2,
+                py: 1,
+                bgcolor: '#2a2a2a',
+                borderBottom: '1px solid #4d4d4d',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 2,
               }}
             >
+              <Typography sx={{ color: '#c5c5d2', fontSize: 12 }}>
+                Widget code
+              </Typography>
               <Box
+                component="button"
+                onClick={onViewPreview}
                 sx={{
-                  px: 2,
-                  py: 1,
-                  bgcolor: '#2a2a2a',
-                  borderBottom: '1px solid #4d4d4d',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: 2,
-                }}
-              >
-                <Typography sx={{ color: '#c5c5d2', fontSize: 12 }}>
-                  Live preview paused to reduce Sandpack timeouts
-                </Typography>
-                <Box
-                  component="button"
-                  onClick={onViewPreview}
-                  sx={{
-                    border: '1px solid #10a37f',
-                    background: 'transparent',
-                    color: '#10a37f',
-                    borderRadius: 1,
-                    px: 1.5,
-                    py: 0.5,
-                    fontSize: 12,
-                    cursor: 'pointer',
-                    '&:hover': { bgcolor: 'rgba(16,163,127,0.1)' },
-                  }}
-                >
-                  View preview
-                </Box>
-              </Box>
-              <Box
-                component="pre"
-                sx={{
-                  m: 0,
-                  p: 2,
-                  maxHeight: 300,
-                  overflow: 'auto',
+                  border: '1px solid #10a37f',
+                  background: 'transparent',
+                  color: '#10a37f',
+                  borderRadius: 1,
+                  px: 1.5,
+                  py: 0.5,
                   fontSize: 12,
-                  lineHeight: 1.5,
-                  color: '#d4d4d4',
-                  fontFamily: '"Fira Code", "Fira Mono", Consolas, Monaco, monospace',
+                  cursor: 'pointer',
+                  '&:hover': { bgcolor: 'rgba(16,163,127,0.1)' },
                 }}
               >
-                {canRenderCode ? code : 'No widget code found in this message.'}
+                View preview
               </Box>
             </Box>
-          )}
+            <Box
+              component="pre"
+              sx={{
+                m: 0,
+                p: 2,
+                maxHeight: 300,
+                overflow: 'auto',
+                fontSize: 12,
+                lineHeight: 1.5,
+                color: '#d4d4d4',
+                fontFamily: '"Fira Code", "Fira Mono", Consolas, Monaco, monospace',
+              }}
+            >
+              {canRenderCode ? code : 'No widget code found in this message.'}
+            </Box>
+          </Box>
         </Box>
       </Box>
     </Box>
