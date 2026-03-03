@@ -1,12 +1,11 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { Box, Typography, CircularProgress } from '@mui/material'
 import { CustomMessage } from './CustomMessage'
 import { CustomComposer } from './CustomComposer'
 import { ChatHeader } from './ChatHeader'
 import { useChatContext } from './ChatProvider'
-import { WidgetPreview } from '../widget/WidgetPreview'
 import { Provider } from '@/types/chat'
 import Image from 'next/image'
 
@@ -16,7 +15,7 @@ interface ThreadProps {
 }
 
 export function Thread({ onToggleSidebar, onSettingsClick }: ThreadProps) {
-  const { messages, isLoading, provider, setActivePreview, activePreview } = useChatContext()
+  const { messages, isLoading, provider, setActivePreview } = useChatContext()
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const iconMap: Record<Provider, string> = {
@@ -37,11 +36,7 @@ export function Thread({ onToggleSidebar, onSettingsClick }: ThreadProps) {
     return undefined
   }
 
-  // Only mount one live Sandpack runtime at a time.
-  // The WidgetPreview sits at a fixed DOM position (never moved — moving
-  // iframes causes them to reload). CSS flex `order` places it visually
-  // after the active widget message. FileUpdater swaps the code via
-  // sandpack.updateFile() when the active widget changes.
+  // Track the latest widget message to auto-open the panel preview
   const latestWidgetMessageId = useMemo(() => {
     for (let i = messages.length - 1; i >= 0; i--) {
       if (messages[i].messageType === 'widget-code') {
@@ -50,12 +45,6 @@ export function Thread({ onToggleSidebar, onSettingsClick }: ThreadProps) {
     }
     return null
   }, [messages])
-  const [activeLivePreviewMessageId, setActiveLivePreviewMessageId] = useState<string | null>(null)
-
-  // Default active preview to the latest widget whenever messages change.
-  useEffect(() => {
-    setActiveLivePreviewMessageId(latestWidgetMessageId)
-  }, [latestWidgetMessageId])
 
   // Auto-open panel preview for the latest widget
   useEffect(() => {
@@ -76,27 +65,6 @@ export function Thread({ onToggleSidebar, onSettingsClick }: ThreadProps) {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
-
-  // Compute the active widget's data for the single WidgetPreview instance.
-  const activeWidgetData = useMemo(() => {
-    if (!activeLivePreviewMessageId) return null
-    const index = messages.findIndex((m) => m.id === activeLivePreviewMessageId)
-    if (index === -1) return null
-    const message = messages[index]
-    if (message.messageType !== 'widget-code' || !message.data) return null
-
-    const code =
-      typeof message.data?.code === 'string'
-        ? message.data.code
-        : typeof message.content === 'string'
-          ? message.content
-          : ''
-    const mockData = getMockDataForMessage(index)
-    const prompt = message.data?.prompt
-
-    return { code, mockData, prompt, index }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messages, activeLivePreviewMessageId])
 
   return (
     <Box
@@ -188,39 +156,9 @@ export function Thread({ onToggleSidebar, onSettingsClick }: ThreadProps) {
                 <CustomMessage
                   message={message}
                   mockData={getMockDataForMessage(index)}
-                  enableLivePreview={message.id === activeLivePreviewMessageId}
-                  onRequestLivePreview={(messageId) => setActiveLivePreviewMessageId(messageId)}
                 />
               </Box>
             ))}
-            {/* Single WidgetPreview at a fixed DOM position.
-                CSS order places it visually after the active message.
-                FileUpdater swaps the code without remounting Sandpack. */}
-            {activeWidgetData && !activePreview && (
-              <Box
-                sx={{
-                  order: activeWidgetData.index * 2 + 1,
-                  bgcolor: '#2f2f2f',
-                  px: { xs: 3, md: 4 },
-                  pb: 2.5,
-                }}
-              >
-                <Box
-                  sx={{
-                    maxWidth: '90%',
-                    width: '90%',
-                    mx: 'auto',
-                    pl: '42px',
-                  }}
-                >
-                  <WidgetPreview
-                    code={activeWidgetData.code}
-                    mockData={activeWidgetData.mockData}
-                    prompt={activeWidgetData.prompt}
-                  />
-                </Box>
-              </Box>
-            )}
             {isLoading && messages.length > 0 && (
               <Box sx={{ order: messages.length * 2 + 2, bgcolor: '#2f2f2f', py: 2.5, px: 4 }}>
                 <Box sx={{ maxWidth: '90%', width: '90%', mx: 'auto', display: 'flex', gap: 2 }}>
