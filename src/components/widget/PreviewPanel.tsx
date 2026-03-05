@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Box, IconButton, Typography } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import {
@@ -119,6 +119,37 @@ export default function App() {
   )
 }
 
+class SandpackErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { error: Error | null }
+> {
+  state = { error: null as Error | null }
+
+  static getDerivedStateFromError(error: Error) {
+    return { error }
+  }
+
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    console.error('Sandpack error:', error, info)
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <Box sx={{ p: 3, color: '#ef4444', fontSize: 13 }}>
+          <Typography variant="body2" fontWeight={600} sx={{ mb: 1, color: '#ef4444' }}>
+            Preview failed to load
+          </Typography>
+          <Typography variant="caption" sx={{ color: '#999', whiteSpace: 'pre-wrap' }}>
+            {this.state.error.message}
+          </Typography>
+        </Box>
+      )
+    }
+    return this.props.children
+  }
+}
+
 export function PreviewPanel() {
   const { activePreview, setActivePreview } = useChatContext()
 
@@ -162,10 +193,12 @@ export function PreviewPanel() {
       {/* Sandpack preview — absolute positioning gives iframe real pixel dimensions */}
       <Box sx={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
         <Box sx={{ position: 'absolute', inset: 0 }}>
-          <PreviewOnlyWidget
-            code={activePreview.code}
-            mockData={activePreview.mockData}
-          />
+          <SandpackErrorBoundary>
+            <PreviewOnlyWidget
+              code={activePreview.code}
+              mockData={activePreview.mockData}
+            />
+          </SandpackErrorBoundary>
         </Box>
       </Box>
     </Box>

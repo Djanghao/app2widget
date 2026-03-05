@@ -1,0 +1,54 @@
+# GRPO Training Configuration
+
+model:
+  name: "Qwen/Qwen2.5-Coder-7B-Instruct"
+  torch_dtype: "bfloat16"
+  device_map: "auto"
+
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+
+grpo:
+  num_generations: 8
+  beta: 0.1
+  learning_rate: 1.0e-5
+  num_train_epochs: 3
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 4
+  max_prompt_length: 4096
+  max_completion_length: 4096
+  bf16: true
+  logging_steps: 10
+  save_steps: 100
+  warmup_ratio: 0.05
+  optim: "adamw_torch"
+
+reward:
+  compile_weight: 0.3
+  ssim_weight: 0.6
+  judge_weight: 0.1
+  ssim_image_size: [300, 400]  # width, height
+
+renderer:
+  vite_port: 7799
+  screenshot_timeout: 10000
+  render_complete_timeout: 15000
+
+output:
+  dir: "output"
+  final_dir: "output/final"
+  checkpoint_dir: "output/checkpoints"
+
+wandb:
+  project: "app2widget-grpo"
+  enabled: false

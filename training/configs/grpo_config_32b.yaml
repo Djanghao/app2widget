@@ -1,0 +1,59 @@
+# GRPO Training Configuration — Qwen2.5-Coder-32B-Instruct
+# Optimized for RunPod multi-GPU (4x A100/H100 80GB)
+# Full bf16 across GPUs — no quantization needed with enough VRAM
+
+model:
+  name: "Qwen/Qwen2.5-Coder-32B-Instruct"
+  torch_dtype: "bfloat16"
+  device_map: "auto"
+  load_in_4bit: false
+
+lora:
+  r: 64
+  alpha: 128
+  dropout: 0.05
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+
+grpo:
+  num_generations: 8
+  beta: 0.04
+  learning_rate: 5.0e-6
+  num_train_epochs: 3
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 4
+  max_prompt_length: 4096
+  max_completion_length: 4096
+  bf16: true
+  logging_steps: 5
+  save_steps: 50
+  warmup_ratio: 0.05
+  optim: "adamw_torch"
+
+reward:
+  compile_weight: 0.2
+  ssim_weight: 0.4
+  judge_weight: 0.4
+  ssim_image_size: [300, 400]
+  vlm_judge_model: "gpt-4o-mini"
+  vlm_judge_enabled: true
+
+renderer:
+  vite_port: 7799
+  screenshot_timeout: 10000
+  render_complete_timeout: 15000
+
+output:
+  dir: "output_32b"
+  final_dir: "output_32b/final"
+  checkpoint_dir: "output_32b/checkpoints"
+
+wandb:
+  project: "app2widget-grpo-32b"
+  enabled: false

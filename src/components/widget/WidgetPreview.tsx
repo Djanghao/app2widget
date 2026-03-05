@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   SandpackProvider,
   SandpackLayout,
@@ -221,6 +221,24 @@ function FileUpdater({ code, mockData }: { code: string; mockData: any }) {
   return null
 }
 
+class SandpackErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { error: Error | null }
+> {
+  state = { error: null as Error | null }
+  static getDerivedStateFromError(error: Error) { return { error } }
+  render() {
+    if (this.state.error) {
+      return (
+        <Box sx={{ p: 2, color: '#ef4444', fontSize: 12 }}>
+          Preview error: {this.state.error.message}
+        </Box>
+      )
+    }
+    return this.props.children
+  }
+}
+
 export function WidgetPreview({ code, mockData, prompt }: WidgetPreviewProps) {
   const files = {
     '/App.tsx': {
@@ -234,6 +252,7 @@ export function WidgetPreview({ code, mockData, prompt }: WidgetPreviewProps) {
   }
 
   return (
+    <SandpackErrorBoundary>
     <SandpackProvider
       template="react-ts"
       files={files}
@@ -284,5 +303,6 @@ export function WidgetPreview({ code, mockData, prompt }: WidgetPreviewProps) {
       <FileUpdater code={code} mockData={mockData} />
       <SandpackContent prompt={prompt} />
     </SandpackProvider>
+    </SandpackErrorBoundary>
   )
 }

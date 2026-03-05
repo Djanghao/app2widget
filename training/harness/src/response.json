@@ -1,0 +1,66 @@
+{
+  "widget": {
+    "id": "pollen_count_001",
+    "app": "Pollen Alert",
+    "version": "1.0"
+  },
+  "data": {
+    "location": "Austin, TX",
+    "currentPollenLevel": {
+      "tree": {
+        "level": 340,
+        "severity": "High"
+      },
+      "grass": {
+        "level": 120,
+        "severity": "Moderate"
+      },
+      "weed": {
+        "level": 50,
+        "severity": "Low"
+      }
+    },
+    "hourlyPollenTrend": [
+      {
+        "hour": "6AM",
+        "tree": 300,
+        "grass": 100,
+        "weed": 40
+      },
+      {
+        "hour": "9AM",
+        "tree": 320,
+        "grass": 110,
+        "weed": 45
+      },
+      {
+        "hour": "12PM",
+        "tree": 340,
+        "grass": 120,
+        "weed": 50
+      },
+      {
+        "hour": "3PM",
+        "tree": 330,
+        "grass": 115,
+        "weed": 48
+      },
+      {
+        "hour": "6PM",
+        "tree": 310,
+        "grass": 105,
+        "weed": 43
+      }
+    ]
+  },
+  "meta": {
+    "theme": "light",
+    "dataMode": "rich",
+    "layout": "detailed",
+    "primaryColor": "#FF5722",
+    "accentColor": "#FFEB3B",
+    "chartTypes": [
+      "bar"
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+[project]
+name = "app2widget-training"
+version = "0.1.0"
+description = "GRPO training pipeline for widget code generation"
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.1.0",
+    "transformers>=4.40.0",
+    "trl>=0.12.0",
+    "peft>=0.10.0",
+    "bitsandbytes>=0.43.0",
+    "accelerate>=0.30.0",
+    "datasets>=2.18.0",
+    "openai>=1.30.0",
+    "playwright>=1.40.0",
+    "Pillow>=10.0.0",
+    "scikit-image>=0.22.0",
+    "pyyaml>=6.0",
+    "pydantic-settings>=2.2.0",
+    "wandb>=0.16.0",
+    "aiohttp>=3.9.0",
+    "python-dotenv>=1.0.0",
+]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]

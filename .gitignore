@@ -38,3 +38,12 @@ next-env.d.ts
 
 # prisma
 prisma/migrations
+
+# training artifacts (large model weights, screenshots, checkpoints)
+training/output*/
+training/data/teacher_screenshots/
+training/data/teacher_metadata/
+training/data/candidates/
+training/data/dataset.jsonl
+training/data/generation.log
+training/harness/node_modules/

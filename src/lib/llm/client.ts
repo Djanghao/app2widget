@@ -12,9 +12,15 @@ export async function callLLM(
   apiKey: string,
   request: LLMRequest
 ): Promise<string> {
+  // Normalize base URL: ensure it ends with /v1
+  let baseUrl = config.baseUrl.replace(/\/+$/, '')
+  if (!baseUrl.endsWith('/v1')) {
+    baseUrl = baseUrl + '/v1'
+  }
+
   // Debug logging
   console.log('LLM Config:', {
-    baseUrl: config.baseUrl,
+    baseUrl,
     modelName: config.modelName,
     apiKeyLength: apiKey?.length,
     apiKeyPrefix: apiKey?.substring(0, 10) + '...',
@@ -22,7 +28,7 @@ export async function callLLM(
 
   const client = new OpenAI({
     apiKey: apiKey,
-    baseURL: config.baseUrl,
+    baseURL: baseUrl,
   })
 
   try {

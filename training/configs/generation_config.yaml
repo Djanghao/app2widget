@@ -1,0 +1,235 @@
+# Teacher Data Generation Configuration — Scaled for frontier-beating training
+
+teacher:
+  model: "gpt-4o"
+  temperature: 0.8
+  max_tokens: 4096
+  num_samples: 1200
+
+data:
+  output_dir: "data"
+  dataset_file: "data/dataset.jsonl"
+  teacher_screenshots_dir: "data/teacher_screenshots"
+  teacher_metadata_dir: "data/teacher_metadata"
+  candidates_dir: "data/candidates"
+
+ui_styles:
+  # Light themes
+  - "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace."
+  - "Warm and friendly with rounded shapes, pastel colors, and playful typography. Approachable design."
+  - "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy."
+  - "Airy and modern with lots of white space, thin borders, muted blues and grays. Calm and focused."
+  - "Playful and colorful with bright primary colors, thick rounded borders, and large friendly fonts."
+  - "Elegant and luxurious with serif fonts, gold accents on cream backgrounds, refined spacing."
+  - "Scandinavian-inspired with muted earth tones, natural textures, clean geometric shapes."
+  - "Neomorphic / soft UI with light gray backgrounds, inset and raised soft shadows, subtle depth."
+
+  # Dark themes
+  - "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel."
+  - "Cyberpunk dark theme with neon green and magenta accents on near-black backgrounds, monospace fonts."
+  - "Dark glassmorphism with frosted glass panels, blur effects, translucent overlays, and vibrant gradients."
+  - "Midnight blue dark theme with electric blue accents, subtle gradients, and sharp modern typography."
+  - "Dark minimal with pure black background, white text, single accent color, ultra-clean lines."
+
+  # Bold / vibrant
+  - "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching."
+  - "Retro/vintage with warm sepia tones, rounded retro fonts, subtle paper textures, nostalgic feel."
+  - "Brutalist with raw black and white, oversized bold type, sharp edges, no rounded corners."
+  - "Gradient-heavy modern with smooth color transitions, floating cards, and depth through color."
+  - "Material Design 3 inspired with dynamic color, rounded containers, prominent FABs, and elevation."
+
+  # Platform-specific
+  - "iOS-inspired with SF Pro-style fonts, vibrancy effects, system-like cards, and Apple HIG spacing."
+  - "Android Material You with pill-shaped elements, tonal colors, large touch targets, and rounded corners."
+  - "Windows Fluent with acrylic backgrounds, reveal highlights, and clean segmented layouts."
+  - "Dashboard/analytics style with dense data, small fonts, grid layouts, and chart-heavy composition."
+
+widget_descriptions:
+  # Weather & Environment
+  - "A weather widget showing current temperature, condition, and a 7-day temperature trend line chart"
+  - "An air quality index widget with a circular gauge and pollutant breakdown"
+  - "A UV index widget with current level, risk category, and hourly forecast bar chart"
+  - "A pollen count widget showing allergen levels with color-coded severity"
+  - "A sunrise/sunset widget with golden hour indicator and day length"
+  - "A tide forecast widget with high/low times, current level, and 24h wave height chart"
+  - "A wind speed widget with compass direction indicator, gust speed, and hourly trend"
+  - "A humidity and dew point widget with comfort level indicator and daily range"
+
+  # Finance & Business
+  - "A stock portfolio widget showing total value, daily change, and top 3 holdings with sparklines"
+  - "A cryptocurrency price tracker widget with 24h change and mini price chart"
+  - "A monthly budget widget with spending categories as a pie chart and remaining balance"
+  - "A revenue dashboard widget showing total revenue, growth percentage, and monthly trend"
+  - "An expense tracker widget with category breakdown and weekly spending bar chart"
+  - "A savings goal widget with progress bar, target amount, and projected completion date"
+  - "A currency exchange rate widget with live rates and 7-day trend for a pair"
+  - "An invoice summary widget showing pending, paid, and overdue counts with total amounts"
+  - "A profit margin widget with current vs previous quarter comparison bar chart"
+  - "A subscription revenue widget showing MRR, churn rate, and growth trend"
+  - "A tax estimation widget showing estimated quarterly taxes owed with income bracket indicator"
+  - "A loan amortization widget showing remaining balance, next payment, and principal vs interest chart"
+  - "A credit score widget with gauge visualization, score history trend, and factor breakdown"
+  - "A real estate ROI widget showing rental yield, appreciation rate, and cash flow projection"
+
+  # Health & Fitness
+  - "A fitness tracker widget showing daily steps, calories, and a weekly activity bar chart"
+  - "A heart rate monitor widget with current BPM, resting rate, and 24h trend line"
+  - "A sleep quality widget showing last night's duration, stages breakdown pie chart, and weekly average"
+  - "A hydration tracker widget with daily water intake progress and hourly consumption chart"
+  - "A nutrition summary widget with calories consumed, macros breakdown, and meal count"
+  - "A meditation streak widget showing current streak, total sessions, and weekly minutes bar chart"
+  - "A blood pressure tracker widget with latest reading, category, and 7-day trend"
+  - "A workout summary widget showing exercises completed, total volume, and muscle groups hit"
+  - "A menstrual cycle tracker widget showing cycle day, phase, and predicted next dates"
+  - "A body composition widget showing weight, body fat %, muscle mass, and 3-month trend"
+  - "A medication reminder widget showing today's schedule, adherence rate, and refill dates"
+
+  # Productivity & Work
+  - "A task manager widget showing today's tasks with completion progress and priority indicators"
+  - "A Pomodoro timer widget with completed sessions, total focus time, and daily goal progress"
+  - "A meeting agenda widget showing next 3 upcoming meetings with time and location"
+  - "A project milestone widget with timeline progress and upcoming deadlines"
+  - "A team velocity widget showing sprint burndown chart and story points completed"
+  - "An email inbox widget showing unread count, priority messages, and daily volume trend"
+  - "A code review widget showing pending reviews, average review time, and weekly stats"
+  - "A time tracking widget showing today's logged hours by project with progress toward 8h goal"
+  - "A standup summary widget showing yesterday's completions, today's plan, and blockers count"
+  - "A CI/CD pipeline widget showing recent builds, success rate, and average deploy time"
+  - "A hiring pipeline widget showing candidates per stage, time-to-hire, and open positions"
+
+  # Social & Communication
+  - "A social media stats widget showing followers, engagement rate, and growth trend"
+  - "A messaging widget showing unread conversations, recent contacts, and message volume"
+  - "A notification center widget with categorized alerts and unread count by type"
+  - "A community metrics widget showing active members, posts today, and engagement trend"
+  - "A content calendar widget showing scheduled posts this week with platform indicators"
+
+  # E-commerce & Shopping
+  - "An order tracking widget showing current order status, delivery progress, and ETA"
+  - "A product rating widget showing average rating, review count, and rating distribution bar chart"
+  - "A shopping cart widget showing item count, total price, and savings amount"
+  - "A price comparison widget showing current price vs competitor prices with trend"
+  - "A deal alert widget showing top discounts with percentage off and expiry countdown"
+  - "An inventory status widget showing stock levels, low-stock alerts, and reorder suggestions"
+  - "A customer lifetime value widget showing average CLV, top segments, and retention chart"
+  - "A returns dashboard widget showing return rate, top reasons, and monthly trend"
+
+  # Travel & Transport
+  - "A flight status widget showing departure/arrival times, gate, and delay info"
+  - "A transit tracker widget showing next 3 arrivals with real-time delay indicators"
+  - "A trip planner widget showing upcoming trip details with countdown and packing progress"
+  - "A gas price widget showing local average, cheapest nearby, and price trend chart"
+  - "A ride-sharing widget showing estimated fare, arrival time, and driver rating"
+  - "A hotel booking widget showing check-in/out dates, room details, and price breakdown"
+  - "A travel expense widget showing trip budget vs spent with category breakdown"
+  - "An EV charging widget showing nearest stations, availability, and charge cost estimate"
+
+  # Education & Learning
+  - "A course progress widget showing completed modules, quiz scores, and time spent trend"
+  - "A vocabulary builder widget showing words learned, streak, and daily goal progress"
+  - "A grade tracker widget showing GPA, recent grades, and subject performance bar chart"
+  - "A reading tracker widget showing books read, current progress, and yearly goal"
+  - "A study timer widget showing daily study hours, subject breakdown, and weekly comparison"
+  - "A flashcard review widget showing cards due, accuracy rate, and mastery level per deck"
+  - "A class schedule widget showing today's classes with room numbers and countdown to next"
+  - "A certification progress widget showing exams passed, study hours, and target date"
+
+  # Home & IoT
+  - "A smart home widget showing connected devices count, energy usage, and room temperatures"
+  - "An energy usage widget showing current consumption, daily cost, and usage trend line chart"
+  - "A thermostat widget showing current temperature, target, and schedule preview"
+  - "A security camera widget showing active cameras count, recent motion alerts, and status"
+  - "A plant care widget showing watering schedule, soil moisture level, and next care date"
+  - "A smart lock widget showing lock status, recent access log, and authorized users count"
+  - "A home air quality widget showing PM2.5, CO2 level, humidity with room-by-room comparison"
+  - "A solar panel widget showing current generation, daily yield, and savings this month"
+
+  # Music & Entertainment
+  - "A music player widget showing currently playing track, artist, and playback controls"
+  - "A podcast widget showing current episode, progress, and listening stats"
+  - "A movie rating widget showing top picks with ratings, genre, and runtime"
+  - "A gaming stats widget showing playtime, achievements unlocked, and level progress"
+  - "A streaming watchlist widget showing next to watch, episodes left, and time to finish"
+  - "A concert/event widget showing upcoming shows, venue, and ticket availability status"
+  - "A music listening stats widget showing top artists, genres, and listening hours this week"
+
+  # Analytics & Metrics
+  - "A website analytics widget showing visitors, page views, bounce rate, and traffic source pie chart"
+  - "A server status widget showing uptime percentage, response time, and error rate trend"
+  - "A conversion funnel widget showing stage-by-stage conversion rates with comparison"
+  - "A customer satisfaction widget showing NPS score, trend, and recent feedback sentiment"
+  - "An API usage widget showing request count, average latency, and error rate bar chart"
+  - "A user engagement widget showing DAU/MAU ratio, session duration, and retention curve"
+  - "An A/B test results widget showing variant performance, confidence level, and lift percentage"
+  - "A feature adoption widget showing rollout %, active users, and error rate for new feature"
+  - "A database performance widget showing query time p99, connections, and slow query count"
+  - "A cost optimization widget showing cloud spend by service, savings opportunities, and trend"
+
+  # Sports
+  - "A live sports score widget showing teams, current score, period, and key stats"
+  - "A fantasy league widget showing team rank, points, and player performance highlights"
+  - "A running stats widget showing pace, distance, elevation, and route segment splits"
+  - "A league standings widget showing top 5 teams with wins, losses, and points"
+  - "A workout plan widget showing today's exercises, sets/reps, and rest timers"
+  - "A cycling stats widget showing distance, average speed, elevation gain, and power zones"
+
+  # Food & Dining
+  - "A restaurant menu widget showing featured dishes with prices and ratings"
+  - "A recipe widget showing ingredients count, cooking time, and nutrition summary"
+  - "A food delivery widget showing order status, estimated delivery time, and driver location"
+  - "A meal planner widget showing today's meals with calorie totals and prep time"
+  - "A grocery list widget showing item count by category and estimated total cost"
+  - "A wine tracker widget showing collection count, recent additions, and ratings by region"
+  - "A coffee consumption widget showing cups today, caffeine intake, and weekly pattern"
+
+  # News & Information
+  - "A news headline widget showing top 3 stories with source and time ago"
+  - "A stock market summary widget showing major indices with change percentages"
+  - "A calendar widget showing today's date, events count, and next event details"
+  - "A countdown widget showing days until a target event with progress percentage"
+  - "A quote of the day widget showing an inspirational quote with author and category"
+  - "A world clock widget showing 4 time zones with analog clock faces and day/night indicator"
+  - "An election tracker widget showing candidate poll numbers, margin, and trend chart"
+
+  # System & Device
+  - "A battery status widget showing charge level, estimated time remaining, and usage breakdown"
+  - "A storage usage widget showing used vs total space with file type breakdown pie chart"
+  - "A network speed widget showing download/upload speeds and ping with mini line chart"
+  - "A password health widget showing weak passwords count, reused, and overall security score"
+  - "A system monitor widget showing CPU, RAM, and disk usage with process count"
+  - "A backup status widget showing last backup time, size, and next scheduled backup"
+  - "A VPN status widget showing connection status, server location, and speed impact"
+
+  # Sustainability & Social
+  - "A carbon footprint widget showing daily emissions, category breakdown, and monthly trend"
+  - "A donation tracker widget showing total raised, goal progress, and donor count"
+  - "A volunteer hours widget showing hours logged, impact metrics, and upcoming events"
+  - "A recycling tracker widget showing items recycled, CO2 saved, and community leaderboard position"
+
+  # Personal & Lifestyle
+  - "A habit tracker widget showing today's habits checklist with streak counts"
+  - "A time zone widget showing clocks for 3 cities with local time and date difference"
+  - "A parking spot widget showing available spots, nearest location, and hourly rate"
+  - "A loyalty points widget showing balance, recent transactions, and rewards available"
+  - "A project kanban widget showing task counts per column (Todo, In Progress, Done) with totals"
+  - "A vaccination tracker widget showing doses received, next due date, and coverage percentage"
+  - "A pet care widget showing feeding schedule, vet appointment, and activity level"
+  - "A commute widget showing estimated travel time, traffic level, and alternative routes comparison"
+  - "A tip calculator widget showing bill total, tip amount by percentage, and per-person split"
+  - "A journal entry widget showing mood tracker, streak, word count, and recent entries"
+  - "A birthday reminder widget showing upcoming birthdays this week with age and days until"
+  - "A wardrobe organizer widget showing outfit suggestions based on weather and calendar events"
+  - "A screen time widget showing daily usage, app breakdown, and pickups count with weekly trend"
+  - "A goal tracker widget showing 3 active goals with progress bars, milestones, and deadlines"
+
+  # Complex / chart-heavy widgets
+  - "A multi-metric dashboard widget with 4 KPI cards at top and a combined line+bar chart below"
+  - "A correlation matrix widget showing relationships between 4 variables with color-coded heatmap"
+  - "A Gantt chart widget showing 5 project tasks with dependencies, progress, and timeline"
+  - "A radar/spider chart widget comparing 6 attributes across 2 items with legend"
+  - "A treemap widget showing budget allocation across 8 departments with proportional sizing"
+  - "A sankey/flow widget showing user journey from 3 sources through 4 pages to 2 outcomes"
+  - "A stacked area chart widget showing revenue by 4 product lines over 12 months"
+  - "A candlestick chart widget showing 30 days of stock price with volume bars below"
+  - "A scatter plot widget showing correlation between 2 metrics with trend line and clusters"
+  - "A geographic heatmap widget showing sales intensity across 6 regions with totals"
