@@ -1,0 +1,50 @@
+{
+  "description": "A gaming stats widget showing playtime, achievements unlocked, and level progress",
+  "ui_style": "Warm and friendly with rounded shapes, pastel colors, and playful typography. Approachable design.",
+  "mock_data": {
+    "widget": {
+      "id": "gaming_stats_001",
+      "app": "Game Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "game": "Cyber Adventure",
+      "playtime": {
+        "totalHours": 150,
+        "lastSession": "2 hours ago",
+        "averageSession": 3
+      },
+      "achievements": [
+        {
+          "name": "First Blood",
+          "unlocked": true,
+          "dateUnlocked": "2023-09-01"
+        },
+        {
+          "name": "Master Explorer",
+          "unlocked": true,
+          "dateUnlocked": "2023-09-15"
+        },
+        {
+          "name": "Puzzle Master",
+          "unlocked": false,
+          "dateUnlocked": null
+        }
+      ],
+      "levelProgress": {
+        "currentLevel": 12,
+        "experiencePoints": 3500,
+        "nextLevel": 5000
+      }
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, LinearProgress } from '@mui/material';\nimport { ArrowUpward } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface Playtime {\n  totalHours: number;\n  lastSession: string;\n  averageSession: number;\n}\n\ninterface Achievement {\n  name: string;\n  unlocked: boolean;\n  dateUnlocked: string | null;\n}\n\ninterface LevelProgress {\n  currentLevel: number;\n  experiencePoints: number;\n  nextLevel: number;\n}\n\ninterface GameData {\n  game: string;\n  playtime: Playtime;\n  achievements: Achievement[];\n  levelProgress: LevelProgress;\n}\n\nexport default function Widget() {\n  const gameData = response.data as GameData;\n  const { game, playtime, achievements, levelProgress } = gameData;\n  const { theme, primaryColor, accentColor } = response.meta;\n\n  const progressPercentage = (levelProgress.experiencePoints / levelProgress.nextLevel) * 100;\n\n  return (\n    <Card\n      sx={{\n        width: 'fit-content',\n        minWidth: 320,\n        maxWidth: 450,\n        bgcolor: theme === 'dark' ? '#303030' : '#FFFFFF',\n        color: theme === 'dark' ? '#FFFFFF' : '#000000',\n      }}\n      elevation={2}\n    >\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: primaryColor }}>\n              {game}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 0.5 }}>\n              Total Playtime: {playtime.totalHours} hours\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Last Session: {playtime.lastSession}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Average Session: {playtime.averageSession} hours\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" fontWeight={500}>\n              Achievements\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {achievements.map((achievement) => (\n                <Chip\n                  key={achievement.name}\n                  label={achievement.name}\n                  color={achievement.unlocked ? 'primary' : 'default'}\n                  sx={{ fontSize: '11px', px: 1, py: 0.5 }}\n                />\n              ))}\n            </Stack>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" fontWeight={500}>\n              Level Progress\n            </Typography>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              Level {levelProgress.currentLevel}\n            </Typography>\n            <LinearProgress\n              variant=\"determinate\"\n              value={progressPercentage}\n              sx={{\n                height: 8,\n                borderRadius: 4,\n                bgcolor: '#F3E8FF',\n                '& .MuiLinearProgress-bar': {\n                  bgcolor: accentColor,\n                  borderRadius: 4,\n                },\n                mt: 1,\n              }}\n            />\n            <Stack direction=\"row\" justifyContent=\"space-between\" sx={{ mt: 0.5 }}>\n              <Typography variant=\"caption\" color=\"text.secondary\">\n                {levelProgress.experiencePoints} XP\n              </Typography>\n              <Typography variant=\"caption\" color=\"text.secondary\">\n                {levelProgress.nextLevel} XP to next level\n              </Typography>\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

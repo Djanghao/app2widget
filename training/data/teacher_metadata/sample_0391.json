@@ -1,0 +1,33 @@
+{
+  "description": "A streaming watchlist widget showing next to watch, episodes left, and time to finish",
+  "ui_style": "Brutalist with raw black and white, oversized bold type, sharp edges, no rounded corners.",
+  "mock_data": {
+    "widget": {
+      "id": "streaming_watchlist_001",
+      "app": "StreamMaster",
+      "version": "1.0"
+    },
+    "data": {
+      "nextToWatch": {
+        "title": "The Crown",
+        "season": 4,
+        "episode": 5,
+        "progress": "15:23 / 50:00"
+      },
+      "watchlistSummary": {
+        "totalShows": 8,
+        "episodesLeft": 23,
+        "timeToFinish": "12h 50m"
+      }
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "minimal",
+      "primaryColor": "#1C1C1E",
+      "accentColor": "#FF3B30",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Divider, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface NextToWatch {\n  title: string;\n  season: number;\n  episode: number;\n  progress: string;\n}\n\ninterface WatchlistSummary {\n  totalShows: number;\n  episodesLeft: number;\n  timeToFinish: string;\n}\n\ninterface StreamingData {\n  nextToWatch: NextToWatch;\n  watchlistSummary: WatchlistSummary;\n}\n\nexport default function Widget() {\n  const streamingData = response.data as StreamingData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#1C1C1E', color: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#FF3B30', mb: 1 }}>\n              Next to Watch\n            </Typography>\n            <Typography variant=\"h5\" fontWeight={700}>\n              {streamingData.nextToWatch.title}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ mt: 0.5 }}>\n              Season {streamingData.nextToWatch.season}, Episode {streamingData.nextToWatch.episode}\n            </Typography>\n            <Typography variant=\"caption\" color=\"text.secondary\" sx={{ mt: 0.5, display: 'block' }}>\n              Progress: {streamingData.nextToWatch.progress}\n            </Typography>\n          </Box>\n\n          <Divider sx={{ borderColor: '#FF3B30' }} />\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#FF3B30', mb: 1 }}>\n              Watchlist Summary\n            </Typography>\n            <Stack direction=\"row\" spacing={1}>\n              <Chip label={`Total Shows: ${streamingData.watchlistSummary.totalShows}`} sx={{ fontSize: '12px', bgcolor: '#333333', color: '#FFFFFF' }}/>\n              <Chip label={`Episodes Left: ${streamingData.watchlistSummary.episodesLeft}`} sx={{ fontSize: '12px', bgcolor: '#333333', color: '#FFFFFF' }}/>\n              <Chip label={`Time to Finish: ${streamingData.watchlistSummary.timeToFinish}`} sx={{ fontSize: '12px', bgcolor: '#333333', color: '#FFFFFF' }}/>\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

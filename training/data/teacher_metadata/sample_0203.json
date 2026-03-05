@@ -1,0 +1,58 @@
+{
+  "description": "A fitness tracker widget showing daily steps, calories, and a weekly activity bar chart",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "fitness_tracker_001",
+      "app": "Fitness Plus",
+      "version": "1.0"
+    },
+    "data": {
+      "dailyStats": {
+        "steps": 7345,
+        "caloriesBurned": 520
+      },
+      "weeklyActivity": [
+        {
+          "day": "Monday",
+          "steps": 8000
+        },
+        {
+          "day": "Tuesday",
+          "steps": 9200
+        },
+        {
+          "day": "Wednesday",
+          "steps": 7500
+        },
+        {
+          "day": "Thursday",
+          "steps": 6800
+        },
+        {
+          "day": "Friday",
+          "steps": 8900
+        },
+        {
+          "day": "Saturday",
+          "steps": 9600
+        },
+        {
+          "day": "Sunday",
+          "steps": 7200
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface DailyStats {\n  steps: number;\n  caloriesBurned: number;\n}\n\ninterface WeeklyActivity {\n  day: string;\n  steps: number;\n}\n\ninterface FitnessData {\n  dailyStats: DailyStats;\n  weeklyActivity: WeeklyActivity[];\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n  chartTypes: string[];\n}\n\nexport default function Widget() {\n  const fitnessData = response.data as FitnessData;\n  const metaData = response.meta as MetaData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 3 }}>\n        <Stack spacing={2.5}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: metaData.primaryColor }}>\n              Daily Fitness Stats\n            </Typography>\n            <Typography variant=\"body1\" sx={{ color: '#1F2937' }}>\n              Steps: {fitnessData.dailyStats.steps.toLocaleString()}\n            </Typography>\n            <Typography variant=\"body1\" sx={{ color: '#1F2937', mt: 0.5 }}>\n              Calories Burned: {fitnessData.dailyStats.caloriesBurned}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: metaData.primaryColor }}>\n              Weekly Activity\n            </Typography>\n            <BarChart\n              height={140}\n              series={[\n                {\n                  data: fitnessData.weeklyActivity.map(d => d.steps),\n                  color: metaData.accentColor,\n                },\n              ]}\n              xAxis={[\n                {\n                  data: fitnessData.weeklyActivity.map(d => d.day),\n                  scaleType: 'band',\n                  tickLabelStyle: {\n                    fontSize: 11,\n                    fill: '#6B7280',\n                  },\n                }\n              ]}\n              margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n              sx={{\n                '& .MuiBarElement-root': {\n                  rx: 4,\n                },\n              }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

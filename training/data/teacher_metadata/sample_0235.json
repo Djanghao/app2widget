@@ -1,0 +1,34 @@
+{
+  "description": "A podcast widget showing current episode, progress, and listening stats",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "podcast_current_001",
+      "app": "PodPlay",
+      "version": "1.0"
+    },
+    "data": {
+      "currentEpisode": {
+        "title": "The Future of AI",
+        "host": "Jane Doe",
+        "duration": "45:30",
+        "progress": "23:15",
+        "completionPercent": 51
+      },
+      "listeningStats": {
+        "totalTimeListened": "15:45:00",
+        "episodesCompleted": 12,
+        "favoriteGenre": "Technology"
+      }
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#3F51B5",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, CircularProgress } from '@mui/material';\nimport response from './response.json';\n\ninterface CurrentEpisode {\n  title: string;\n  host: string;\n  duration: string;\n  progress: string;\n  completionPercent: number;\n}\n\ninterface ListeningStats {\n  totalTimeListened: string;\n  episodesCompleted: number;\n  favoriteGenre: string;\n}\n\ninterface PodcastData {\n  currentEpisode: CurrentEpisode;\n  listeningStats: ListeningStats;\n}\n\nexport default function Widget() {\n  const podcastData = response.data as PodcastData;\n  const { currentEpisode, listeningStats } = podcastData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 400, bgcolor: '#333', color: '#FFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: response.meta.primaryColor }}>\n              Now Playing\n            </Typography>\n            <Typography variant=\"body2\" sx={{ mt: 0.5 }}>\n              {currentEpisode.title}\n            </Typography>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              Hosted by {currentEpisode.host}\n            </Typography>\n            <Stack direction=\"row\" spacing={1} alignItems=\"center\" sx={{ mt: 1 }}>\n              <CircularProgress variant=\"determinate\" value={currentEpisode.completionPercent} size={40} sx={{ color: response.meta.accentColor }} />\n              <Typography variant=\"body2\" color=\"text.secondary\">\n                {currentEpisode.progress} / {currentEpisode.duration}\n              </Typography>\n            </Stack>\n          </Box>\n\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: response.meta.primaryColor }}>\n              Your Stats\n            </Typography>\n            <Stack spacing={1} sx={{ mt: 1 }}>\n              <Typography variant=\"body2\">\n                Total Time Listened: {listeningStats.totalTimeListened}\n              </Typography>\n              <Typography variant=\"body2\">\n                Episodes Completed: {listeningStats.episodesCompleted}\n              </Typography>\n              <Typography variant=\"body2\">\n                Favorite Genre: {listeningStats.favoriteGenre}\n              </Typography>\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

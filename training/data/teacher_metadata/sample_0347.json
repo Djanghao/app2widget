@@ -1,0 +1,38 @@
+{
+  "description": "A standup summary widget showing yesterday's completions, today's plan, and blockers count",
+  "ui_style": "iOS-inspired with SF Pro-style fonts, vibrancy effects, system-like cards, and Apple HIG spacing.",
+  "mock_data": {
+    "widget": {
+      "id": "standup_summary_001",
+      "app": "Standup Manager",
+      "version": "1.0"
+    },
+    "data": {
+      "yesterdayCompletions": 5,
+      "todaysPlan": [
+        "Finish UI design for Project X",
+        "Code review for Team B",
+        "Prepare presentation slides"
+      ],
+      "blockers": [
+        {
+          "name": "API response delay",
+          "details": "Backend team investigating"
+        },
+        {
+          "name": "Incomplete assets",
+          "details": "Waiting on design team"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, Divider } from '@mui/material';\nimport response from './response.json';\n\ninterface Blocker {\n  name: string;\n  details: string;\n}\n\ninterface StandupSummaryData {\n  yesterdayCompletions: number;\n  todaysPlan: string[];\n  blockers: Blocker[];\n}\n\nexport default function Widget() {\n  const standupData = response.data as StandupSummaryData;\n  const { yesterdayCompletions, todaysPlan, blockers } = standupData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#2C2C2E', color: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#FFC107' }}>\n              Standup Summary\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#B0BEC5', mt: 1 }}>\n              Yesterday's Completions: {yesterdayCompletions}\n            </Typography>\n          </Box>\n\n          <Divider sx={{ bgcolor: '#FFC107' }} />\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#FFC107', mb: 1 }}>\n              Today's Plan\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {todaysPlan.map((task, index) => (\n                <Chip\n                  key={index}\n                  label={task}\n                  sx={{ fontSize: '11px', bgcolor: '#424242', color: '#FFFFFF' }}\n                />\n              ))}\n            </Stack>\n          </Box>\n\n          <Divider sx={{ bgcolor: '#FFC107' }} />\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#FFC107', mb: 1 }}>\n              Blockers\n            </Typography>\n            <Stack spacing={1}>\n              {blockers.map((blocker, index) => (\n                <Box key={index}>\n                  <Typography variant=\"body2\" sx={{ fontWeight: 500 }}>\n                    {blocker.name}\n                  </Typography>\n                  <Typography variant=\"caption\" color=\"text.secondary\">\n                    {blocker.details}\n                  </Typography>\n                </Box>\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

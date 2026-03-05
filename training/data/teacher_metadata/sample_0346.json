@@ -1,0 +1,43 @@
+{
+  "description": "A time tracking widget showing today's logged hours by project with progress toward 8h goal",
+  "ui_style": "Gradient-heavy modern with smooth color transitions, floating cards, and depth through color.",
+  "mock_data": {
+    "widget": {
+      "id": "time_tracking_001",
+      "app": "Time Logger",
+      "version": "1.0"
+    },
+    "data": {
+      "todayLoggedHours": {
+        "total": 5.5,
+        "goal": 8,
+        "percentage": 68.75
+      },
+      "projects": [
+        {
+          "name": "Project A",
+          "hours": 2.5
+        },
+        {
+          "name": "Project B",
+          "hours": 1.5
+        },
+        {
+          "name": "Project C",
+          "hours": 1.5
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#03A9F4",
+      "chartTypes": [
+        "pie"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, CircularProgress } from '@mui/material';\nimport { PieChart, ResponsiveChartContainer, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface Project {\n  name: string;\n  hours: number;\n}\n\ninterface TimeTrackingData {\n  todayLoggedHours: {\n    total: number;\n    goal: number;\n    percentage: number;\n  };\n  projects: Project[];\n}\n\nexport default function Widget() {\n  const timeTrackingData = response.data as TimeTrackingData;\n  const { todayLoggedHours, projects } = timeTrackingData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 420, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#FF5722' }}>\n              Time Logged Today\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#1976D2' }}>\n              {todayLoggedHours.total.toFixed(1)} hrs\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 0.5 }}>\n              Goal: {todayLoggedHours.goal} hrs ({todayLoggedHours.percentage.toFixed(2)}%)\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'pie',\n                  data: projects.map(project => project.hours),\n                  color: ['#FF5722', '#03A9F4', '#FFC107'],\n                  showLabel: true,\n                  labelPosition: 'inside',\n                  labelStyle: { fontSize: 10, fill: '#FFFFFF' },\n                },\n              ]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <PieChart />\n              </g>\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n\n          <Stack direction=\"row\" spacing={1}>\n            {projects.map((project) => (\n              <Box key={project.name} sx={{ flex: 1 }}>\n                <Typography variant=\"caption\" color=\"text.secondary\">\n                  {project.name}\n                </Typography>\n                <Typography variant=\"body2\" fontWeight={500}>\n                  {project.hours.toFixed(1)} hrs\n                </Typography>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

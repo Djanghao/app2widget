@@ -1,0 +1,41 @@
+{
+  "description": "An energy usage widget showing current consumption, daily cost, and usage trend line chart",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "energy_usage_001",
+      "app": "Energy Monitor",
+      "version": "1.0"
+    },
+    "data": {
+      "currentUsage": {
+        "kilowatts": 5.8,
+        "cost": 1.15
+      },
+      "dailyCost": {
+        "total": 9.85,
+        "currency": "USD"
+      },
+      "usageTrend": [
+        4.5,
+        5.2,
+        5.8,
+        6.0,
+        5.6,
+        5.3,
+        5.0
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface EnergyUsageData {\n  currentUsage: {\n    kilowatts: number;\n    cost: number;\n  };\n  dailyCost: {\n    total: number;\n    currency: string;\n  };\n  usageTrend: number[];\n}\n\nexport default function Widget() {\n  const data = response.data as EnergyUsageData;\n  const { currentUsage, dailyCost, usageTrend } = data;\n  const isIncreasing = usageTrend[usageTrend.length - 1] > usageTrend[0];\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 400, bgcolor: '#2C2C2C' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#FFC107', mb: 0.5 }}>\n              Current Usage\n            </Typography>\n            <Typography variant=\"h4\" sx={{ color: '#FFFFFF', fontWeight: 600 }}>\n              {currentUsage.kilowatts.toFixed(1)} kW\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={0.5} sx={{ mt: 0.5 }}>\n              {isIncreasing ? <TrendingUp sx={{ fontSize: 16, color: '#FF5722' }} /> : <TrendingDown sx={{ fontSize: 16, color: '#FF5722' }} />}\n              <Typography variant=\"body2\" sx={{ color: '#FFFFFF' }}>\n                ${currentUsage.cost.toFixed(2)}\n              </Typography>\n            </Stack>\n          </Box>\n\n          <LineChart\n            height={100}\n            series={[\n              {\n                data: usageTrend,\n                color: '#FFC107',\n                curve: 'natural',\n                showMark: false,\n              },\n            ]}\n            xAxis={[{ data: usageTrend.map((_, i) => i), hide: true }]}\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n            sx={{\n              '& .MuiLineElement-root': {\n                strokeWidth: 2,\n              },\n            }}\n          />\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#FFC107', mb: 0.5 }}>\n              Daily Cost\n            </Typography>\n            <Typography variant=\"h5\" sx={{ color: '#FFFFFF', fontWeight: 500 }}>\n              {dailyCost.currency} {dailyCost.total.toFixed(2)}\n            </Typography>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

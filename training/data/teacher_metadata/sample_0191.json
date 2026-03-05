@@ -1,0 +1,74 @@
+{
+  "description": "A pollen count widget showing allergen levels with color-coded severity",
+  "ui_style": "Warm and friendly with rounded shapes, pastel colors, and playful typography. Approachable design.",
+  "mock_data": {
+    "widget": {
+      "id": "pollen_allergen_001",
+      "app": "Pollen Alert",
+      "version": "1.0"
+    },
+    "data": {
+      "location": "Austin, TX",
+      "currentPollenLevel": {
+        "tree": {
+          "level": "High",
+          "count": 230,
+          "severity": "Severe"
+        },
+        "grass": {
+          "level": "Moderate",
+          "count": 120,
+          "severity": "Moderate"
+        },
+        "weed": {
+          "level": "Low",
+          "count": 30,
+          "severity": "Mild"
+        }
+      },
+      "weeklyPollenTrend": [
+        {
+          "day": "Mon",
+          "tree": 200,
+          "grass": 110,
+          "weed": 40
+        },
+        {
+          "day": "Tue",
+          "tree": 220,
+          "grass": 120,
+          "weed": 35
+        },
+        {
+          "day": "Wed",
+          "tree": 230,
+          "grass": 115,
+          "weed": 30
+        },
+        {
+          "day": "Thu",
+          "tree": 210,
+          "grass": 125,
+          "weed": 45
+        },
+        {
+          "day": "Fri",
+          "tree": 225,
+          "grass": 130,
+          "weed": 50
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface PollenLevel {\n  level: string;\n  count: number;\n  severity: string;\n}\n\ninterface WeeklyPollenTrend {\n  day: string;\n  tree: number;\n  grass: number;\n  weed: number;\n}\n\ninterface PollenData {\n  location: string;\n  currentPollenLevel: {\n    tree: PollenLevel;\n    grass: PollenLevel;\n    weed: PollenLevel;\n  };\n  weeklyPollenTrend: WeeklyPollenTrend[];\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n  chartTypes: string[];\n}\n\nexport default function Widget() {\n  const pollenData = response.data as PollenData;\n  const metaData = response.meta as MetaData;\n\n  return (\n    <Card\n      sx={{\n        width: 'fit-content',\n        minWidth: 350,\n        maxWidth: 500,\n        bgcolor: '#FFFFFF',\n        borderRadius: 2,\n      }}\n      elevation={2}\n    >\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: metaData.primaryColor, fontWeight: 600 }}>\n              Pollen Levels in {pollenData.location}\n            </Typography>\n            <Stack direction=\"row\" spacing={1} sx={{ mt: 1 }}>\n              {Object.entries(pollenData.currentPollenLevel).map(([type, level]) => (\n                <Chip\n                  key={type}\n                  label={`${type.charAt(0).toUpperCase() + type.slice(1)}: ${level.level}`}\n                  sx={{\n                    bgcolor: metaData.accentColor,\n                    color: '#FFFFFF',\n                    fontSize: '12px',\n                    fontWeight: 500,\n                  }}\n                />\n              ))}\n            </Stack>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <BarChart\n              series={[\n                {\n                  data: pollenData.weeklyPollenTrend.map((day) => day.tree),\n                  label: 'Tree',\n                  color: '#FF5722',\n                },\n                {\n                  data: pollenData.weeklyPollenTrend.map((day) => day.grass),\n                  label: 'Grass',\n                  color: '#FFC107',\n                },\n                {\n                  data: pollenData.weeklyPollenTrend.map((day) => day.weed),\n                  label: 'Weed',\n                  color: '#4CAF50',\n                },\n              ]}\n              xAxis={[\n                {\n                  data: pollenData.weeklyPollenTrend.map((day) => day.day),\n                  scaleType: 'band',\n                  tickLabelStyle: { fontSize: 10, fill: '#6B7280' },\n                },\n              ]}\n              margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n              sx={{\n                '& .MuiBarElement-root': {\n                  rx: 4,\n                },\n              }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

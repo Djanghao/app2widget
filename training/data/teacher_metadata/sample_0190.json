@@ -1,0 +1,55 @@
+{
+  "description": "A UV index widget with current level, risk category, and hourly forecast bar chart",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "uv_index_001",
+      "app": "UV Monitor",
+      "version": "1.0"
+    },
+    "data": {
+      "location": "Miami, FL",
+      "current": {
+        "uvIndex": 8,
+        "riskCategory": "Very High"
+      },
+      "hourlyForecast": [
+        {
+          "hour": "8AM",
+          "uvIndex": 3
+        },
+        {
+          "hour": "10AM",
+          "uvIndex": 6
+        },
+        {
+          "hour": "12PM",
+          "uvIndex": 8
+        },
+        {
+          "hour": "2PM",
+          "uvIndex": 9
+        },
+        {
+          "hour": "4PM",
+          "uvIndex": 7
+        },
+        {
+          "hour": "6PM",
+          "uvIndex": 5
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { ResponsiveChartContainer, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface HourlyForecast {\n  hour: string;\n  uvIndex: number;\n}\n\ninterface UVData {\n  location: string;\n  current: {\n    uvIndex: number;\n    riskCategory: string;\n  };\n  hourlyForecast: HourlyForecast[];\n}\n\nexport default function Widget() {\n  const uvData = response.data as UVData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {uvData.location}\n            </Typography>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ my: 0.5 }}>\n              Current UV Index: {uvData.current.uvIndex}\n            </Typography>\n            <Chip\n              label={uvData.current.riskCategory}\n              sx={{ fontSize: '12px', bgcolor: '#FF5722', color: '#FFFFFF', fontWeight: 'bold' }}\n            />\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: uvData.hourlyForecast.map(forecast => forecast.uvIndex),\n                  color: '#FFC107',\n                  label: 'UV Index',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: uvData.hourlyForecast.map(forecast => forecast.hour),\n                  id: 'hours',\n                },\n              ]}\n              yAxis={[{ id: 'uvIndex' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <BarPlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"hours\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"uvIndex\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

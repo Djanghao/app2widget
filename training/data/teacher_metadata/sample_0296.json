@@ -1,0 +1,96 @@
+{
+  "description": "A multi-metric dashboard widget with 4 KPI cards at top and a combined line+bar chart below",
+  "ui_style": "Elegant and luxurious with serif fonts, gold accents on cream backgrounds, refined spacing.",
+  "mock_data": {
+    "widget": {
+      "id": "multi_metric_dashboard_001",
+      "app": "Metric Monitor",
+      "version": "1.0"
+    },
+    "data": {
+      "KPIs": [
+        {
+          "name": "Revenue",
+          "value": 25000,
+          "unit": "USD",
+          "change": 5.0,
+          "changeDirection": "up"
+        },
+        {
+          "name": "Users",
+          "value": 4890,
+          "unit": "users",
+          "change": 2.1,
+          "changeDirection": "up"
+        },
+        {
+          "name": "Conversions",
+          "value": 930,
+          "unit": "sales",
+          "change": -0.5,
+          "changeDirection": "down"
+        },
+        {
+          "name": "Engagement",
+          "value": 72.5,
+          "unit": "percent",
+          "change": 1.3,
+          "changeDirection": "up"
+        }
+      ],
+      "chartData": {
+        "lineData": [
+          30,
+          35,
+          40,
+          45,
+          50,
+          60,
+          70
+        ],
+        "barData": [
+          {
+            "category": "Mon",
+            "value": 20
+          },
+          {
+            "category": "Tue",
+            "value": 25
+          },
+          {
+            "category": "Wed",
+            "value": 30
+          },
+          {
+            "category": "Thu",
+            "value": 35
+          },
+          {
+            "category": "Fri",
+            "value": 40
+          },
+          {
+            "category": "Sat",
+            "value": 45
+          },
+          {
+            "category": "Sun",
+            "value": 50
+          }
+        ]
+      }
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#4CAF50",
+      "chartTypes": [
+        "line",
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface KPI {\n  name: string;\n  value: number;\n  unit: string;\n  change: number;\n  changeDirection: string;\n}\n\ninterface ChartData {\n  barData: { category: string; value: number }[];\n}\n\ninterface ResponseData {\n  KPIs: KPI[];\n  chartData: ChartData;\n}\n\nexport default function Widget() {\n  const data = response.data as ResponseData;\n  const { KPIs } = data;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFF8E1' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          {KPIs.slice(0, 3).map((kpi) => (\n            <Box key={kpi.name}>\n              <Stack direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\">\n                <Typography variant=\"body2\" color=\"text.secondary\">\n                  {kpi.name}\n                </Typography>\n                <Stack direction=\"row\" alignItems=\"center\" spacing={0.5}>\n                  <Typography variant=\"body1\" fontWeight={600} sx={{ color: '#FF5722' }}>\n                    {kpi.value.toLocaleString()} {kpi.unit}\n                  </Typography>\n                  <Chip\n                    icon={kpi.changeDirection === 'up' ? <TrendingUp sx={{ fontSize: 16 }} /> : <TrendingDown sx={{ fontSize: 16 }} />}\n                    label={`${kpi.change}%`}\n                    sx={{\n                      bgcolor: kpi.changeDirection === 'up' ? '#4CAF50' : '#F44336',\n                      color: 'white',\n                      fontSize: 10,\n                    }}\n                  />\n                </Stack>\n              </Stack>\n            </Box>\n          ))}\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

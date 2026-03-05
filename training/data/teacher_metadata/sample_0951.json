@@ -1,0 +1,40 @@
+{
+  "description": "A task manager widget showing today's tasks with completion progress and priority indicators",
+  "ui_style": "Dashboard/analytics style with dense data, small fonts, grid layouts, and chart-heavy composition.",
+  "mock_data": {
+    "widget": {
+      "id": "task_manager_001",
+      "app": "Task Manager Pro",
+      "version": "1.0"
+    },
+    "data": {
+      "todayTasks": [
+        {
+          "task": "Finish project report",
+          "priority": "High",
+          "completed": false
+        },
+        {
+          "task": "Email response to team",
+          "priority": "Medium",
+          "completed": true
+        },
+        {
+          "task": "Plan next week's schedule",
+          "priority": "Low",
+          "completed": false
+        }
+      ],
+      "completionProgress": 33
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, LinearProgress } from '@mui/material';\nimport { CircularProgress } from '@mui/material';\nimport response from './response.json';\n\ninterface Task {\n  task: string;\n  priority: string;\n  completed: boolean;\n}\n\ninterface TaskManagerData {\n  todayTasks: Task[];\n  completionProgress: number;\n}\n\nexport default function Widget() {\n  const taskManagerData = response.data.data as TaskManagerData;\n  const { todayTasks, completionProgress } = taskManagerData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#2B2B2B' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" color=\"#FFC107\" fontWeight={600}>\n              Task Manager Pro\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Today's Tasks\n            </Typography>\n          </Box>\n\n          <Stack spacing={1}>\n            {todayTasks.slice(0, 3).map((task, index) => (\n              <Box key={index} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>\n                <Typography\n                  variant=\"body2\"\n                  sx={{ textDecoration: task.completed ? 'line-through' : 'none', color: '#FFFFFF' }}\n                >\n                  {task.task}\n                </Typography>\n                <Chip\n                  label={task.priority}\n                  sx={{\n                    fontSize: '10px',\n                    bgcolor: task.priority === 'High' ? '#FF5722' : task.priority === 'Medium' ? '#FFC107' : '#757575',\n                    color: '#FFFFFF'\n                  }}\n                  size=\"small\"\n                />\n              </Box>\n            ))}\n          </Stack>\n\n          <Box>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              Completion Progress\n            </Typography>\n            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>\n              <CircularProgress variant=\"determinate\" value={completionProgress} size={40} sx={{ color: '#FF5722' }} />\n              <Typography variant=\"body2\" sx={{ ml: 1, color: '#FFFFFF' }}>\n                {completionProgress}%\n              </Typography>\n            </Box>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

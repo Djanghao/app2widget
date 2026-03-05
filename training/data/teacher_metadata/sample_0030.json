@@ -1,0 +1,59 @@
+{
+  "description": "A social media stats widget showing followers, engagement rate, and growth trend",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "social_stats_001",
+      "app": "Social Stats Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "account": {
+        "username": "@yourbrand",
+        "platform": "Instagram",
+        "followers": 14500,
+        "engagementRate": 4.2
+      },
+      "monthlyGrowth": [
+        {
+          "month": "Jan",
+          "growth": 200
+        },
+        {
+          "month": "Feb",
+          "growth": 150
+        },
+        {
+          "month": "Mar",
+          "growth": 300
+        },
+        {
+          "month": "Apr",
+          "growth": 250
+        },
+        {
+          "month": "May",
+          "growth": 350
+        }
+      ],
+      "growthTrend": [
+        14000,
+        14200,
+        14350,
+        14650,
+        14900
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#E1306C",
+      "accentColor": "#405DE6",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface AccountData {\n  username: string;\n  platform: string;\n  followers: number;\n  engagementRate: number;\n}\n\ninterface MonthlyGrowth {\n  month: string;\n  growth: number;\n}\n\ninterface SocialStatsData {\n  account: AccountData;\n  monthlyGrowth: MonthlyGrowth[];\n  growthTrend: number[];\n}\n\nexport default function Widget() {\n  const socialStatsData = response.data as SocialStatsData;\n  const { account, monthlyGrowth, growthTrend } = socialStatsData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#1E1E1E' }} elevation={3}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#F5F5F5' }}>\n              {account.platform} Stats\n            </Typography>\n            <Typography variant=\"body1\" sx={{ color: '#F5F5F5' }}>\n              {account.username}\n            </Typography>\n            <Stack direction=\"row\" spacing={1} sx={{ mt: 1 }}>\n              <Chip label={`Followers: ${account.followers}`} sx={{ fontSize: '12px', bgcolor: '#E1306C', color: '#FFFFFF' }} />\n              <Chip label={`Engagement: ${account.engagementRate}%`} sx={{ fontSize: '12px', bgcolor: '#405DE6', color: '#FFFFFF' }} />\n            </Stack>\n          </Box>\n\n          <LineChart\n            height={120}\n            series={[\n              {\n                data: growthTrend,\n                color: '#E1306C',\n                curve: 'natural',\n                showMark: false,\n              },\n            ]}\n            xAxis={[{ data: [0, 1, 2, 3, 4], hide: true }]}\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n            sx={{\n              '& .MuiLineElement-root': {\n                strokeWidth: 2,\n              },\n            }}\n          />\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#BDBDBD', mb: 1 }}>\n              Monthly Growth\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {monthlyGrowth.map((growth, index) => (\n                <Chip\n                  key={index}\n                  label={`${growth.month}: +${growth.growth}`}\n                  sx={{ fontSize: '10px', bgcolor: '#333333', color: '#FFFFFF' }}\n                />\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

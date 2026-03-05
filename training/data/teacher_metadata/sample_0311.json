@@ -1,0 +1,65 @@
+{
+  "description": "A tide forecast widget with high/low times, current level, and 24h wave height chart",
+  "ui_style": "Warm and friendly with rounded shapes, pastel colors, and playful typography. Approachable design.",
+  "mock_data": {
+    "widget": {
+      "id": "tide_forecast_001",
+      "app": "Tide Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "location": "Miami Beach, FL",
+      "current": {
+        "tideLevel": 3.2,
+        "condition": "High",
+        "nextHigh": "2:15 PM",
+        "nextLow": "8:45 PM"
+      },
+      "waveHeightChart": [
+        {
+          "time": "12AM",
+          "height": 2.1
+        },
+        {
+          "time": "3AM",
+          "height": 2.4
+        },
+        {
+          "time": "6AM",
+          "height": 3.0
+        },
+        {
+          "time": "9AM",
+          "height": 3.5
+        },
+        {
+          "time": "12PM",
+          "height": 3.8
+        },
+        {
+          "time": "3PM",
+          "height": 3.4
+        },
+        {
+          "time": "6PM",
+          "height": 3.0
+        },
+        {
+          "time": "9PM",
+          "height": 2.5
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#00796B",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface WaveHeight {\n  time: string;\n  height: number;\n}\n\ninterface TideData {\n  location: string;\n  current: {\n    tideLevel: number;\n    condition: string;\n    nextHigh: string;\n    nextLow: string;\n  };\n  waveHeightChart: WaveHeight[];\n}\n\nexport default function Widget() {\n  const tideData = response.data as TideData;\n  const { location, current, waveHeightChart } = tideData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#E3F2FD' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" color=\"primary\">\n              Tide Tracker\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {location}\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={300} sx={{ my: 0.5 }} color=\"primary\">\n              {current.tideLevel} ft\n            </Typography>\n            <Typography variant=\"body1\" color=\"text.secondary\">\n              Current Condition: {current.condition}\n            </Typography>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              Next High Tide: {current.nextHigh} | Next Low Tide: {current.nextLow}\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: waveHeightChart.map(point => point.height),\n                  color: '#00796B',\n                  label: 'Wave Height',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: waveHeightChart.map(point => point.time),\n                  id: 'time',\n                },\n              ]}\n              yAxis={[{ id: 'height' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"time\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"height\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

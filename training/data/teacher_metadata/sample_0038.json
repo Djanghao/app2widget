@@ -1,0 +1,41 @@
+{
+  "description": "A flight status widget showing departure/arrival times, gate, and delay info",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "flight_status_001",
+      "app": "Flight Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "flightNumber": "UA232",
+      "departure": {
+        "airport": "Los Angeles International Airport (LAX)",
+        "scheduledTime": "2023-10-10T14:30:00Z",
+        "actualTime": "2023-10-10T14:45:00Z",
+        "gate": "45B",
+        "status": "Delayed"
+      },
+      "arrival": {
+        "airport": "John F. Kennedy International Airport (JFK)",
+        "scheduledTime": "2023-10-10T22:30:00Z",
+        "estimatedTime": "2023-10-10T22:50:00Z",
+        "gate": "7",
+        "status": "On Time"
+      },
+      "delayInfo": {
+        "departureDelay": 15,
+        "arrivalDelay": 20
+      }
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#007BFF",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { ArrowUpward, ArrowDownward } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface FlightStatus {\n  flightNumber: string;\n  departure: {\n    airport: string;\n    scheduledTime: string;\n    actualTime: string;\n    gate: string;\n    status: string;\n  };\n  arrival: {\n    airport: string;\n    scheduledTime: string;\n    estimatedTime: string;\n    gate: string;\n    status: string;\n  };\n  delayInfo: {\n    departureDelay: number;\n    arrivalDelay: number;\n  };\n}\n\nexport default function Widget() {\n  const data = response.data as FlightStatus;\n  const departureDelayPositive = data.delayInfo.departureDelay > 0;\n  const arrivalDelayPositive = data.delayInfo.arrivalDelay > 0;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Flight Number\n            </Typography>\n            <Typography variant=\"h5\" fontWeight={600} sx={{ color: '#007BFF' }}>\n              {data.flightNumber}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Departure\n            </Typography>\n            <Typography variant=\"body1\" fontWeight={500}>\n              {data.departure.airport}\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={0.5} sx={{ mt: 0.5 }}>\n              <Chip label={`Gate: ${data.departure.gate}`} size=\"small\" sx={{ bgcolor: '#E3F2FD', color: '#1976D2' }} />\n              <Typography variant=\"body2\" sx={{ color: departureDelayPositive ? '#EF4444' : '#10B981' }}>\n                {departureDelayPositive ? <ArrowUpward fontSize=\"small\" /> : <ArrowDownward fontSize=\"small\" />}\n                {data.departure.status} ({data.delayInfo.departureDelay} min)\n              </Typography>\n            </Stack>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Arrival\n            </Typography>\n            <Typography variant=\"body1\" fontWeight={500}>\n              {data.arrival.airport}\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={0.5} sx={{ mt: 0.5 }}>\n              <Chip label={`Gate: ${data.arrival.gate}`} size=\"small\" sx={{ bgcolor: '#FFF8E1', color: '#FFB300' }} />\n              <Typography variant=\"body2\" sx={{ color: arrivalDelayPositive ? '#EF4444' : '#10B981' }}>\n                {arrivalDelayPositive ? <ArrowUpward fontSize=\"small\" /> : <ArrowDownward fontSize=\"small\" />}\n                {data.arrival.status} ({data.delayInfo.arrivalDelay} min)\n              </Typography>\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,53 @@
+{
+  "description": "An invoice summary widget showing pending, paid, and overdue counts with total amounts",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "invoice_summary_001",
+      "app": "Invoice Manager",
+      "version": "1.0"
+    },
+    "data": {
+      "summary": {
+        "totalInvoices": 150,
+        "pending": {
+          "count": 45,
+          "amount": 12500.0
+        },
+        "paid": {
+          "count": 90,
+          "amount": 45000.0
+        },
+        "overdue": {
+          "count": 15,
+          "amount": 3000.0
+        }
+      },
+      "invoiceStatus": [
+        {
+          "status": "Pending",
+          "count": 45
+        },
+        {
+          "status": "Paid",
+          "count": 90
+        },
+        {
+          "status": "Overdue",
+          "count": 15
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FF5722",
+      "chartTypes": [
+        "pie"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { PieChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface InvoiceSummary {\n  totalInvoices: number;\n  pending: {\n    count: number;\n    amount: number;\n  };\n  paid: {\n    count: number;\n    amount: number;\n  };\n  overdue: {\n    count: number;\n    amount: number;\n  };\n}\n\ninterface InvoiceStatus {\n  status: string;\n  count: number;\n}\n\ninterface InvoiceData {\n  summary: InvoiceSummary;\n  invoiceStatus: InvoiceStatus[];\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n  chartTypes: string[];\n}\n\nexport default function Widget() {\n  const invoiceData = response.data as InvoiceData;\n  const metaData = response.meta as MetaData;\n  \n  const chartData = invoiceData.invoiceStatus.map(status => ({\n    id: status.status,\n    value: status.count,\n    label: status.status,\n  }));\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: metaData.primaryColor }}>\n              Invoice Summary\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Total Invoices: {invoiceData.summary.totalInvoices}\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              <Chip label={`Pending: ${invoiceData.summary.pending.count}`} sx={{ fontSize: '11px', backgroundColor: metaData.primaryColor, color: '#FFFFFF', px: 1, py: 0.5 }} />\n              <Chip label={`Paid: ${invoiceData.summary.paid.count}`} sx={{ fontSize: '11px', backgroundColor: '#4CAF50', color: '#FFFFFF', px: 1, py: 0.5 }} />\n              <Chip label={`Overdue: ${invoiceData.summary.overdue.count}`} sx={{ fontSize: '11px', backgroundColor: metaData.accentColor, color: '#FFFFFF', px: 1, py: 0.5 }} />\n            </Stack>\n          </Box>\n\n          <PieChart\n            height={200}\n            data={chartData}\n            series={[\n              {\n                innerRadius: 0.6,\n                outerRadius: 1,\n                cx: '50%',\n                cy: '50%',\n                label: {\n                  visible: true,\n                  field: 'label',\n                  placement: 'auto',\n                  fontSize: 10,\n                  color: '#333',\n                },\n                valueField: 'value',\n                nameField: 'id',\n                colorField: 'id',\n                color: [metaData.primaryColor, '#4CAF50', metaData.accentColor],\n              }\n            ]}\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,51 @@
+{
+  "description": "A UV index widget with current level, risk category, and hourly forecast bar chart",
+  "ui_style": "Material Design 3 inspired with dynamic color, rounded containers, prominent FABs, and elevation.",
+  "mock_data": {
+    "widget": {
+      "id": "uv_index_001",
+      "app": "UV Monitor",
+      "version": "1.0"
+    },
+    "data": {
+      "location": "Miami, FL",
+      "current": {
+        "uvIndex": 8,
+        "riskCategory": "Very High"
+      },
+      "hourlyUVForecast": [
+        {
+          "hour": "9AM",
+          "uvIndex": 3
+        },
+        {
+          "hour": "12PM",
+          "uvIndex": 6
+        },
+        {
+          "hour": "3PM",
+          "uvIndex": 8
+        },
+        {
+          "hour": "6PM",
+          "uvIndex": 5
+        },
+        {
+          "hour": "9PM",
+          "uvIndex": 2
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface HourlyUVForecast {\n  hour: string;\n  uvIndex: number;\n}\n\ninterface UVData {\n  location: string;\n  current: {\n    uvIndex: number;\n    riskCategory: string;\n  };\n  hourlyUVForecast: HourlyUVForecast[];\n}\n\nexport default function Widget() {\n  const uvData = response.data as UVData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {uvData.location}\n            </Typography>\n            <Typography variant=\"h3\" fontWeight={300} sx={{ my: 0.5 }}>\n              UV Index: {uvData.current.uvIndex}\n            </Typography>\n            <Chip label={uvData.current.riskCategory} color=\"primary\" sx={{ backgroundColor: response.meta.primaryColor, color: '#FFFFFF' }} />\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <BarChart\n              height={140}\n              series={[\n                {\n                  data: uvData.hourlyUVForecast.map(f => f.uvIndex),\n                  color: response.meta.accentColor,\n                },\n              ]}\n              xAxis={[\n                {\n                  data: uvData.hourlyUVForecast.map(f => f.hour),\n                  scaleType: 'band',\n                  tickLabelStyle: {\n                    fontSize: 11,\n                    fill: '#6B7280',\n                  },\n                },\n              ]}\n              yAxis={[\n                {\n                  tickLabelStyle: {\n                    fontSize: 11,\n                    fill: '#6B7280',\n                  },\n                },\n              ]}\n              margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n              sx={{\n                '& .MuiBarElement-root': {\n                  rx: 4,\n                },\n              }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

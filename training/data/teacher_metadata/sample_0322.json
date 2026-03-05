@@ -1,0 +1,48 @@
+{
+  "description": "A profit margin widget with current vs previous quarter comparison bar chart",
+  "ui_style": "Dark glassmorphism with frosted glass panels, blur effects, translucent overlays, and vibrant gradients.",
+  "mock_data": {
+    "widget": {
+      "id": "profit_margin_001",
+      "app": "Business Insights",
+      "version": "1.0"
+    },
+    "data": {
+      "currentQuarter": {
+        "revenue": 120000,
+        "costs": 75000,
+        "profit": 45000,
+        "profitMarginPercent": 37.5
+      },
+      "previousQuarter": {
+        "revenue": 110000,
+        "costs": 72000,
+        "profit": 38000,
+        "profitMarginPercent": 34.5
+      },
+      "quarterComparison": [
+        {
+          "quarter": "Current",
+          "revenue": 120000,
+          "profit": 45000
+        },
+        {
+          "quarter": "Previous",
+          "revenue": 110000,
+          "profit": 38000
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface CurrentQuarter {\n  revenue: number;\n  costs: number;\n  profit: number;\n  profitMarginPercent: number;\n}\n\ninterface PreviousQuarter {\n  revenue: number;\n  costs: number;\n  profit: number;\n  profitMarginPercent: number;\n}\n\ninterface QuarterComparison {\n  quarter: string;\n  revenue: number;\n  profit: number;\n}\n\ninterface WidgetData {\n  currentQuarter: CurrentQuarter;\n  previousQuarter: PreviousQuarter;\n  quarterComparison: QuarterComparison[];\n}\n\nexport default function Widget() {\n  const data = response.data as WidgetData;\n  const { currentQuarter, previousQuarter, quarterComparison } = data;\n  const isProfitIncreased = currentQuarter.profit > previousQuarter.profit;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF', borderRadius: 3 }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#FF5722' }}>\n              Profit Margin\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={0.5}>\n              {isProfitIncreased ? <TrendingUp sx={{ fontSize: 20, color: '#10B981' }} /> : <TrendingDown sx={{ fontSize: 20, color: '#EF4444' }} />}\n              <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#1976D2' }}>\n                {currentQuarter.profitMarginPercent}%\n              </Typography>\n            </Stack>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 0.5 }}>\n              Previous Quarter: {previousQuarter.profitMarginPercent}%\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: quarterComparison.map(q => q.revenue),\n                  color: '#FFC107',\n                  label: 'Revenue',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: quarterComparison.map(q => q.quarter),\n                  id: 'quarters',\n                },\n              ]}\n              yAxis={[{ id: 'revenue' }]}\n            >\n              <g clipPath={`url(#clipPathId)`}>\n                <BarPlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"quarters\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"revenue\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsClipPath id=\"clipPathId\" />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

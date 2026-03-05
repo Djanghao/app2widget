@@ -1,0 +1,49 @@
+{
+  "description": "A price comparison widget showing current price vs competitor prices with trend",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "price_comp_001",
+      "app": "Price Compare",
+      "version": "1.0"
+    },
+    "data": {
+      "product": {
+        "name": "Wireless Headphones",
+        "currentPrice": 89.99
+      },
+      "competitorPrices": [
+        {
+          "store": "Store A",
+          "price": 95.5
+        },
+        {
+          "store": "Store B",
+          "price": 87.99
+        },
+        {
+          "store": "Store C",
+          "price": 92.45
+        }
+      ],
+      "priceTrend": [
+        91.99,
+        89.99,
+        88.99,
+        90.49,
+        89.99
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface CompetitorPrice {\n  store: string;\n  price: number;\n}\n\ninterface ProductData {\n  product: {\n    name: string;\n    currentPrice: number;\n  };\n  competitorPrices: CompetitorPrice[];\n  priceTrend: number[];\n}\n\nexport default function Widget() {\n  const productData = response.data as ProductData;\n  const { product, competitorPrices, priceTrend } = productData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#FF5722' }}>\n              {product.name}\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#1976D2' }}>\n              ${product.currentPrice.toFixed(2)}\n            </Typography>\n            <Typography variant=\"caption\" color=\"text.secondary\" sx={{ mt: 0.5 }}>\n              Current Price\n            </Typography>\n          </Box>\n\n          <LineChart\n            height={100}\n            series={[\n              {\n                data: priceTrend,\n                color: '#FFC107',\n                curve: 'linear',\n                showMark: false,\n              },\n            ]}\n            xAxis={[{ data: priceTrend.map((_, i) => i), hide: true }]}\n            margin={{ top: 5, bottom: 5, left: 10, right: 10 }}\n            sx={{\n              '& .MuiLineElement-root': {\n                strokeWidth: 2,\n              },\n            }}\n          />\n\n          <Stack direction=\"row\" spacing={0.5}>\n            {competitorPrices.map((competitor, index) => (\n              <Chip\n                key={index}\n                label={`${competitor.store}: $${competitor.price.toFixed(2)}`}\n                sx={{ fontSize: '11px', px: 1, py: 0.5 }}\n              />\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,77 @@
+{
+  "description": "An expense tracker widget with category breakdown and weekly spending bar chart",
+  "ui_style": "Warm and friendly with rounded shapes, pastel colors, and playful typography. Approachable design.",
+  "mock_data": {
+    "widget": {
+      "id": "expense_tracker_001",
+      "app": "Expense Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "weeklySummary": {
+        "totalSpent": 350.75,
+        "weeklyBudget": 500.0,
+        "remaining": 149.25
+      },
+      "spendingByCategory": [
+        {
+          "category": "Groceries",
+          "amount": 120.5
+        },
+        {
+          "category": "Transport",
+          "amount": 45.0
+        },
+        {
+          "category": "Dining",
+          "amount": 85.25
+        },
+        {
+          "category": "Entertainment",
+          "amount": 100.0
+        }
+      ],
+      "weeklySpending": [
+        {
+          "day": "Mon",
+          "spent": 50.0
+        },
+        {
+          "day": "Tue",
+          "spent": 30.75
+        },
+        {
+          "day": "Wed",
+          "spent": 45.0
+        },
+        {
+          "day": "Thu",
+          "spent": 60.0
+        },
+        {
+          "day": "Fri",
+          "spent": 40.0
+        },
+        {
+          "day": "Sat",
+          "spent": 70.0
+        },
+        {
+          "day": "Sun",
+          "spent": 55.0
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, Grid } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface WeeklySummary {\n  totalSpent: number;\n  weeklyBudget: number;\n  remaining: number;\n}\n\ninterface SpendingByCategory {\n  category: string;\n  amount: number;\n}\n\ninterface WeeklySpending {\n  day: string;\n  spent: number;\n}\n\ninterface ExpenseData {\n  weeklySummary: WeeklySummary;\n  spendingByCategory: SpendingByCategory[];\n  weeklySpending: WeeklySpending[];\n}\n\nexport default function Widget() {\n  const expenseData = response.data as ExpenseData;\n  const { weeklySummary, spendingByCategory, weeklySpending } = expenseData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2.5}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#FF5722' }}>\n              Weekly Expense\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#1F2937' }}>\n              ${weeklySummary.totalSpent.toFixed(2)}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 0.5 }}>\n              Budget: ${weeklySummary.weeklyBudget.toFixed(2)} | Remaining: ${weeklySummary.remaining.toFixed(2)}\n            </Typography>\n          </Box>\n\n          <BarChart\n            height={140}\n            series={[\n              {\n                data: weeklySpending.map(d => d.spent),\n                color: '#FF5722',\n              },\n            ]}\n            xAxis={[\n              {\n                data: weeklySpending.map(d => d.day),\n                scaleType: 'band',\n                tickLabelStyle: {\n                  fontSize: 11,\n                  fill: '#6B7280',\n                },\n              }\n            ]}\n            margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n            sx={{\n              '& .MuiBarElement-root': {\n                rx: 4,\n              },\n            }}\n          />\n\n          <Grid container spacing={1}>\n            {spendingByCategory.map((category, index) => (\n              <Grid item xs={6} key={index}>\n                <Chip\n                  label={`${category.category}: $${category.amount.toFixed(2)}`}\n                  sx={{ width: '100%', fontSize: '10px', bgcolor: '#FFC107', color: '#1F2937' }}\n                />\n              </Grid>\n            ))}\n          </Grid>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

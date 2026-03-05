@@ -1,0 +1,45 @@
+{
+  "description": "A class schedule widget showing today's classes with room numbers and countdown to next",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "class_schedule_today_001",
+      "app": "Class Scheduler",
+      "version": "1.0"
+    },
+    "data": {
+      "currentDay": "Wednesday",
+      "classesToday": [
+        {
+          "subject": "Mathematics",
+          "startTime": "10:00 AM",
+          "endTime": "11:30 AM",
+          "room": "B101",
+          "countdownToNext": "1h 15m"
+        },
+        {
+          "subject": "Physics",
+          "startTime": "12:00 PM",
+          "endTime": "1:30 PM",
+          "room": "C203",
+          "countdownToNext": "30m"
+        },
+        {
+          "subject": "History",
+          "startTime": "2:00 PM",
+          "endTime": "3:00 PM",
+          "room": "A102"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#3B82F6",
+      "accentColor": "#FBBF24",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, Divider } from '@mui/material';\nimport response from './response.json';\n\ninterface ClassSchedule {\n  subject: string;\n  startTime: string;\n  endTime: string;\n  room: string;\n  countdownToNext?: string;\n}\n\ninterface ClassData {\n  currentDay: string;\n  classesToday: ClassSchedule[];\n}\n\nexport default function Widget() {\n  const classData = response.data as ClassData;\n  const { currentDay, classesToday } = classData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#1E1E1E' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#FBBF24' }}>\n              {response.widget.app}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Schedule for {currentDay}\n            </Typography>\n          </Box>\n\n          {classesToday.map((classItem, index) => (\n            <Box key={index}>\n              {index > 0 && <Divider sx={{ my: 1 }} />}\n              <Stack spacing={1}>\n                <Typography variant=\"body1\" sx={{ color: '#F8FAFC', fontWeight: 500 }}>\n                  {classItem.subject}\n                </Typography>\n                <Stack direction=\"row\" spacing={0.5}>\n                  <Chip label={classItem.startTime} sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: '#3B82F6', color: '#F8FAFC' }} />\n                  <Chip label={classItem.endTime} sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: '#3B82F6', color: '#F8FAFC' }} />\n                  <Chip label={`Room: ${classItem.room}`} sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: '#3B82F6', color: '#F8FAFC' }} />\n                </Stack>\n                {classItem.countdownToNext && (\n                  <Typography variant=\"caption\" color=\"text.secondary\">\n                    Starts in {classItem.countdownToNext}\n                  </Typography>\n                )}\n              </Stack>\n            </Box>\n          ))}\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

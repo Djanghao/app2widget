@@ -1,0 +1,40 @@
+{
+  "description": "A tip calculator widget showing bill total, tip amount by percentage, and per-person split",
+  "ui_style": "Dashboard/analytics style with dense data, small fonts, grid layouts, and chart-heavy composition.",
+  "mock_data": {
+    "widget": {
+      "id": "tip_calculator_001",
+      "app": "Tip Master",
+      "version": "1.0"
+    },
+    "data": {
+      "billAmount": 85.5,
+      "tipPercentage": 18,
+      "tipAmount": 15.39,
+      "totalWithTip": 100.89,
+      "split": [
+        {
+          "people": 1,
+          "amountPerPerson": 100.89
+        },
+        {
+          "people": 2,
+          "amountPerPerson": 50.45
+        },
+        {
+          "people": 3,
+          "amountPerPerson": 33.63
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface SplitData {\n  people: number;\n  amountPerPerson: number;\n}\n\ninterface TipCalculatorData {\n  billAmount: number;\n  tipPercentage: number;\n  tipAmount: number;\n  totalWithTip: number;\n  split: SplitData[];\n}\n\nexport default function Widget() {\n  const data = response.data as TipCalculatorData;\n  const meta = response.meta;\n\n  return (\n    <Card\n      sx={{\n        width: 'fit-content',\n        minWidth: 320,\n        maxWidth: 450,\n        bgcolor: meta.theme === 'light' ? '#FFFFFF' : '#1E1E1E',\n      }}\n      elevation={2}\n    >\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: meta.primaryColor }}>\n              Tip Calculator\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Bill Amount: ${data.billAmount.toFixed(2)}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Tip Percentage: {data.tipPercentage}%\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Tip Amount: ${data.tipAmount.toFixed(2)}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Total with Tip: ${data.totalWithTip.toFixed(2)}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" fontWeight={600} sx={{ mb: 1, color: meta.accentColor }}>\n              Split Options\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {data.split.map((splitOption, index) => (\n                <Chip\n                  key={index}\n                  label={`${splitOption.people} Person${splitOption.people > 1 ? 's' : ''}: $${splitOption.amountPerPerson.toFixed(2)}`}\n                  sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: meta.primaryColor, color: 'white' }}\n                />\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

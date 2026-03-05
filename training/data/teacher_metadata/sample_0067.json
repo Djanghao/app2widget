@@ -1,0 +1,71 @@
+{
+  "description": "A running stats widget showing pace, distance, elevation, and route segment splits",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "running_stats_001",
+      "app": "Run Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "currentRun": {
+        "pace": "5:30/km",
+        "distance": 10.0,
+        "elevationGain": 120
+      },
+      "routeSplits": [
+        {
+          "segment": "1 km",
+          "time": "5:45"
+        },
+        {
+          "segment": "2 km",
+          "time": "5:35"
+        },
+        {
+          "segment": "3 km",
+          "time": "5:30"
+        },
+        {
+          "segment": "4 km",
+          "time": "5:25"
+        },
+        {
+          "segment": "5 km",
+          "time": "5:20"
+        },
+        {
+          "segment": "6 km",
+          "time": "5:15"
+        },
+        {
+          "segment": "7 km",
+          "time": "5:10"
+        },
+        {
+          "segment": "8 km",
+          "time": "5:05"
+        },
+        {
+          "segment": "9 km",
+          "time": "5:00"
+        },
+        {
+          "segment": "10 km",
+          "time": "4:55"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface RouteSplit {\n  segment: string;\n  time: string;\n}\n\ninterface CurrentRun {\n  pace: string;\n  distance: number;\n  elevationGain: number;\n}\n\ninterface RunningStatsData {\n  currentRun: CurrentRun;\n  routeSplits: RouteSplit[];\n}\n\nexport default function Widget() {\n  const runningStatsData = response.data as RunningStatsData;\n  const { currentRun, routeSplits } = runningStatsData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#2C2C2C' }} elevation={2}>\n      <CardContent sx={{ p: 2.5, color: '#FFFFFF' }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#FF5722' }}>\n              Current Run\n            </Typography>\n            <Typography variant=\"body1\" sx={{ mb: 0.5 }}>\n              Pace: {currentRun.pace}\n            </Typography>\n            <Typography variant=\"body1\" sx={{ mb: 0.5 }}>\n              Distance: {currentRun.distance} km\n            </Typography>\n            <Typography variant=\"body1\">\n              Elevation Gain: {currentRun.elevationGain} m\n            </Typography>\n          </Box>\n\n          <LineChart\n            height={120}\n            series={[\n              {\n                data: routeSplits.map((split) => parseFloat(split.time.replace(':', '.'))),\n                color: '#FFC107',\n                curve: 'linear',\n                showMark: false,\n              },\n            ]}\n            xAxis={[\n              {\n                data: routeSplits.map((split) => split.segment),\n                hide: true,\n              },\n            ]}\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n            sx={{\n              '& .MuiLineElement-root': {\n                strokeWidth: 2,\n              },\n            }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

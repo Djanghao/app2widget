@@ -1,0 +1,65 @@
+{
+  "description": "A pet care widget showing feeding schedule, vet appointment, and activity level",
+  "ui_style": "Midnight blue dark theme with electric blue accents, subtle gradients, and sharp modern typography.",
+  "mock_data": {
+    "widget": {
+      "id": "pet_care_001",
+      "app": "Pet Care Assistant",
+      "version": "1.0"
+    },
+    "data": {
+      "feedingSchedule": {
+        "nextFeeding": "2:00 PM",
+        "foodType": "Dry Kibble",
+        "amount": "1 cup"
+      },
+      "vetAppointment": {
+        "date": "2023-10-15",
+        "time": "10:00 AM",
+        "vetName": "Dr. Emily Carter",
+        "location": "Happy Pets Clinic"
+      },
+      "activityLevel": [
+        {
+          "day": "Mon",
+          "activity": 30
+        },
+        {
+          "day": "Tue",
+          "activity": 45
+        },
+        {
+          "day": "Wed",
+          "activity": 40
+        },
+        {
+          "day": "Thu",
+          "activity": 35
+        },
+        {
+          "day": "Fri",
+          "activity": 50
+        },
+        {
+          "day": "Sat",
+          "activity": 20
+        },
+        {
+          "day": "Sun",
+          "activity": 15
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FFB74D",
+      "accentColor": "#8D6E63",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface ActivityLevel {\n  day: string;\n  activity: number;\n}\n\ninterface PetCareData {\n  feedingSchedule: {\n    nextFeeding: string;\n    foodType: string;\n    amount: string;\n  };\n  vetAppointment: {\n    date: string;\n    time: string;\n    vetName: string;\n    location: string;\n  };\n  activityLevel: ActivityLevel[];\n}\n\nexport default function Widget() {\n  const petData = response.data as PetCareData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={3}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Next Feeding\n            </Typography>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#FFB74D' }}>\n              {petData.feedingSchedule.nextFeeding}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {`${petData.feedingSchedule.foodType} - ${petData.feedingSchedule.amount}`}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Vet Appointment\n            </Typography>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#8D6E63' }}>\n              {`${petData.vetAppointment.date} at ${petData.vetAppointment.time}`}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {`${petData.vetAppointment.vetName} - ${petData.vetAppointment.location}`}\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: petData.activityLevel.map(a => a.activity),\n                  color: '#FFB74D',\n                  label: 'Activity Level',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: petData.activityLevel.map(a => a.day),\n                  id: 'days',\n                },\n              ]}\n              yAxis={[{ id: 'activity' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <BarPlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"days\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"activity\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

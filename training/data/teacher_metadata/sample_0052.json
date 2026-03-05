@@ -1,0 +1,46 @@
+{
+  "description": "A plant care widget showing watering schedule, soil moisture level, and next care date",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "plant_care_001",
+      "app": "Plant Buddy",
+      "version": "1.0"
+    },
+    "data": {
+      "plant": {
+        "name": "Fiddle Leaf Fig",
+        "nextWatering": "2023-10-15",
+        "soilMoisture": "Moderate",
+        "lastWatered": "2023-10-10"
+      },
+      "wateringSchedule": [
+        {
+          "date": "2023-10-08",
+          "watered": true
+        },
+        {
+          "date": "2023-10-10",
+          "watered": true
+        },
+        {
+          "date": "2023-10-12",
+          "watered": false
+        },
+        {
+          "date": "2023-10-14",
+          "watered": false
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FFCA28",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface WateringSchedule {\n  date: string;\n  watered: boolean;\n}\n\ninterface PlantData {\n  plant: {\n    name: string;\n    nextWatering: string;\n    soilMoisture: string;\n    lastWatered: string;\n  };\n  wateringSchedule: WateringSchedule[];\n}\n\nexport default function Widget() {\n  const plantData = response.data as PlantData;\n  const lastFiveDays = plantData.wateringSchedule.slice(-5);\n  \n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#4CAF50' }}>\n              {plantData.plant.name}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Next Watering: {plantData.plant.nextWatering}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 0.5 }}>\n              Soil Moisture: {plantData.plant.soilMoisture}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 0.5 }}>\n              Last Watered: {plantData.plant.lastWatered}\n            </Typography>\n          </Box>\n\n          <LineChart\n            height={100}\n            series={[\n              {\n                data: lastFiveDays.map(day => (day.watered ? 1 : 0)),\n                color: '#FFCA28',\n                curve: 'step',\n                showMark: false,\n              },\n            ]}\n            xAxis={[\n              {\n                data: lastFiveDays.map(day => day.date),\n                hide: true\n              }\n            ]}\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n            sx={{\n              '& .MuiLineElement-root': {\n                strokeWidth: 2,\n              },\n            }}\n          />\n\n          <Stack direction=\"row\" spacing={0.5}>\n            {lastFiveDays.map((day, index) => (\n              <Chip\n                key={index}\n                label={day.date}\n                color={day.watered ? 'primary' : 'default'}\n                sx={{ fontSize: '11px', px: 1 }}\n              />\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

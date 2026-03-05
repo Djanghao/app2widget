@@ -1,0 +1,31 @@
+{
+  "description": "A tax estimation widget showing estimated quarterly taxes owed with income bracket indicator",
+  "ui_style": "Midnight blue dark theme with electric blue accents, subtle gradients, and sharp modern typography.",
+  "mock_data": {
+    "widget": {
+      "id": "tax_estimation_001",
+      "app": "Tax Planner",
+      "version": "1.0"
+    },
+    "data": {
+      "estimatedTaxes": {
+        "quarter": "Q2 2023",
+        "amountOwed": 1250.75,
+        "dueDate": "2023-06-15"
+      },
+      "incomeBracket": {
+        "bracketRange": "$50,000 - $75,000",
+        "taxRate": 22
+      }
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FFC107",
+      "accentColor": "#673AB7",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport response from './response.json';\n\ninterface EstimatedTaxes {\n  quarter: string;\n  amountOwed: number;\n  dueDate: string;\n}\n\ninterface IncomeBracket {\n  bracketRange: string;\n  taxRate: number;\n}\n\ninterface TaxData {\n  estimatedTaxes: EstimatedTaxes;\n  incomeBracket: IncomeBracket;\n}\n\nexport default function Widget() {\n  const taxData = response.data as TaxData;\n  const { estimatedTaxes, incomeBracket } = taxData;\n  const { theme, primaryColor, accentColor } = response.meta;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 420, bgcolor: theme === 'light' ? '#FFFFFF' : '#1E293B' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: theme === 'light' ? 'text.secondary' : '#CBD5E1' }}>\n              Estimated Taxes for {estimatedTaxes.quarter}\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={600} sx={{ color: primaryColor }}>\n              ${estimatedTaxes.amountOwed.toLocaleString()}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: theme === 'light' ? 'text.secondary' : '#CBD5E1' }}>\n              Due by {new Date(estimatedTaxes.dueDate).toLocaleDateString()}\n            </Typography>\n          </Box>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: theme === 'light' ? 'text.secondary' : '#CBD5E1' }}>\n              Income Bracket\n            </Typography>\n            <Typography variant=\"body1\" fontWeight={500} sx={{ color: theme === 'light' ? 'text.secondary' : '#E5E7EB' }}>\n              {incomeBracket.bracketRange}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: accentColor }}>\n              Tax Rate: {incomeBracket.taxRate}%\n            </Typography>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

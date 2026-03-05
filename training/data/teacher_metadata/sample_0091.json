@@ -1,0 +1,55 @@
+{
+  "description": "A pet care widget showing feeding schedule, vet appointment, and activity level",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "pet_care_001",
+      "app": "Pet Care Companion",
+      "version": "1.0"
+    },
+    "data": {
+      "feedingSchedule": [
+        {
+          "meal": "Breakfast",
+          "time": "8:00 AM"
+        },
+        {
+          "meal": "Lunch",
+          "time": "12:00 PM"
+        },
+        {
+          "meal": "Dinner",
+          "time": "6:00 PM"
+        }
+      ],
+      "nextVetAppointment": {
+        "date": "2023-11-15",
+        "time": "3:00 PM",
+        "vetName": "Dr. Smith"
+      },
+      "activityLevel": {
+        "current": "Moderate",
+        "trend": [
+          3,
+          4,
+          3,
+          5,
+          4,
+          4,
+          3
+        ]
+      }
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface FeedingSchedule {\n  meal: string;\n  time: string;\n}\n\ninterface NextVetAppointment {\n  date: string;\n  time: string;\n  vetName: string;\n}\n\ninterface ActivityLevel {\n  current: string;\n  trend: number[];\n}\n\ninterface PetCareData {\n  feedingSchedule: FeedingSchedule[];\n  nextVetAppointment: NextVetAppointment;\n  activityLevel: ActivityLevel;\n}\n\nexport default function Widget() {\n  const petCareData = response.data as PetCareData;\n  const { feedingSchedule, nextVetAppointment, activityLevel } = petCareData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#FF5722' }}>\n              Feeding Schedule\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {feedingSchedule.slice(0, 3).map((schedule, index) => (\n                <Chip\n                  key={index}\n                  label={`${schedule.meal}: ${schedule.time}`}\n                  sx={{ fontSize: '11px', px: 1, py: 0.5 }}\n                />\n              ))}\n            </Stack>\n          </Box>\n\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#FF5722' }}>\n              Next Vet Appointment\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {nextVetAppointment.date} at {nextVetAppointment.time} with {nextVetAppointment.vetName}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#FF5722' }}>\n              Activity Level: {activityLevel.current}\n            </Typography>\n            <LineChart\n              height={80}\n              series={[\n                {\n                  data: activityLevel.trend,\n                  color: '#FFC107',\n                  curve: 'natural',\n                  showMark: false,\n                },\n              ]}\n              xAxis={[{ data: [0, 1, 2, 3, 4, 5, 6], hide: true }]}\n              margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n              sx={{\n                '& .MuiLineElement-root': {\n                  strokeWidth: 2,\n                },\n              }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

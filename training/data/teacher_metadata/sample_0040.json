@@ -1,0 +1,46 @@
+{
+  "description": "A trip planner widget showing upcoming trip details with countdown and packing progress",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "trip_planner_001",
+      "app": "Trip Planner",
+      "version": "1.0"
+    },
+    "data": {
+      "upcomingTrip": {
+        "destination": "Paris, France",
+        "departureDate": "2023-11-15",
+        "countdownDays": 10
+      },
+      "packingProgress": {
+        "totalItems": 20,
+        "packedItems": 15,
+        "packingPercentage": 75
+      },
+      "checklist": [
+        {
+          "item": "Passport",
+          "status": "completed"
+        },
+        {
+          "item": "Flight Tickets",
+          "status": "completed"
+        },
+        {
+          "item": "Hotel Reservation",
+          "status": "pending"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, CircularProgress } from '@mui/material';\nimport response from './response.json';\n\ninterface TripData {\n  upcomingTrip: {\n    destination: string;\n    departureDate: string;\n    countdownDays: number;\n  };\n  packingProgress: {\n    totalItems: number;\n    packedItems: number;\n    packingPercentage: number;\n  };\n  checklist: {\n    item: string;\n    status: string;\n  }[];\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n}\n\nexport default function Widget() {\n  const tripData = response.data as TripData;\n  const metaData = response.meta as MetaData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#121212' }} elevation={3}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: metaData.primaryColor, mb: 1 }}>\n              Upcoming Trip\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#E0E0E0' }}>\n              Destination: {tripData.upcomingTrip.destination}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#E0E0E0', mt: 0.5 }}>\n              Departure Date: {tripData.upcomingTrip.departureDate}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#E0E0E0', mt: 0.5 }}>\n              Countdown: {tripData.upcomingTrip.countdownDays} days\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#E0E0E0', mb: 0.5 }}>\n              Packing Progress\n            </Typography>\n            <CircularProgress\n              variant=\"determinate\"\n              value={tripData.packingProgress.packingPercentage}\n              sx={{ color: metaData.accentColor, mb: 1 }}\n            />\n            <Typography variant=\"caption\" sx={{ color: '#E0E0E0' }}>\n              {tripData.packingProgress.packedItems} of {tripData.packingProgress.totalItems} items packed\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#E0E0E0', mb: 0.5 }}>\n              Checklist\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {tripData.checklist.slice(0, 3).map((item, index) => (\n                <Chip\n                  key={index}\n                  label={item.item}\n                  sx={{\n                    fontSize: '11px',\n                    px: 1,\n                    py: 0.5,\n                    bgcolor: item.status === 'completed' ? metaData.primaryColor : '#424242',\n                    color: '#FFFFFF',\n                  }}\n                />\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

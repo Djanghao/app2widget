@@ -1,0 +1,45 @@
+{
+  "description": "A nutrition summary widget with calories consumed, macros breakdown, and meal count",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "nutrition_summary_001",
+      "app": "Nutrition Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "caloriesConsumed": 1850,
+      "macrosBreakdown": {
+        "carbohydrates": 250,
+        "proteins": 100,
+        "fats": 70
+      },
+      "mealCount": 3,
+      "dailyIntake": [
+        {
+          "meal": "Breakfast",
+          "calories": 450
+        },
+        {
+          "meal": "Lunch",
+          "calories": 650
+        },
+        {
+          "meal": "Dinner",
+          "calories": 750
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "pie"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { PieChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface MacrosBreakdown {\n  carbohydrates: number;\n  proteins: number;\n  fats: number;\n}\n\ninterface Meal {\n  meal: string;\n  calories: number;\n}\n\ninterface NutritionData {\n  caloriesConsumed: number;\n  macrosBreakdown: MacrosBreakdown;\n  mealCount: number;\n  dailyIntake: Meal[];\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n  chartTypes: string[];\n}\n\nexport default function Widget() {\n  const nutritionData = response.data as NutritionData;\n  const metaData = response.meta as MetaData;\n  const { caloriesConsumed, macrosBreakdown, dailyIntake } = nutritionData;\n\n  const pieData = [\n    { value: macrosBreakdown.carbohydrates, label: 'Carbs', color: metaData.primaryColor },\n    { value: macrosBreakdown.proteins, label: 'Proteins', color: metaData.accentColor },\n    { value: macrosBreakdown.fats, label: 'Fats', color: '#FF9800' },\n  ];\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 400, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ mb: 1, color: metaData.primaryColor }}>\n              Nutrition Summary\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Calories Consumed\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#4CAF50' }}>\n              {caloriesConsumed} kcal\n            </Typography>\n          </Box>\n\n          <PieChart\n            height={140}\n            series={[\n              {\n                data: pieData.map((item) => item.value),\n                color: pieData.map((item) => item.color),\n                innerRadius: 0.5,\n              },\n            ]}\n            labels={pieData.map((item) => item.label)}\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n          />\n\n          <Stack spacing={1.5}>\n            {dailyIntake.map((meal) => (\n              <Box key={meal.meal}>\n                <Typography variant=\"body2\" fontWeight={500}>\n                  {meal.meal}: {meal.calories} kcal\n                </Typography>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,62 @@
+{
+  "description": "A stock market summary widget showing major indices with change percentages",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "stock_market_summary_001",
+      "app": "Market Overview",
+      "version": "1.0"
+    },
+    "data": {
+      "indices": [
+        {
+          "name": "Dow Jones",
+          "currentValue": 34200,
+          "change": 150,
+          "changePercent": 0.44,
+          "sparkline": [
+            34050,
+            34100,
+            34150,
+            34200
+          ]
+        },
+        {
+          "name": "S&P 500",
+          "currentValue": 4400,
+          "change": 22,
+          "changePercent": 0.5,
+          "sparkline": [
+            4378,
+            4390,
+            4395,
+            4400
+          ]
+        },
+        {
+          "name": "NASDAQ",
+          "currentValue": 13600,
+          "change": 110,
+          "changePercent": 0.82,
+          "sparkline": [
+            13490,
+            13550,
+            13590,
+            13600
+          ]
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface Index {\n  name: string;\n  currentValue: number;\n  change: number;\n  changePercent: number;\n  sparkline: number[];\n}\n\ninterface IndicesData {\n  indices: Index[];\n}\n\nexport default function Widget() {\n  const { indices } = response.data as IndicesData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#212121' }} elevation={3}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          {indices.map((index) => {\n            const positive = index.change >= 0;\n            return (\n              <Box key={index.name}>\n                <Stack direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\" sx={{ mb: 0.5 }}>\n                  <Box>\n                    <Typography variant=\"body2\" sx={{ color: '#FFFFFF', fontWeight: 600 }}>\n                      {index.name}\n                    </Typography>\n                    <Stack direction=\"row\" alignItems=\"center\" spacing={0.5} sx={{ mt: 0.5 }}>\n                      {positive ? <TrendingUp sx={{ fontSize: 16, color: '#4CAF50' }} /> : <TrendingDown sx={{ fontSize: 16, color: '#F44336' }} />}\n                      <Typography variant=\"body2\" sx={{ color: positive ? '#4CAF50' : '#F44336' }}>\n                        {positive ? '+' : ''}{index.change} ({index.changePercent}%)\n                      </Typography>\n                    </Stack>\n                  </Box>\n                  <Box textAlign=\"right\">\n                    <Typography variant=\"h6\" sx={{ color: '#FFFFFF', fontWeight: 700 }}>\n                      {index.currentValue.toLocaleString()}\n                    </Typography>\n                  </Box>\n                </Stack>\n                <LineChart\n                  height={40}\n                  series={[\n                    {\n                      data: index.sparkline,\n                      color: positive ? '#4CAF50' : '#F44336',\n                      curve: 'natural',\n                      showMark: false,\n                    },\n                  ]}\n                  xAxis={[{ data: index.sparkline.map((_, i) => i), hide: true }]}\n                  margin={{ top: 5, bottom: 5, left: 0, right: 0 }}\n                  sx={{\n                    '& .MuiLineElement-root': {\n                      strokeWidth: 1.5,\n                    },\n                  }}\n                />\n              </Box>\n            );\n          })}\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

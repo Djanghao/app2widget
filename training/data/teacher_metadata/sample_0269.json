@@ -1,0 +1,60 @@
+{
+  "description": "A world clock widget showing 4 time zones with analog clock faces and day/night indicator",
+  "ui_style": "Brutalist with raw black and white, oversized bold type, sharp edges, no rounded corners.",
+  "mock_data": {
+    "widget": {
+      "id": "world_clock_001",
+      "app": "Global Time",
+      "version": "1.0"
+    },
+    "data": {
+      "timeZones": [
+        {
+          "city": "New York",
+          "time": "3:45 PM",
+          "dayNight": "day",
+          "analogClock": {
+            "hour": 3,
+            "minute": 45
+          }
+        },
+        {
+          "city": "London",
+          "time": "8:45 PM",
+          "dayNight": "night",
+          "analogClock": {
+            "hour": 20,
+            "minute": 45
+          }
+        },
+        {
+          "city": "Tokyo",
+          "time": "4:45 AM",
+          "dayNight": "night",
+          "analogClock": {
+            "hour": 4,
+            "minute": 45
+          }
+        },
+        {
+          "city": "Sydney",
+          "time": "6:45 AM",
+          "dayNight": "day",
+          "analogClock": {
+            "hour": 6,
+            "minute": 45
+          }
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#3B82F6",
+      "accentColor": "#F97316",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport response from './response.json';\n\ninterface TimeZone {\n  city: string;\n  time: string;\n  dayNight: string;\n  analogClock: {\n    hour: number;\n    minute: number;\n  };\n}\n\ninterface WorldClockData {\n  timeZones: TimeZone[];\n}\n\nexport default function Widget() {\n  const worldClockData = response.data as WorldClockData;\n  const { timeZones } = worldClockData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          {timeZones.slice(0, 4).map((zone) => (\n            <Box key={zone.city} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>\n              <Typography variant=\"body1\" fontWeight={600} sx={{ color: '#000000' }}>\n                {zone.city}\n              </Typography>\n              <Typography variant=\"body2\" sx={{ color: zone.dayNight === 'day' ? '#3B82F6' : '#F97316' }}>\n                {zone.time}\n              </Typography>\n            </Box>\n          ))}\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

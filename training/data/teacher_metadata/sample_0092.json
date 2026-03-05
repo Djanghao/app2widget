@@ -1,0 +1,45 @@
+{
+  "description": "A commute widget showing estimated travel time, traffic level, and alternative routes comparison",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "commute_time_001",
+      "app": "Commute Companion",
+      "version": "1.0"
+    },
+    "data": {
+      "currentTrip": {
+        "destination": "Downtown Office",
+        "estimatedTime": 35,
+        "trafficLevel": "Moderate",
+        "distance": "15 miles"
+      },
+      "alternativeRoutes": [
+        {
+          "routeName": "Highway 101",
+          "estimatedTime": 30,
+          "trafficLevel": "Heavy"
+        },
+        {
+          "routeName": "Main St",
+          "estimatedTime": 40,
+          "trafficLevel": "Light"
+        },
+        {
+          "routeName": "Broadway Blvd",
+          "estimatedTime": 45,
+          "trafficLevel": "Moderate"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF9800",
+      "accentColor": "#3F51B5",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { Info } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface CurrentTrip {\n  destination: string;\n  estimatedTime: number;\n  trafficLevel: string;\n  distance: string;\n}\n\ninterface AlternativeRoute {\n  routeName: string;\n  estimatedTime: number;\n  trafficLevel: string;\n}\n\ninterface CommuteData {\n  currentTrip: CurrentTrip;\n  alternativeRoutes: AlternativeRoute[];\n}\n\nexport default function Widget() {\n  const commuteData = response.data as CommuteData;\n  const { currentTrip, alternativeRoutes } = commuteData;\n  \n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} color=\"primary\">\n              Commute to {currentTrip.destination}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Estimated Time: {currentTrip.estimatedTime} mins\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Traffic: {currentTrip.trafficLevel}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Distance: {currentTrip.distance}\n            </Typography>\n          </Box>\n          \n          <Box>\n            <Typography variant=\"body2\" fontWeight={600} sx={{ mb: 1 }}>\n              Alternative Routes\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {alternativeRoutes.map((route, index) => (\n                <Chip\n                  key={index}\n                  label={`${route.routeName} (${route.estimatedTime} mins, ${route.trafficLevel})`}\n                  sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: '#E0E7FF' }}\n                />\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

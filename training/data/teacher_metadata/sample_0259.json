@@ -1,0 +1,28 @@
+{
+  "description": "A food delivery widget showing order status, estimated delivery time, and driver location",
+  "ui_style": "Playful and colorful with bright primary colors, thick rounded borders, and large friendly fonts.",
+  "mock_data": {
+    "widget": {
+      "id": "food_delivery_status_001",
+      "app": "QuickEats",
+      "version": "1.0"
+    },
+    "data": {
+      "orderStatus": "On the way",
+      "estimatedDeliveryTime": "12:45 PM",
+      "driverLocation": {
+        "latitude": 37.7749,
+        "longitude": -122.4194
+      }
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Chip, Stack } from '@mui/material';\nimport response from './response.json';\n\ninterface DriverLocation {\n  latitude: number;\n  longitude: number;\n}\n\ninterface WidgetData {\n  widget: {\n    id: string;\n    app: string;\n    version: string;\n  };\n  data: {\n    orderStatus: string;\n    estimatedDeliveryTime: string;\n    driverLocation: DriverLocation;\n  };\n  meta: {\n    theme: string;\n    dataMode: string;\n    layout: string;\n    primaryColor: string;\n    accentColor: string;\n    chartTypes: [];\n  };\n}\n\nexport default function Widget() {\n  const { data, meta } = response as WidgetData;\n\n  return (\n    <Card\n      sx={{\n        width: 'fit-content',\n        minWidth: 280,\n        maxWidth: 380,\n        bgcolor: meta.theme === 'light' ? '#FFFFFF' : '#333333',\n        borderColor: meta.primaryColor,\n        borderWidth: 2,\n        borderRadius: 3,\n        p: 2,\n        mb: 1,\n      }}\n      elevation={2}\n    >\n      <CardContent>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: meta.primaryColor }}>\n              {data.widget.app} - Delivery Status\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Order Status: <strong>{data.data.orderStatus}</strong>\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Estimated Delivery: <strong>{data.data.estimatedDeliveryTime}</strong>\n            </Typography>\n          </Box>\n\n          <Stack direction=\"row\" spacing={0.5}>\n            <Chip\n              label={`Latitude: ${data.data.driverLocation.latitude.toFixed(4)}`}\n              sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: meta.accentColor }}\n            />\n            <Chip\n              label={`Longitude: ${data.data.driverLocation.longitude.toFixed(4)}`}\n              sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: meta.accentColor }}\n            />\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

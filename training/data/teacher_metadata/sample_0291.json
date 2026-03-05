@@ -1,0 +1,48 @@
+{
+  "description": "A journal entry widget showing mood tracker, streak, word count, and recent entries",
+  "ui_style": "Warm and friendly with rounded shapes, pastel colors, and playful typography. Approachable design.",
+  "mock_data": {
+    "widget": {
+      "id": "journal_mood_tracker_001",
+      "app": "Daily Journal",
+      "version": "1.0"
+    },
+    "data": {
+      "currentMood": "Happy",
+      "streak": {
+        "days": 15,
+        "bestStreak": 22
+      },
+      "wordCount": {
+        "today": 450,
+        "average": 400
+      },
+      "recentEntries": [
+        {
+          "date": "2023-10-10",
+          "title": "A Productive Day",
+          "words": 500
+        },
+        {
+          "date": "2023-10-09",
+          "title": "Relaxing Sunday",
+          "words": 350
+        },
+        {
+          "date": "2023-10-08",
+          "title": "Family Gathering",
+          "words": 400
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FFC107",
+      "accentColor": "#FF5722",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface Streak {\n  days: number;\n  bestStreak: number;\n}\n\ninterface WordCount {\n  today: number;\n  average: number;\n}\n\ninterface RecentEntry {\n  date: string;\n  title: string;\n  words: number;\n}\n\ninterface WidgetData {\n  currentMood: string;\n  streak: Streak;\n  wordCount: WordCount;\n  recentEntries: RecentEntry[];\n}\n\nexport default function Widget() {\n  const widgetData = response.data as WidgetData;\n  const moodColor = widgetData.currentMood === 'Happy' ? '#FFC107' : '#FF5722';\n  const isPositiveStreak = widgetData.streak.days >= widgetData.streak.bestStreak;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: moodColor }}>\n              Mood Tracker\n            </Typography>\n            <Typography variant=\"body1\" sx={{ color: moodColor }}>\n              Current Mood: {widgetData.currentMood}\n            </Typography>\n          </Box>\n\n          <Stack direction=\"row\" spacing={1} alignItems=\"center\">\n            {isPositiveStreak ? (\n              <TrendingUp sx={{ fontSize: 20, color: '#10B981' }} />\n            ) : (\n              <TrendingDown sx={{ fontSize: 20, color: '#EF4444' }} />\n            )}\n            <Typography variant=\"body2\" sx={{ color: isPositiveStreak ? '#10B981' : '#EF4444' }}>\n              Streak: {widgetData.streak.days} days\n            </Typography>\n            <Typography variant=\"caption\" sx={{ color: 'text.secondary', ml: 1 }}>\n              Best: {widgetData.streak.bestStreak} days\n            </Typography>\n          </Stack>\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#6B7280', mb: 0.5 }}>\n              Today's Word Count\n            </Typography>\n            <Typography variant=\"h4\" sx={{ fontWeight: 700, color: '#1F2937' }}>\n              {widgetData.wordCount.today}\n            </Typography>\n            <Typography variant=\"caption\" sx={{ color: 'text.secondary' }}>\n              Average: {widgetData.wordCount.average}\n            </Typography>\n          </Box>\n\n          <Stack spacing={1}>\n            <Typography variant=\"body2\" sx={{ color: '#6B7280' }}>\n              Recent Entries\n            </Typography>\n            {widgetData.recentEntries.slice(0, 3).map((entry, index) => (\n              <Box key={index}>\n                <Typography variant=\"body2\" sx={{ fontWeight: 500 }}>\n                  {entry.title}\n                </Typography>\n                <Typography variant=\"caption\" sx={{ color: 'text.secondary' }}>\n                  {entry.date} - {entry.words} words\n                </Typography>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

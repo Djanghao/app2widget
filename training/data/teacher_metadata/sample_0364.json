@@ -1,0 +1,43 @@
+{
+  "description": "A transit tracker widget showing next 3 arrivals with real-time delay indicators",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "transit_tracker_001",
+      "app": "City Transit",
+      "version": "1.0"
+    },
+    "data": {
+      "station": "Main Street Station",
+      "nextArrivals": [
+        {
+          "line": "Blue Line",
+          "destination": "Downtown",
+          "arrivalTime": "2 mins",
+          "delay": "On Time"
+        },
+        {
+          "line": "Red Line",
+          "destination": "Uptown",
+          "arrivalTime": "5 mins",
+          "delay": "2 mins late"
+        },
+        {
+          "line": "Green Line",
+          "destination": "Airport",
+          "arrivalTime": "10 mins",
+          "delay": "On Time"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FF5722",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface Arrival {\n  line: string;\n  destination: string;\n  arrivalTime: string;\n  delay: string;\n}\n\ninterface TransitData {\n  station: string;\n  nextArrivals: Arrival[];\n}\n\nexport default function Widget() {\n  const transitData = response.data as TransitData;\n  const { station, nextArrivals } = transitData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#303030', color: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600}>\n              {station}\n            </Typography>\n          </Box>\n\n          <Stack spacing={1}>\n            {nextArrivals.map((arrival, index) => (\n              <Box key={index} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>\n                <Box>\n                  <Typography variant=\"body1\" fontWeight={500} sx={{ color: '#4CAF50' }}>\n                    {arrival.line}\n                  </Typography>\n                  <Typography variant=\"body2\" color=\"text.secondary\">\n                    To {arrival.destination}\n                  </Typography>\n                </Box>\n                <Box textAlign=\"right\">\n                  <Typography variant=\"body2\" fontWeight={500} sx={{ color: '#FF5722' }}>\n                    {arrival.arrivalTime}\n                  </Typography>\n                  <Chip\n                    label={arrival.delay}\n                    sx={{\n                      fontSize: '10px',\n                      bgcolor: arrival.delay === 'On Time' ? '#4CAF50' : '#FF5722',\n                      color: '#FFFFFF',\n                      height: 20,\n                    }}\n                  />\n                </Box>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

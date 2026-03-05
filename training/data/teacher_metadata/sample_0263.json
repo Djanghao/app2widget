@@ -1,0 +1,58 @@
+{
+  "description": "A coffee consumption widget showing cups today, caffeine intake, and weekly pattern",
+  "ui_style": "Midnight blue dark theme with electric blue accents, subtle gradients, and sharp modern typography.",
+  "mock_data": {
+    "widget": {
+      "id": "coffee_tracker_001",
+      "app": "Caffeine Counter",
+      "version": "1.0"
+    },
+    "data": {
+      "todayConsumption": {
+        "cups": 3,
+        "caffeineIntakeMg": 240
+      },
+      "weeklyPattern": [
+        {
+          "day": "Mon",
+          "cups": 2
+        },
+        {
+          "day": "Tue",
+          "cups": 3
+        },
+        {
+          "day": "Wed",
+          "cups": 4
+        },
+        {
+          "day": "Thu",
+          "cups": 3
+        },
+        {
+          "day": "Fri",
+          "cups": 5
+        },
+        {
+          "day": "Sat",
+          "cups": 2
+        },
+        {
+          "day": "Sun",
+          "cups": 3
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#6B7280",
+      "accentColor": "#F59E0B",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface WeeklyPattern {\n  day: string;\n  cups: number;\n}\n\ninterface CaffeineData {\n  todayConsumption: {\n    cups: number;\n    caffeineIntakeMg: number;\n  };\n  weeklyPattern: WeeklyPattern[];\n}\n\nexport default function Widget() {\n  const caffeineData = response.data as CaffeineData;\n  const { todayConsumption, weeklyPattern } = caffeineData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#1E293B' }} elevation={2}>\n      <CardContent sx={{ p: 3 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8' }}>\n              Today's Caffeine Intake\n            </Typography>\n            <Typography variant=\"h4\" sx={{ color: '#F8FAFC', fontWeight: 700 }}>\n              {todayConsumption.cups} cups\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8' }}>\n              {todayConsumption.caffeineIntakeMg} mg\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 160 }}>\n            <BarChart\n              height={140}\n              series={[\n                {\n                  data: weeklyPattern.map(d => d.cups),\n                  color: '#3B82F6',\n                },\n              ]}\n              xAxis={[\n                {\n                  data: weeklyPattern.map(d => d.day),\n                  scaleType: 'band',\n                  tickLabelStyle: {\n                    fontSize: 11,\n                    fill: '#9CA3AF',\n                  },\n                }\n              ]}\n              margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n              sx={{\n                '& .MuiBarElement-root': {\n                  rx: 4,\n                },\n              }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,51 @@
+{
+  "description": "A website analytics widget showing visitors, page views, bounce rate, and traffic source pie chart",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "website_analytics_001",
+      "app": "Site Stats",
+      "version": "1.0"
+    },
+    "data": {
+      "overview": {
+        "visitors": 1345,
+        "pageViews": 4823,
+        "bounceRate": 47.5
+      },
+      "trafficSources": [
+        {
+          "source": "Direct",
+          "value": 45
+        },
+        {
+          "source": "Organic Search",
+          "value": 25
+        },
+        {
+          "source": "Referral",
+          "value": 15
+        },
+        {
+          "source": "Social Media",
+          "value": 10
+        },
+        {
+          "source": "Email",
+          "value": 5
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#0288D1",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "pie"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { PieChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface TrafficSource {\n  source: string;\n  value: number;\n}\n\ninterface Overview {\n  visitors: number;\n  pageViews: number;\n  bounceRate: number;\n}\n\ninterface AnalyticsData {\n  overview: Overview;\n  trafficSources: TrafficSource[];\n}\n\nexport default function Widget() {\n  const analyticsData = response.data as AnalyticsData;\n  const { overview, trafficSources } = analyticsData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#0288D1' }}>\n              Site Stats\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Visitors: {overview.visitors.toLocaleString()}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Page Views: {overview.pageViews.toLocaleString()}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Bounce Rate: {overview.bounceRate}%\n            </Typography>\n          </Box>\n\n          <PieChart\n            height={200}\n            series={[\n              {\n                data: trafficSources.map((source) => ({ id: source.source, value: source.value })),\n                colorScheme: ['#0288D1', '#FFC107', '#FF7043', '#AB47BC', '#29B6F6'],\n              },\n            ]}\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n            sx={{\n              '& .MuiPieSlice-label': {\n                fontSize: 10,\n                fill: '#6B7280',\n              },\n            }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

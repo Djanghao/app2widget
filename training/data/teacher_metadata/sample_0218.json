@@ -1,0 +1,68 @@
+{
+  "description": "A social media stats widget showing followers, engagement rate, and growth trend",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "social_media_stats_001",
+      "app": "Social Insights",
+      "version": "1.0"
+    },
+    "data": {
+      "profile": {
+        "username": "influencer123",
+        "followers": 25000,
+        "engagementRate": 5.4
+      },
+      "weeklyGrowth": [
+        {
+          "day": "Mon",
+          "growth": 150
+        },
+        {
+          "day": "Tue",
+          "growth": 200
+        },
+        {
+          "day": "Wed",
+          "growth": 180
+        },
+        {
+          "day": "Thu",
+          "growth": 220
+        },
+        {
+          "day": "Fri",
+          "growth": 250
+        },
+        {
+          "day": "Sat",
+          "growth": 270
+        },
+        {
+          "day": "Sun",
+          "growth": 300
+        }
+      ],
+      "growthTrend": [
+        25000,
+        25150,
+        25350,
+        25530,
+        25750,
+        26000,
+        26270
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#1DA1F2",
+      "accentColor": "#FF4500",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface ProfileData {\n  username: string;\n  followers: number;\n  engagementRate: number;\n}\n\ninterface WeeklyGrowth {\n  day: string;\n  growth: number;\n}\n\ninterface SocialMediaStatsData {\n  profile: ProfileData;\n  weeklyGrowth: WeeklyGrowth[];\n  growthTrend: number[];\n}\n\nexport default function Widget() {\n  const data = response.data as SocialMediaStatsData;\n  const { profile, weeklyGrowth, growthTrend } = data;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#1E1E1E' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#FFFFFF' }}>\n              {profile.username}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8' }}>\n              Followers: {profile.followers.toLocaleString()}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8' }}>\n              Engagement Rate: {profile.engagementRate}%\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: growthTrend,\n                  color: '#1DA1F2',\n                  label: 'Follower Growth',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: weeklyGrowth.map((d) => d.day),\n                  id: 'days',\n                },\n              ]}\n              yAxis={[{ id: 'followers' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"days\"\n                tickLabelStyle={{ fontSize: 10, fill: '#94A3B8' }}\n              />\n              <ChartsYAxis\n                axisId=\"followers\"\n                tickLabelStyle={{ fontSize: 10, fill: '#94A3B8' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,50 @@
+{
+  "description": "A customer satisfaction widget showing NPS score, trend, and recent feedback sentiment",
+  "ui_style": "Material Design 3 inspired with dynamic color, rounded containers, prominent FABs, and elevation.",
+  "mock_data": {
+    "widget": {
+      "id": "customer_satisfaction_001",
+      "app": "Feedback Insights",
+      "version": "1.0"
+    },
+    "data": {
+      "npsScore": 42,
+      "npsTrend": [
+        38,
+        40,
+        42,
+        41,
+        43,
+        42
+      ],
+      "recentFeedback": [
+        {
+          "id": "feedback_101",
+          "sentiment": "positive",
+          "summary": "Great service, very satisfied!"
+        },
+        {
+          "id": "feedback_102",
+          "sentiment": "neutral",
+          "summary": "Service was okay, could be improved."
+        },
+        {
+          "id": "feedback_103",
+          "sentiment": "negative",
+          "summary": "Had a bad experience, not happy with the service."
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface Feedback {\n  id: string;\n  sentiment: string;\n  summary: string;\n}\n\ninterface WidgetData {\n  npsScore: number;\n  npsTrend: number[];\n  recentFeedback: Feedback[];\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n  chartTypes: string[];\n}\n\nexport default function Widget() {\n  const data: WidgetData = response.data;\n  const meta: MetaData = response.meta;\n  const clipPathId = useId();\n  const isPositive = data.npsScore >= 0;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 400, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Net Promoter Score\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: isPositive ? '#4CAF50' : '#F44336' }}>\n              {data.npsScore}\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={0.5} sx={{ mt: 0.5 }}>\n              {isPositive ? <TrendingUp sx={{ fontSize: 16, color: '#4CAF50' }} /> : <TrendingDown sx={{ fontSize: 16, color: '#F44336' }} />}\n              <Typography variant=\"body2\" sx={{ color: isPositive ? '#4CAF50' : '#F44336' }}>\n                {isPositive ? 'Positive' : 'Negative'} Trend\n              </Typography>\n            </Stack>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 120 }}>\n            <LineChart\n              height={120}\n              series={[\n                {\n                  data: data.npsTrend,\n                  color: meta.primaryColor,\n                  curve: 'linear',\n                  showMark: false,\n                },\n              ]}\n              xAxis={[{ data: data.npsTrend.map((_, i) => i), hide: true }]}\n              margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n              sx={{\n                '& .MuiLineElement-root': {\n                  strokeWidth: 2,\n                },\n              }}\n            />\n          </Box>\n\n          <Typography variant=\"body2\" sx={{ mb: 1 }}>\n            Recent Feedback\n          </Typography>\n          <Stack direction=\"row\" spacing={0.5}>\n            {data.recentFeedback.map((feedback) => (\n              <Chip\n                key={feedback.id}\n                label={feedback.summary}\n                sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: feedback.sentiment === 'positive' ? '#E8F5E9' : feedback.sentiment === 'neutral' ? '#FFFDE7' : '#FFEBEE', color: feedback.sentiment === 'positive' ? '#4CAF50' : feedback.sentiment === 'neutral' ? '#FBC02D' : '#F44336' }}\n              />\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,44 @@
+{
+  "description": "A donation tracker widget showing total raised, goal progress, and donor count",
+  "ui_style": "Windows Fluent with acrylic backgrounds, reveal highlights, and clean segmented layouts.",
+  "mock_data": {
+    "widget": {
+      "id": "donation_tracker_001",
+      "app": "Charity Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "campaign": {
+        "name": "Feed the Children",
+        "totalRaised": 15400.75,
+        "goal": 20000.0,
+        "donorCount": 287
+      },
+      "goalProgress": [
+        {
+          "stage": "Initial",
+          "amount": 4000
+        },
+        {
+          "stage": "Mid",
+          "amount": 10000
+        },
+        {
+          "stage": "Current",
+          "amount": 15400.75
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, LinearProgress } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface GoalProgress {\n  stage: string;\n  amount: number;\n}\n\ninterface CampaignData {\n  campaign: {\n    name: string;\n    totalRaised: number;\n    goal: number;\n    donorCount: number;\n  };\n  goalProgress: GoalProgress[];\n}\n\nexport default function Widget() {\n  const campaignData = response.data as CampaignData;\n  const { campaign, goalProgress } = campaignData;\n  const progressPercentage = (campaign.totalRaised / campaign.goal) * 100;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 3 }}>\n        <Stack spacing={2.5}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#FF5722' }}>\n              {campaign.name}\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#1F2937' }}>\n              ${campaign.totalRaised.toLocaleString()}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 0.5 }}>\n              raised of ${campaign.goal.toLocaleString()} goal\n            </Typography>\n          </Box>\n\n          <Box>\n            <Stack direction=\"row\" justifyContent=\"space-between\" sx={{ mb: 0.5 }}>\n              <Typography variant=\"caption\" color=\"text.secondary\">\n                Progress\n              </Typography>\n              <Typography variant=\"caption\" fontWeight={600} sx={{ color: '#FF5722' }}>\n                {progressPercentage.toFixed(2)}%\n              </Typography>\n            </Stack>\n            <LinearProgress\n              variant=\"determinate\"\n              value={progressPercentage}\n              sx={{\n                height: 8,\n                borderRadius: 4,\n                bgcolor: '#FFE0B2',\n                '& .MuiLinearProgress-bar': {\n                  bgcolor: '#FF5722',\n                  borderRadius: 4,\n                }\n              }}\n            />\n          </Box>\n\n          <BarChart\n            height={140}\n            series={[\n              {\n                data: goalProgress.map(g => g.amount),\n                color: '#FFC107',\n              },\n            ]}\n            xAxis={[\n              {\n                data: goalProgress.map(g => g.stage),\n                scaleType: 'band',\n                tickLabelStyle: {\n                  fontSize: 11,\n                  fill: '#6B7280',\n                },\n              }\n            ]}\n            margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n            sx={{\n              '& .MuiBarElement-root': {\n                rx: 4,\n              },\n            }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

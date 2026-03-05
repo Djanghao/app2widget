@@ -1,0 +1,89 @@
+{
+  "description": "A content calendar widget showing scheduled posts this week with platform indicators",
+  "ui_style": "Material Design 3 inspired with dynamic color, rounded containers, prominent FABs, and elevation.",
+  "mock_data": {
+    "widget": {
+      "id": "content_calendar_001",
+      "app": "Social Scheduler",
+      "version": "1.0"
+    },
+    "data": {
+      "weekOverview": [
+        {
+          "day": "Mon",
+          "platforms": [
+            {
+              "name": "Twitter",
+              "posts": 2
+            },
+            {
+              "name": "Instagram",
+              "posts": 1
+            }
+          ]
+        },
+        {
+          "day": "Tue",
+          "platforms": [
+            {
+              "name": "Facebook",
+              "posts": 1
+            },
+            {
+              "name": "LinkedIn",
+              "posts": 1
+            }
+          ]
+        },
+        {
+          "day": "Wed",
+          "platforms": [
+            {
+              "name": "Instagram",
+              "posts": 3
+            },
+            {
+              "name": "Twitter",
+              "posts": 1
+            }
+          ]
+        },
+        {
+          "day": "Thu",
+          "platforms": [
+            {
+              "name": "Facebook",
+              "posts": 2
+            },
+            {
+              "name": "LinkedIn",
+              "posts": 2
+            }
+          ]
+        },
+        {
+          "day": "Fri",
+          "platforms": [
+            {
+              "name": "Twitter",
+              "posts": 1
+            },
+            {
+              "name": "Instagram",
+              "posts": 2
+            }
+          ]
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#3B82F6",
+      "accentColor": "#EF4444",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, Grid } from '@mui/material';\nimport response from './response.json';\n\ninterface PlatformPosts {\n  name: string;\n  posts: number;\n}\n\ninterface WeekOverview {\n  day: string;\n  platforms: PlatformPosts[];\n}\n\ninterface WidgetData {\n  weekOverview: WeekOverview[];\n}\n\nexport default function Widget() {\n  const widgetData = response.data as WidgetData;\n  const { weekOverview } = widgetData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#1F2937' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" sx={{ color: '#F3F4F6', mb: 1 }}>\n            Social Media Posts Overview\n          </Typography>\n          <Grid container spacing={1}>\n            {weekOverview.map((dayData, index) => (\n              <Grid item xs={12} key={index}>\n                <Box sx={{ mb: 1 }}>\n                  <Typography variant=\"body1\" sx={{ color: '#9CA3AF' }}>\n                    {dayData.day}\n                  </Typography>\n                  <Stack direction=\"row\" spacing={0.5}>\n                    {dayData.platforms.map((platform, idx) => (\n                      <Chip\n                        key={idx}\n                        label={`${platform.name}: ${platform.posts}`}\n                        sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: '#4B5563', color: '#F3F4F6' }}\n                      />\n                    ))}\n                  </Stack>\n                </Box>\n              </Grid>\n            ))}\n          </Grid>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

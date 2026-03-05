@@ -1,0 +1,74 @@
+{
+  "description": "A Gantt chart widget showing 5 project tasks with dependencies, progress, and timeline",
+  "ui_style": "Neomorphic / soft UI with light gray backgrounds, inset and raised soft shadows, subtle depth.",
+  "mock_data": {
+    "widget": {
+      "id": "gantt_chart_001",
+      "app": "Project Manager",
+      "version": "1.0"
+    },
+    "data": {
+      "tasks": [
+        {
+          "id": "task_001",
+          "name": "Project Planning",
+          "startDate": "2023-10-01",
+          "endDate": "2023-10-05",
+          "progress": 100,
+          "dependencies": []
+        },
+        {
+          "id": "task_002",
+          "name": "Design Phase",
+          "startDate": "2023-10-06",
+          "endDate": "2023-10-10",
+          "progress": 60,
+          "dependencies": [
+            "task_001"
+          ]
+        },
+        {
+          "id": "task_003",
+          "name": "Development Phase",
+          "startDate": "2023-10-11",
+          "endDate": "2023-10-20",
+          "progress": 30,
+          "dependencies": [
+            "task_002"
+          ]
+        },
+        {
+          "id": "task_004",
+          "name": "Testing Phase",
+          "startDate": "2023-10-21",
+          "endDate": "2023-10-25",
+          "progress": 0,
+          "dependencies": [
+            "task_003"
+          ]
+        },
+        {
+          "id": "task_005",
+          "name": "Deployment",
+          "startDate": "2023-10-26",
+          "endDate": "2023-10-28",
+          "progress": 0,
+          "dependencies": [
+            "task_004"
+          ]
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, LinearProgress } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface Task {\n  id: string;\n  name: string;\n  startDate: string;\n  endDate: string;\n  progress: number;\n  dependencies: string[];\n}\n\ninterface GanttData {\n  tasks: Task[];\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n  chartTypes: string[];\n}\n\nexport default function Widget() {\n  const ganttData = response.data as GanttData;\n  const metaData = response.meta as MetaData;\n\n  const { tasks } = ganttData;\n  const themeColor = metaData.primaryColor;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: themeColor }}>\n            Project Tasks\n          </Typography>\n          \n          <Stack spacing={1.5}>\n            {tasks.slice(0, 5).map((task) => (\n              <Box key={task.id}>\n                <Stack direction=\"row\" justifyContent=\"space-between\" sx={{ mb: 0.5 }}>\n                  <Typography variant=\"body2\" sx={{ color: '#1F2937', fontWeight: 500 }}>\n                    {task.name}\n                  </Typography>\n                  <Typography variant=\"caption\" sx={{ color: themeColor }}>\n                    {task.progress}%\n                  </Typography>\n                </Stack>\n                <LinearProgress\n                  variant=\"determinate\"\n                  value={task.progress}\n                  sx={{\n                    height: 8,\n                    borderRadius: 4,\n                    bgcolor: '#E0E0E0',\n                    '& .MuiLinearProgress-bar': {\n                      bgcolor: themeColor,\n                      borderRadius: 4,\n                    }\n                  }}\n                />\n              </Box>\n            ))}\n          </Stack>\n\n          <BarChart\n            height={140}\n            series={[\n              {\n                data: tasks.map(task => task.progress),\n                color: metaData.accentColor,\n              },\n            ]}\n            xAxis={[\n              {\n                data: tasks.map(task => task.name),\n                scaleType: 'band',\n                tickLabelStyle: {\n                  fontSize: 11,\n                  fill: '#6B7280',\n                },\n              }\n            ]}\n            margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n            sx={{\n              '& .MuiBarElement-root': {\n                rx: 4,\n              },\n            }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

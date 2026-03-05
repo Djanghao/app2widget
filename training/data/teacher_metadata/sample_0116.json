@@ -1,0 +1,40 @@
+{
+  "description": "A workout summary widget showing exercises completed, total volume, and muscle groups hit",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "workout_summary_001",
+      "app": "Workout Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "summary": {
+        "exercisesCompleted": 5,
+        "totalVolume": 12000,
+        "muscleGroups": [
+          {
+            "name": "Chest",
+            "exercises": 2
+          },
+          {
+            "name": "Back",
+            "exercises": 1
+          },
+          {
+            "name": "Legs",
+            "exercises": 2
+          }
+        ]
+      }
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#0D47A1",
+      "accentColor": "#FF5722",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface MuscleGroup {\n  name: string;\n  exercises: number;\n}\n\ninterface WorkoutSummary {\n  exercisesCompleted: number;\n  totalVolume: number;\n  muscleGroups: MuscleGroup[];\n}\n\nexport default function Widget() {\n  const workoutData = response.data.summary as WorkoutSummary;\n  const { exercisesCompleted, totalVolume, muscleGroups } = workoutData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#1E293B' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8', mb: 0.5 }}>\n              Workout Summary\n            </Typography>\n            <Typography variant=\"h4\" sx={{ color: '#F8FAFC', fontWeight: 600 }}>\n              {exercisesCompleted} Exercises\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#F8FAFC', mt: 0.5 }}>\n              Total Volume: {totalVolume.toLocaleString()} kg\n            </Typography>\n          </Box>\n\n          <Stack direction=\"row\" spacing={0.5}>\n            {muscleGroups.map((group, index) => (\n              <Chip\n                key={index}\n                label={`${group.name}: ${group.exercises}`}\n                sx={{ fontSize: '11px', color: '#F8FAFC', bgcolor: '#0D47A1', px: 1, py: 0.5 }}\n              />\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,64 @@
+{
+  "description": "A team velocity widget showing sprint burndown chart and story points completed",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "team_velocity_001",
+      "app": "Agile Sprint Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "sprintInfo": {
+        "sprintName": "Sprint 21",
+        "totalStoryPoints": 50,
+        "completedStoryPoints": 42,
+        "remainingStoryPoints": 8
+      },
+      "burndownChart": [
+        {
+          "day": "Mon",
+          "remainingPoints": 45
+        },
+        {
+          "day": "Tue",
+          "remainingPoints": 38
+        },
+        {
+          "day": "Wed",
+          "remainingPoints": 30
+        },
+        {
+          "day": "Thu",
+          "remainingPoints": 20
+        },
+        {
+          "day": "Fri",
+          "remainingPoints": 10
+        },
+        {
+          "day": "Sat",
+          "remainingPoints": 8
+        }
+      ],
+      "storyPointsCompleted": [
+        5,
+        7,
+        8,
+        10,
+        10,
+        2
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#0D47A1",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface SprintInfo {\n  sprintName: string;\n  totalStoryPoints: number;\n  completedStoryPoints: number;\n  remainingStoryPoints: number;\n}\n\ninterface BurndownPoint {\n  day: string;\n  remainingPoints: number;\n}\n\ninterface WidgetData {\n  sprintInfo: SprintInfo;\n  burndownChart: BurndownPoint[];\n  storyPointsCompleted: number[];\n}\n\nexport default function Widget() {\n  const widgetData = response.data as WidgetData;\n  const { sprintInfo, burndownChart } = widgetData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#212121', color: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#FFC107' }}>\n            {sprintInfo.sprintName}\n          </Typography>\n          <Stack direction=\"row\" justifyContent=\"space-between\">\n            <Box>\n              <Typography variant=\"body2\" sx={{ color: '#BDBDBD' }}>\n                Total Points\n              </Typography>\n              <Typography variant=\"h5\" fontWeight={700} sx={{ color: '#0D47A1' }}>\n                {sprintInfo.totalStoryPoints}\n              </Typography>\n            </Box>\n            <Box>\n              <Typography variant=\"body2\" sx={{ color: '#BDBDBD' }}>\n                Completed\n              </Typography>\n              <Typography variant=\"h5\" fontWeight={700} sx={{ color: '#0D47A1' }}>\n                {sprintInfo.completedStoryPoints}\n              </Typography>\n            </Box>\n            <Box>\n              <Typography variant=\"body2\" sx={{ color: '#BDBDBD' }}>\n                Remaining\n              </Typography>\n              <Typography variant=\"h5\" fontWeight={700} sx={{ color: '#FFC107' }}>\n                {sprintInfo.remainingStoryPoints}\n              </Typography>\n            </Box>\n          </Stack>\n          \n          <Box sx={{ width: '100%', height: 200 }}>\n            <LineChart\n              series={[\n                {\n                  data: burndownChart.map(point => point.remainingPoints),\n                  color: '#2196F3',\n                  curve: 'natural',\n                  showMark: false,\n                },\n              ]}\n              xAxis={[\n                {\n                  data: burndownChart.map(point => point.day),\n                  scaleType: 'band',\n                  tickLabelStyle: { fontSize: 11, fill: '#BDBDBD' },\n                },\n              ]}\n              margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n              sx={{\n                '& .MuiLineElement-root': {\n                  strokeWidth: 2,\n                },\n              }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,43 @@
+{
+  "description": "A reading tracker widget showing books read, current progress, and yearly goal",
+  "ui_style": "Warm and friendly with rounded shapes, pastel colors, and playful typography. Approachable design.",
+  "mock_data": {
+    "widget": {
+      "id": "reading_tracker_001",
+      "app": "Book Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "yearlyGoal": {
+        "targetBooks": 50,
+        "booksRead": 35,
+        "progressPercentage": 70
+      },
+      "currentBooks": [
+        {
+          "title": "The Great Gatsby",
+          "author": "F. Scott Fitzgerald",
+          "currentPage": 120,
+          "totalPages": 180,
+          "progress": 67
+        },
+        {
+          "title": "1984",
+          "author": "George Orwell",
+          "currentPage": 50,
+          "totalPages": 328,
+          "progress": 15
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, LinearProgress } from '@mui/material';\nimport response from './response.json';\n\ninterface CurrentBook {\n  title: string;\n  author: string;\n  currentPage: number;\n  totalPages: number;\n  progress: number;\n}\n\ninterface ReadingTrackerData {\n  yearlyGoal: {\n    targetBooks: number;\n    booksRead: number;\n    progressPercentage: number;\n  };\n  currentBooks: CurrentBook[];\n}\n\nexport default function Widget() {\n  const readingData = response.data as ReadingTrackerData;\n  const { yearlyGoal, currentBooks } = readingData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#FF5722' }}>\n              Yearly Reading Goal\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {yearlyGoal.booksRead} of {yearlyGoal.targetBooks} books\n            </Typography>\n            <LinearProgress\n              variant=\"determinate\"\n              value={yearlyGoal.progressPercentage}\n              sx={{\n                height: 8,\n                borderRadius: 4,\n                bgcolor: '#FFE0B2',\n                '& .MuiLinearProgress-bar': {\n                  bgcolor: '#FF5722',\n                  borderRadius: 4,\n                }\n              }}\n            />\n            <Typography variant=\"caption\" fontWeight={600} sx={{ color: '#FF5722', mt: 1 }}>\n              {yearlyGoal.progressPercentage}%\n            </Typography>\n          </Box>\n\n          {currentBooks.slice(0, 2).map((book, index) => (\n            <Box key={index}>\n              <Typography variant=\"body1\" fontWeight={500} sx={{ color: '#FF5722' }}>\n                {book.title}\n              </Typography>\n              <Typography variant=\"caption\" color=\"text.secondary\" sx={{ mb: 0.5 }}>\n                by {book.author}\n              </Typography>\n              <LinearProgress\n                variant=\"determinate\"\n                value={book.progress}\n                sx={{\n                  height: 8,\n                  borderRadius: 4,\n                  bgcolor: '#FFE0B2',\n                  '& .MuiLinearProgress-bar': {\n                    bgcolor: '#FFC107',\n                    borderRadius: 4,\n                  }\n                }}\n              />\n              <Typography variant=\"caption\" fontWeight={600} sx={{ color: '#FFC107', mt: 1 }}>\n                {book.progress}%\n              </Typography>\n            </Box>\n          ))}\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

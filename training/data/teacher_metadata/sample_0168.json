@@ -1,0 +1,39 @@
+{
+  "description": "A news headline widget showing top 3 stories with source and time ago",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "news_headlines_001",
+      "app": "Daily News",
+      "version": "1.0"
+    },
+    "data": {
+      "headlines": [
+        {
+          "title": "Global Markets Rally on Economic Recovery Hopes",
+          "source": "Reuters",
+          "timeAgo": "2h"
+        },
+        {
+          "title": "New Study Reveals Climate Change Impact on Ocean Life",
+          "source": "BBC News",
+          "timeAgo": "3h"
+        },
+        {
+          "title": "Tech Giants Invest in AI to Boost Innovation",
+          "source": "The Verge",
+          "timeAgo": "4h"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Typography, Box, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface Headline {\n  title: string;\n  source: string;\n  timeAgo: string;\n}\n\ninterface NewsData {\n  headlines: Headline[];\n}\n\nexport default function Widget() {\n  const newsData = response.data as NewsData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 300, maxWidth: 400, bgcolor: '#FFF' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" fontWeight={600} color=\"text.primary\">\n            News Headlines\n          </Typography>\n          <Stack spacing={1}>\n            {newsData.headlines.map((headline, index) => (\n              <Box key={index}>\n                <Typography variant=\"body1\" fontWeight={500} sx={{ mb: 0.5 }}>\n                  {headline.title}\n                </Typography>\n                <Stack direction=\"row\" spacing={0.5}>\n                  <Chip label={headline.source} sx={{ fontSize: '11px', px: 1, py: 0.5 }} />\n                  <Typography variant=\"caption\" color=\"text.secondary\">\n                    {headline.timeAgo}\n                  </Typography>\n                </Stack>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

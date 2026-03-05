@@ -1,0 +1,38 @@
+{
+  "description": "A smart lock widget showing lock status, recent access log, and authorized users count",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "smartlock_status_001",
+      "app": "Smart Lock Manager",
+      "version": "1.0"
+    },
+    "data": {
+      "lockStatus": "Locked",
+      "recentAccessLog": [
+        {
+          "time": "08:30 AM",
+          "user": "Alice"
+        },
+        {
+          "time": "12:45 PM",
+          "user": "Bob"
+        },
+        {
+          "time": "03:15 PM",
+          "user": "Charlie"
+        }
+      ],
+      "authorizedUsersCount": 5
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#000000",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport LockIcon from '@mui/icons-material/Lock';\nimport response from './response.json';\n\ninterface RecentAccessLog {\n  time: string;\n  user: string;\n}\n\ninterface LockData {\n  lockStatus: string;\n  recentAccessLog: RecentAccessLog[];\n  authorizedUsersCount: number;\n}\n\nexport default function Widget() {\n  const lockData = response.data as LockData;\n  const { lockStatus, recentAccessLog, authorizedUsersCount } = lockData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 380, bgcolor: 'background.paper' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box display=\"flex\" alignItems=\"center\">\n            <LockIcon color=\"primary\" sx={{ mr: 1 }} />\n            <Typography variant=\"h6\" fontWeight={600}>\n              Smart Lock Status\n            </Typography>\n          </Box>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Current Status\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: lockStatus === 'Locked' ? 'primary.main' : 'error.main' }}>\n              {lockStatus}\n            </Typography>\n          </Box>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 0.5 }}>\n              Recent Access\n            </Typography>\n            <Stack spacing={0.5}>\n              {recentAccessLog.map((log, index) => (\n                <Chip\n                  key={index}\n                  label={`${log.user} at ${log.time}`}\n                  sx={{ fontSize: '11px', px: 1, py: 0.5 }}\n                />\n              ))}\n            </Stack>\n          </Box>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Authorized Users\n            </Typography>\n            <Typography variant=\"h5\" fontWeight={500}>\n              {authorizedUsersCount}\n            </Typography>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,35 @@
+{
+  "description": "A music player widget showing currently playing track, artist, and playback controls",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "music_player_001",
+      "app": "TuneStream",
+      "version": "1.0"
+    },
+    "data": {
+      "currentlyPlaying": {
+        "track": "Blinding Lights",
+        "artist": "The Weeknd",
+        "album": "After Hours",
+        "duration": "3:20",
+        "progress": "1:45",
+        "playbackControls": {
+          "isPlaying": true,
+          "volume": 75,
+          "repeat": false,
+          "shuffle": true
+        }
+      }
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#1DB954",
+      "accentColor": "#191414",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, IconButton } from '@mui/material';\nimport { PlayArrow, Pause, Repeat, Shuffle } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface PlaybackControls {\n  isPlaying: boolean;\n  volume: number;\n  repeat: boolean;\n  shuffle: boolean;\n}\n\ninterface CurrentlyPlaying {\n  track: string;\n  artist: string;\n  album: string;\n  duration: string;\n  progress: string;\n  playbackControls: PlaybackControls;\n}\n\ninterface WidgetData {\n  currentlyPlaying: CurrentlyPlaying;\n}\n\nexport default function Widget() {\n  const { currentlyPlaying } = response.data as WidgetData;\n  const { track, artist, album, duration, progress, playbackControls } = currentlyPlaying;\n  const { isPlaying, repeat, shuffle } = playbackControls;\n  \n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 300, maxWidth: 400, bgcolor: '#191414' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ color: '#B3B3B3' }}>\n              Now Playing\n            </Typography>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#FFFFFF', my: 0.5 }}>\n              {track}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ color: '#B3B3B3' }}>\n              {artist} - {album}\n            </Typography>\n          </Box>\n          \n          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#B3B3B3' }}>\n            <Typography variant=\"caption\">{progress}</Typography>\n            <Typography variant=\"caption\">{duration}</Typography>\n          </Box>\n          \n          <Stack direction=\"row\" spacing={1} justifyContent=\"center\">\n            <IconButton sx={{ color: shuffle ? '#1DB954' : '#B3B3B3' }}>\n              <Shuffle />\n            </IconButton>\n            <IconButton sx={{ color: '#1DB954' }}>\n              {isPlaying ? <Pause /> : <PlayArrow />}\n            </IconButton>\n            <IconButton sx={{ color: repeat ? '#1DB954' : '#B3B3B3' }}>\n              <Repeat />\n            </IconButton>\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,42 @@
+{
+  "description": "A plant care widget showing watering schedule, soil moisture level, and next care date",
+  "ui_style": "Warm and friendly with rounded shapes, pastel colors, and playful typography. Approachable design.",
+  "mock_data": {
+    "widget": {
+      "id": "plant_care_001",
+      "app": "Green Thumb",
+      "version": "1.0"
+    },
+    "data": {
+      "plantName": "Fiddle Leaf Fig",
+      "nextWatering": "2023-11-05",
+      "soilMoisture": "Moderate",
+      "careSchedule": [
+        {
+          "date": "2023-11-01",
+          "task": "Watering",
+          "completed": true
+        },
+        {
+          "date": "2023-11-03",
+          "task": "Fertilizing",
+          "completed": false
+        },
+        {
+          "date": "2023-11-05",
+          "task": "Watering",
+          "completed": false
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FFEB3B",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, Divider } from '@mui/material';\nimport response from './response.json';\n\ninterface CareSchedule {\n  date: string;\n  task: string;\n  completed: boolean;\n}\n\ninterface PlantCareData {\n  plantName: string;\n  nextWatering: string;\n  soilMoisture: string;\n  careSchedule: CareSchedule[];\n}\n\nexport default function Widget() {\n  const plantCareData = response.data as PlantCareData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h5\" fontWeight={600} color=\"primary\">\n              {plantCareData.plantName}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Soil Moisture: {plantCareData.soilMoisture}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Next Watering: {new Date(plantCareData.nextWatering).toLocaleDateString()}\n            </Typography>\n          </Box>\n\n          <Divider />\n\n          <Box>\n            <Typography variant=\"subtitle1\" fontWeight={500} sx={{ mb: 1 }}>\n              Care Schedule\n            </Typography>\n            <Stack spacing={0.5}>\n              {plantCareData.careSchedule.slice(0, 3).map((schedule, index) => (\n                <Chip\n                  key={index}\n                  label={`${schedule.task} on ${new Date(schedule.date).toLocaleDateString()}`}\n                  color={schedule.completed ? \"primary\" : \"default\"}\n                  sx={{ fontSize: '12px', width: '100%' }}\n                />\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

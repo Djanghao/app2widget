@@ -1,0 +1,47 @@
+{
+  "description": "A battery status widget showing charge level, estimated time remaining, and usage breakdown",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "battery_status_001",
+      "app": "Battery Monitor",
+      "version": "1.0"
+    },
+    "data": {
+      "device": "Smartphone",
+      "battery": {
+        "chargeLevel": 85,
+        "estimatedTimeRemaining": "3h 45m"
+      },
+      "usageBreakdown": [
+        {
+          "app": "Screen",
+          "percentage": 45
+        },
+        {
+          "app": "WiFi",
+          "percentage": 20
+        },
+        {
+          "app": "Apps",
+          "percentage": 25
+        },
+        {
+          "app": "Standby",
+          "percentage": 10
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#FFEB3B",
+      "accentColor": "#F44336",
+      "chartTypes": [
+        "pie"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { PieChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface UsageBreakdown {\n  app: string;\n  percentage: number;\n}\n\ninterface BatteryData {\n  device: string;\n  battery: {\n    chargeLevel: number;\n    estimatedTimeRemaining: string;\n  };\n  usageBreakdown: UsageBreakdown[];\n}\n\nexport default function Widget() {\n  const batteryData = response.data as BatteryData;\n  const { battery, usageBreakdown } = batteryData;\n  const meta = response.meta;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: meta.theme === 'dark' ? '#303030' : '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {batteryData.device} Battery Status\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: meta.primaryColor }}>\n              {battery.chargeLevel}%\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Estimated time remaining: {battery.estimatedTimeRemaining}\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 120 }}>\n            <PieChart\n              height={120}\n              series={[\n                {\n                  data: usageBreakdown.map((usage) => ({\n                    id: usage.app,\n                    value: usage.percentage,\n                    label: usage.app,\n                  })),\n                  colorScheme: [meta.primaryColor, meta.accentColor, '#FFC107', '#03A9F4'],\n                },\n              ]}\n              sx={{\n                '& .MuiPieSlice-root': {\n                  stroke: '#FFFFFF',\n                  strokeWidth: 1,\n                },\n              }}\n            />\n          </Box>\n\n          <Stack direction=\"row\" spacing={0.5}>\n            {usageBreakdown.map((usage, index) => (\n              <Chip\n                key={index}\n                label={`${usage.app}: ${usage.percentage}%`}\n                sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: meta.primaryColor, color: '#FFFFFF' }}\n              />\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

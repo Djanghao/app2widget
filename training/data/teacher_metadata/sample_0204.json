@@ -1,0 +1,40 @@
+{
+  "description": "A heart rate monitor widget with current BPM, resting rate, and 24h trend line",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "heart_rate_monitor_001",
+      "app": "HeartBeat Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "currentHeartRate": 72,
+      "restingHeartRate": 60,
+      "trend24h": [
+        65,
+        68,
+        70,
+        72,
+        75,
+        78,
+        80,
+        82,
+        78,
+        76,
+        74,
+        72
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#FF5252",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface HeartRateData {\n  currentHeartRate: number;\n  restingHeartRate: number;\n  trend24h: number[];\n}\n\nexport default function Widget() {\n  const heartRateData = response.data.data as HeartRateData;\n  const { currentHeartRate, restingHeartRate, trend24h } = heartRateData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#333' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#FF5252', mb: 1 }}>\n              Heart Rate Monitor\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 0.5 }}>\n              Current Heart Rate\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#FFC107' }}>\n              {currentHeartRate} bpm\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 0.5 }}>\n              Resting Heart Rate: {restingHeartRate} bpm\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: trend24h,\n                  color: '#FF5252',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'linear',\n                  data: trend24h.map((_, index) => index),\n                  id: 'time',\n                },\n              ]}\n              yAxis={[{ id: 'bpm' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"time\"\n                tickLabelStyle={{ fontSize: 10, fill: '#FFF' }}\n              />\n              <ChartsYAxis\n                axisId=\"bpm\"\n                tickLabelStyle={{ fontSize: 10, fill: '#FFF' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

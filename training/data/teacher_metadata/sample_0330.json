@@ -1,0 +1,46 @@
+{
+  "description": "A sleep quality widget showing last night's duration, stages breakdown pie chart, and weekly average",
+  "ui_style": "Airy and modern with lots of white space, thin borders, muted blues and grays. Calm and focused.",
+  "mock_data": {
+    "widget": {
+      "id": "sleep_quality_001",
+      "app": "Sleep Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "lastNight": {
+        "duration": "7h 45m",
+        "sleepQuality": "Good"
+      },
+      "stages": [
+        {
+          "name": "Light Sleep",
+          "value": 55
+        },
+        {
+          "name": "Deep Sleep",
+          "value": 25
+        },
+        {
+          "name": "REM Sleep",
+          "value": 20
+        }
+      ],
+      "weeklyAverage": {
+        "duration": "7h 30m",
+        "quality": "Moderate"
+      }
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#512DA8",
+      "accentColor": "#FF7043",
+      "chartTypes": [
+        "pie"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { PieChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface SleepStage {\n  name: string;\n  value: number;\n}\n\ninterface SleepData {\n  lastNight: {\n    duration: string;\n    sleepQuality: string;\n  };\n  stages: SleepStage[];\n  weeklyAverage: {\n    duration: string;\n    quality: string;\n  };\n}\n\nexport default function Widget() {\n  const sleepData = response.data as SleepData;\n  const { lastNight, stages, weeklyAverage } = sleepData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#303030', color: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600}>\n              Sleep Quality\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#BDBDBD', mb: 1 }}>\n              Last Night: {lastNight.duration} - {lastNight.sleepQuality}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#BDBDBD' }}>\n              Weekly Avg: {weeklyAverage.duration} - {weeklyAverage.quality}\n            </Typography>\n          </Box>\n\n          <PieChart\n            height={180}\n            series={[\n              {\n                data: stages.map(stage => ({ id: stage.name, value: stage.value })),\n                innerRadius: 0.6,\n                outerRadius: 1,\n                labelPosition: 'outside',\n                labels: stages.map(stage => stage.name),\n                colors: ['#FF7043', '#512DA8', '#1976D2'],\n              },\n            ]}\n          />\n\n          <Stack direction=\"row\" spacing={1.5}>\n            {stages.map(stage => (\n              <Box key={stage.name}>\n                <Typography variant=\"caption\" color=\"text.secondary\">\n                  {stage.name}\n                </Typography>\n                <Typography variant=\"body2\" fontWeight={500}>\n                  {stage.value}%\n                </Typography>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

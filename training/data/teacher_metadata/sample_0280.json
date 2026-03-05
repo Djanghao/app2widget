@@ -1,0 +1,53 @@
+{
+  "description": "A volunteer hours widget showing hours logged, impact metrics, and upcoming events",
+  "ui_style": "Scandinavian-inspired with muted earth tones, natural textures, clean geometric shapes.",
+  "mock_data": {
+    "widget": {
+      "id": "volunteer_hours_001",
+      "app": "Volunteer Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "loggedHours": {
+        "total": 45,
+        "thisWeek": 12,
+        "averagePerWeek": 15
+      },
+      "impactMetrics": [
+        {
+          "metric": "Trees Planted",
+          "count": 50
+        },
+        {
+          "metric": "Meals Served",
+          "count": 200
+        },
+        {
+          "metric": "People Assisted",
+          "count": 120
+        }
+      ],
+      "upcomingEvents": [
+        {
+          "date": "2023-10-15",
+          "event": "Community Clean-Up",
+          "location": "City Park"
+        },
+        {
+          "date": "2023-10-20",
+          "event": "Food Drive",
+          "location": "Community Center"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, Grid } from '@mui/material';\nimport response from './response.json';\n\ninterface VolunteerHours {\n  total: number;\n  thisWeek: number;\n  averagePerWeek: number;\n}\n\ninterface ImpactMetric {\n  metric: string;\n  count: number;\n}\n\ninterface UpcomingEvent {\n  date: string;\n  event: string;\n  location: string;\n}\n\ninterface VolunteerData {\n  loggedHours: VolunteerHours;\n  impactMetrics: ImpactMetric[];\n  upcomingEvents: UpcomingEvent[];\n}\n\nexport default function Widget() {\n  const volunteerData = response.data as VolunteerData;\n  const { loggedHours, impactMetrics, upcomingEvents } = volunteerData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#4CAF50' }}>\n              Volunteer Hours\n            </Typography>\n            <Stack direction=\"row\" spacing={2}>\n              <Box>\n                <Typography variant=\"body2\" color=\"text.secondary\">\n                  Total\n                </Typography>\n                <Typography variant=\"h5\" fontWeight={700}>\n                  {loggedHours.total}\n                </Typography>\n              </Box>\n              <Box>\n                <Typography variant=\"body2\" color=\"text.secondary\">\n                  This Week\n                </Typography>\n                <Typography variant=\"h5\" fontWeight={700}>\n                  {loggedHours.thisWeek}\n                </Typography>\n              </Box>\n              <Box>\n                <Typography variant=\"body2\" color=\"text.secondary\">\n                  Avg/Week\n                </Typography>\n                <Typography variant=\"h5\" fontWeight={700}>\n                  {loggedHours.averagePerWeek}\n                </Typography>\n              </Box>\n            </Stack>\n          </Box>\n          \n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#FFC107' }}>\n              Impact Metrics\n            </Typography>\n            <Grid container spacing={1}>\n              {impactMetrics.map((metric, index) => (\n                <Grid item xs={6} key={index}>\n                  <Chip label={`${metric.metric}: ${metric.count}`} sx={{ width: '100%', fontSize: '10px' }} />\n                </Grid>\n              ))}\n            </Grid>\n          </Box>\n          \n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#4CAF50' }}>\n              Upcoming Events\n            </Typography>\n            <Stack spacing={0.5}>\n              {upcomingEvents.map((event, index) => (\n                <Box key={index}>\n                  <Typography variant=\"body2\" color=\"text.secondary\">\n                    {event.date}\n                  </Typography>\n                  <Typography variant=\"body2\" fontWeight={500}>\n                    {event.event} at {event.location}\n                  </Typography>\n                </Box>\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

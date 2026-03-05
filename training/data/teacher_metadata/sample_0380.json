@@ -1,0 +1,69 @@
+{
+  "description": "An energy usage widget showing current consumption, daily cost, and usage trend line chart",
+  "ui_style": "Dark minimal with pure black background, white text, single accent color, ultra-clean lines.",
+  "mock_data": {
+    "widget": {
+      "id": "energy_usage_001",
+      "app": "Energy Monitor",
+      "version": "1.0"
+    },
+    "data": {
+      "currentUsage": {
+        "usage": 12.5,
+        "unit": "kWh",
+        "cost": 1.75,
+        "currency": "USD"
+      },
+      "dailyCost": [
+        {
+          "day": "Mon",
+          "cost": 2.5
+        },
+        {
+          "day": "Tue",
+          "cost": 2.3
+        },
+        {
+          "day": "Wed",
+          "cost": 2.1
+        },
+        {
+          "day": "Thu",
+          "cost": 2.4
+        },
+        {
+          "day": "Fri",
+          "cost": 2.55
+        },
+        {
+          "day": "Sat",
+          "cost": 2.75
+        },
+        {
+          "day": "Sun",
+          "cost": 2.6
+        }
+      ],
+      "usageTrend": [
+        10.5,
+        11.0,
+        12.0,
+        12.5,
+        13.0,
+        12.5,
+        11.5
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface CurrentUsage {\n  usage: number;\n  unit: string;\n  cost: number;\n  currency: string;\n}\n\ninterface DailyCost {\n  day: string;\n  cost: number;\n}\n\ninterface EnergyUsageData {\n  currentUsage: CurrentUsage;\n  dailyCost: DailyCost[];\n  usageTrend: number[];\n}\n\nexport default function Widget() {\n  const energyUsageData = response.data as EnergyUsageData;\n  const { currentUsage, dailyCost, usageTrend } = energyUsageData;\n  const clipPathId = `clip-path-${response.widget.id}`;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#121212', color: '#FFFFFF' }} elevation={3}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Energy Usage\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#FF5722' }}>\n              {currentUsage.usage} {currentUsage.unit}\n            </Typography>\n            <Typography variant=\"caption\" sx={{ color: '#FFC107' }}>\n              Cost: {currentUsage.currency} {currentUsage.cost.toFixed(2)}\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 160 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: usageTrend,\n                  color: '#FFC107',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  data: dailyCost.map((d, i) => d.day),\n                  scaleType: 'band',\n                },\n              ]}\n              yAxis={[{ id: 'usage', position: 'left' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsYAxis\n                axisId=\"usage\"\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n\n          <Stack direction=\"row\" spacing={1}>\n            {dailyCost.slice(0, 5).map((cost) => (\n              <Box key={cost.day}>\n                <Typography variant=\"caption\" color=\"text.secondary\">\n                  {cost.day}\n                </Typography>\n                <Typography variant=\"body2\" fontWeight={500}>\n                  {currentUsage.currency} {cost.cost.toFixed(2)}\n                </Typography>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

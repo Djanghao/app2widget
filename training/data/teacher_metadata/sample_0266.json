@@ -1,0 +1,29 @@
+{
+  "description": "A calendar widget showing today's date, events count, and next event details",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "calendar_today_001",
+      "app": "Calendar Plus",
+      "version": "1.0"
+    },
+    "data": {
+      "todayDate": "2023-10-05",
+      "eventsCount": 4,
+      "nextEvent": {
+        "title": "Team Meeting",
+        "time": "14:00",
+        "location": "Conference Room B"
+      }
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FFC107",
+      "accentColor": "#FF5722",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface CalendarData {\n  todayDate: string;\n  eventsCount: number;\n  nextEvent: {\n    title: string;\n    time: string;\n    location: string;\n  };\n}\n\nexport default function Widget() {\n  const { todayDate, eventsCount, nextEvent } = response.data as CalendarData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 300, maxWidth: 380, bgcolor: '#1E1E1E', color: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#FFC107' }}>\n              Today's Date\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ my: 0.5 }}>\n              {todayDate}\n            </Typography>\n            <Chip label={`${eventsCount} events today`} sx={{ bgcolor: '#FF5722', color: '#FFFFFF', fontSize: '12px' }} />\n          </Box>\n\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#FFC107' }}>\n              Next Event\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#FFFFFF' }}>\n              <strong>Title:</strong> {nextEvent.title}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ mt: 0.5, color: '#FFFFFF' }}>\n              <strong>Time:</strong> {nextEvent.time}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ mt: 0.5, color: '#FFFFFF' }}>\n              <strong>Location:</strong> {nextEvent.location}\n            </Typography>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

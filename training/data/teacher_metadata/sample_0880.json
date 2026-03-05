@@ -1,0 +1,27 @@
+{
+  "description": "A quote of the day widget showing an inspirational quote with author and category",
+  "ui_style": "Dark minimal with pure black background, white text, single accent color, ultra-clean lines.",
+  "mock_data": {
+    "widget": {
+      "id": "quote_of_the_day_001",
+      "app": "InspireMe",
+      "version": "1.0"
+    },
+    "data": {
+      "quote": {
+        "text": "The only way to do great work is to love what you do.",
+        "author": "Steve Jobs",
+        "category": "Motivation"
+      }
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface QuoteData {\n  quote: {\n    text: string;\n    author: string;\n    category: string;\n  };\n}\n\nexport default function Widget() {\n  const { quote } = response.data as QuoteData;\n  const { theme, primaryColor, accentColor } = response.meta;\n\n  return (\n    <Card\n      sx={{\n        width: 'fit-content',\n        minWidth: 280,\n        maxWidth: 380,\n        bgcolor: theme === 'light' ? '#FFFFFF' : '#000000',\n        color: theme === 'light' ? '#000000' : '#FFFFFF',\n        borderColor: primaryColor,\n        borderWidth: 1,\n        borderStyle: 'solid',\n      }}\n      elevation={2}\n    >\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={1.5}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600}>\n              Quote of the Day\n            </Typography>\n            <Typography variant=\"body2\" sx={{ mt: 1, mb: 1.5 }}>\n              \"{quote.text}\"\n            </Typography>\n            <Typography variant=\"body2\" sx={{ fontStyle: 'italic', color: accentColor }}>\n              - {quote.author}\n            </Typography>\n          </Box>\n          <Box>\n            <Chip\n              label={quote.category}\n              sx={{\n                fontSize: '11px',\n                bgcolor: primaryColor,\n                color: '#FFFFFF',\n                px: 1,\n                py: 0.5,\n              }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

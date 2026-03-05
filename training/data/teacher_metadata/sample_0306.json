@@ -1,0 +1,68 @@
+{
+  "description": "A weather widget showing current temperature, condition, and a 7-day temperature trend line chart",
+  "ui_style": "iOS-inspired with SF Pro-style fonts, vibrancy effects, system-like cards, and Apple HIG spacing.",
+  "mock_data": {
+    "widget": {
+      "id": "weather_trend_001",
+      "app": "Weather Forecast",
+      "version": "1.0"
+    },
+    "data": {
+      "location": "New York, NY",
+      "current": {
+        "temp": 75,
+        "condition": "Sunny"
+      },
+      "weeklyForecast": [
+        {
+          "day": "Mon",
+          "temp": 74
+        },
+        {
+          "day": "Tue",
+          "temp": 76
+        },
+        {
+          "day": "Wed",
+          "temp": 78
+        },
+        {
+          "day": "Thu",
+          "temp": 79
+        },
+        {
+          "day": "Fri",
+          "temp": 77
+        },
+        {
+          "day": "Sat",
+          "temp": 75
+        },
+        {
+          "day": "Sun",
+          "temp": 73
+        }
+      ],
+      "tempTrend": [
+        74,
+        76,
+        78,
+        79,
+        77,
+        75,
+        73
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface WeeklyForecast {\n  day: string;\n  temp: number;\n}\n\ninterface WeatherData {\n  location: string;\n  current: {\n    temp: number;\n    condition: string;\n  };\n  weeklyForecast: WeeklyForecast[];\n  tempTrend: number[];\n}\n\nexport default function Widget() {\n  const weatherData = response.data as WeatherData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {weatherData.location}\n            </Typography>\n            <Typography variant=\"h3\" fontWeight={300} sx={{ my: 0.5 }}>\n              {weatherData.current.temp}\u00b0\n            </Typography>\n            <Typography variant=\"body1\" color=\"text.secondary\">\n              {weatherData.current.condition}\n            </Typography>\n          </Box>\n\n          <LineChart\n            height={120}\n            series={[\n              {\n                data: weatherData.tempTrend,\n                color: '#FF5722',\n                curve: 'natural',\n                showMark: false,\n              },\n            ]}\n            xAxis={[{ data: [0, 1, 2, 3, 4, 5, 6], hide: true }]}\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n            sx={{\n              '& .MuiLineElement-root': {\n                strokeWidth: 2,\n              },\n            }}\n          />\n\n          <Stack direction=\"row\" spacing={1}>\n            {weatherData.weeklyForecast.map((day) => (\n              <Box key={day.day}>\n                <Typography variant=\"caption\" color=\"text.secondary\">\n                  {day.day}\n                </Typography>\n                <Typography variant=\"body2\" fontWeight={500}>\n                  {day.temp}\u00b0\n                </Typography>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,40 @@
+{
+  "description": "A habit tracker widget showing today's habits checklist with streak counts",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "habit_tracker_001",
+      "app": "Habit Tracker Pro",
+      "version": "1.0"
+    },
+    "data": {
+      "date": "2023-10-12",
+      "habits": [
+        {
+          "name": "Drink Water",
+          "completed": true,
+          "streak": 5
+        },
+        {
+          "name": "Read 30 Minutes",
+          "completed": false,
+          "streak": 3
+        },
+        {
+          "name": "Exercise",
+          "completed": true,
+          "streak": 10
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "minimal",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { CheckCircle, Cancel } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface Habit {\n  name: string;\n  completed: boolean;\n  streak: number;\n}\n\ninterface HabitData {\n  date: string;\n  habits: Habit[];\n}\n\nexport default function Widget() {\n  const habitData = response.data as HabitData;\n  const { date, habits } = habitData;\n  const theme = response.meta.theme;\n  const primaryColor = response.meta.primaryColor;\n  const accentColor = response.meta.accentColor;\n\n  return (\n    <Card\n      sx={{\n        width: 'fit-content',\n        minWidth: 320,\n        maxWidth: 450,\n        bgcolor: theme === 'dark' ? '#1E1E1E' : '#FFFFFF',\n        color: theme === 'dark' ? '#FFFFFF' : '#000000',\n      }}\n      elevation={2}\n    >\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: accentColor }}>\n              Habit Tracker\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {date}\n            </Typography>\n          </Box>\n\n          <Stack spacing={1.5}>\n            {habits.map((habit) => (\n              <Box key={habit.name} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>\n                <Stack direction=\"row\" alignItems=\"center\" spacing={1}>\n                  {habit.completed ? (\n                    <CheckCircle sx={{ color: primaryColor }} />\n                  ) : (\n                    <Cancel sx={{ color: '#EF4444' }} />\n                  )}\n                  <Typography variant=\"body1\" fontWeight={500}>\n                    {habit.name}\n                  </Typography>\n                </Stack>\n                <Chip\n                  label={`Streak: ${habit.streak}`}\n                  sx={{\n                    bgcolor: primaryColor,\n                    color: '#FFFFFF',\n                    fontSize: '11px',\n                    px: 1,\n                  }}\n                />\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,74 @@
+{
+  "description": "A returns dashboard widget showing return rate, top reasons, and monthly trend",
+  "ui_style": "Warm and friendly with rounded shapes, pastel colors, and playful typography. Approachable design.",
+  "mock_data": {
+    "widget": {
+      "id": "returns_dashboard_001",
+      "app": "Returns Insight",
+      "version": "1.0"
+    },
+    "data": {
+      "returnRate": {
+        "currentMonth": 8.5,
+        "previousMonth": 7.8,
+        "changePercent": 9.0
+      },
+      "topReasons": [
+        {
+          "reason": "Defective",
+          "count": 120
+        },
+        {
+          "reason": "Not as described",
+          "count": 95
+        },
+        {
+          "reason": "Size issue",
+          "count": 60
+        }
+      ],
+      "monthlyReturnTrend": [
+        {
+          "month": "Jan",
+          "rate": 7.2
+        },
+        {
+          "month": "Feb",
+          "rate": 7.4
+        },
+        {
+          "month": "Mar",
+          "rate": 6.9
+        },
+        {
+          "month": "Apr",
+          "rate": 7.5
+        },
+        {
+          "month": "May",
+          "rate": 8.0
+        },
+        {
+          "month": "Jun",
+          "rate": 8.2
+        },
+        {
+          "month": "Jul",
+          "rate": 8.5
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar",
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface ReturnTrend {\n  month: string;\n  rate: number;\n}\n\ninterface ReturnData {\n  returnRate: {\n    currentMonth: number;\n    previousMonth: number;\n    changePercent: number;\n  };\n  topReasons: { reason: string; count: number }[];\n  monthlyReturnTrend: ReturnTrend[];\n}\n\nexport default function Widget() {\n  const data = response.data as ReturnData;\n  const { returnRate, topReasons, monthlyReturnTrend } = data;\n  const clipPathId = useId();\n  const isPositiveChange = returnRate.changePercent >= 0;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#FF5722' }}>\n              Return Rate\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#333' }}>\n              {returnRate.currentMonth}%\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={0.5}>\n              {isPositiveChange ? (\n                <TrendingUp sx={{ fontSize: 16, color: '#10B981' }} />\n              ) : (\n                <TrendingDown sx={{ fontSize: 16, color: '#EF4444' }} />\n              )}\n              <Typography variant=\"body2\" sx={{ color: isPositiveChange ? '#10B981' : '#EF4444' }}>\n                {isPositiveChange ? '+' : ''}\n                {returnRate.changePercent}%\n              </Typography>\n            </Stack>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#666', mb: 1 }}>\n              Top Return Reasons\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {topReasons.map((reason, index) => (\n                <Chip\n                  key={index}\n                  label={`${reason.reason} (${reason.count})`}\n                  sx={{ fontSize: '11px', px: 1, py: 0.5 }}\n                />\n              ))}\n            </Stack>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: monthlyReturnTrend.map((m) => m.rate),\n                  color: '#FFC107',\n                  curve: 'linear',\n                  showMark: false,\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: monthlyReturnTrend.map((m) => m.month),\n                  id: 'months',\n                },\n              ]}\n              yAxis={[{ id: 'rate' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"months\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"rate\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

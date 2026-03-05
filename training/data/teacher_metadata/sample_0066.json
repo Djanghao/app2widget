@@ -1,0 +1,67 @@
+{
+  "description": "A fantasy league widget showing team rank, points, and player performance highlights",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "fantasy_league_001",
+      "app": "Fantasy Sports Hub",
+      "version": "1.0"
+    },
+    "data": {
+      "league": {
+        "name": "Premier League",
+        "teamRank": 3,
+        "totalPoints": 1450
+      },
+      "playerHighlights": [
+        {
+          "playerName": "John Doe",
+          "position": "Forward",
+          "points": 120,
+          "recentPerformance": [
+            15,
+            25,
+            18,
+            20,
+            22
+          ]
+        },
+        {
+          "playerName": "Jane Smith",
+          "position": "Midfielder",
+          "points": 95,
+          "recentPerformance": [
+            10,
+            18,
+            20,
+            22,
+            25
+          ]
+        },
+        {
+          "playerName": "Mark Johnson",
+          "position": "Defender",
+          "points": 80,
+          "recentPerformance": [
+            8,
+            15,
+            18,
+            19,
+            20
+          ]
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#1A202C",
+      "accentColor": "#3182CE",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface PlayerHighlight {\n  playerName: string;\n  position: string;\n  points: number;\n  recentPerformance: number[];\n}\n\ninterface LeagueData {\n  league: {\n    name: string;\n    teamRank: number;\n    totalPoints: number;\n  };\n  playerHighlights: PlayerHighlight[];\n}\n\nexport default function Widget() {\n  const data = response.data as LeagueData;\n  const { league, playerHighlights } = data;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#1A202C' }} elevation={3}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#A0AEC0' }}>\n              {league.name}\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#E2E8F0' }}>\n              Rank: {league.teamRank}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Total Points: {league.totalPoints}\n            </Typography>\n          </Box>\n\n          {playerHighlights.slice(0, 3).map((player) => (\n            <Box key={player.playerName}>\n              <Stack direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\" sx={{ mb: 1 }}>\n                <Box>\n                  <Typography variant=\"body2\" sx={{ color: '#F7FAFC', fontWeight: 600 }}>\n                    {player.playerName}\n                  </Typography>\n                  <Typography variant=\"caption\" sx={{ color: '#A0AEC0' }}>\n                    {player.position}\n                  </Typography>\n                </Box>\n                <Typography variant=\"body2\" sx={{ color: '#E2E8F0', fontWeight: 500 }}>\n                  {player.points} pts\n                </Typography>\n              </Stack>\n              <Box sx={{ width: '100%', height: 60 }}>\n                <ResponsiveChartContainer\n                  series={[\n                    {\n                      type: 'line',\n                      data: player.recentPerformance,\n                      color: '#3182CE',\n                      curve: 'linear',\n                    },\n                  ]}\n                  xAxis={[\n                    {\n                      data: player.recentPerformance.map((_, i) => i),\n                      hide: true,\n                    },\n                  ]}\n                  yAxis={[{ hide: true }]}\n                >\n                  <g clipPath={`url(#${clipPathId})`}>\n                    <LinePlot />\n                  </g>\n                  <ChartsClipPath id={clipPathId} />\n                </ResponsiveChartContainer>\n              </Box>\n            </Box>\n          ))}\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

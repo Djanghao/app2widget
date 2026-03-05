@@ -1,0 +1,50 @@
+{
+  "description": "A nutrition summary widget with calories consumed, macros breakdown, and meal count",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "nutrition_summary_001",
+      "app": "Health Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "caloriesConsumed": 1850,
+      "macros": {
+        "carbohydrates": 250,
+        "proteins": 120,
+        "fats": 60
+      },
+      "mealCount": {
+        "breakfast": 1,
+        "lunch": 1,
+        "dinner": 1,
+        "snacks": 2
+      },
+      "macrosBreakdown": [
+        {
+          "macro": "Carbohydrates",
+          "value": 250
+        },
+        {
+          "macro": "Proteins",
+          "value": 120
+        },
+        {
+          "macro": "Fats",
+          "value": 60
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "pie"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { PieChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface MacrosBreakdown {\n  macro: string;\n  value: number;\n}\n\ninterface NutritionData {\n  caloriesConsumed: number;\n  macros: {\n    carbohydrates: number;\n    proteins: number;\n    fats: number;\n  };\n  mealCount: {\n    breakfast: number;\n    lunch: number;\n    dinner: number;\n    snacks: number;\n  };\n  macrosBreakdown: MacrosBreakdown[];\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n  chartTypes: string[];\n}\n\nexport default function Widget() {\n  const nutritionData = response.data as NutritionData;\n  const metaData = response.meta as MetaData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: metaData.primaryColor }}>\n              Nutrition Summary\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Calories Consumed\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: metaData.primaryColor }}>\n              {nutritionData.caloriesConsumed}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Meals\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {Object.entries(nutritionData.mealCount).map(([meal, count], index) => (\n                <Chip\n                  key={index}\n                  label={`${meal.charAt(0).toUpperCase() + meal.slice(1)}: ${count}`}\n                  sx={{ fontSize: '11px', px: 1, py: 0.5 }}\n                />\n              ))}\n            </Stack>\n          </Box>\n\n          <PieChart\n            height={150}\n            series={[\n              {\n                data: nutritionData.macrosBreakdown.map((macro) => ({ label: macro.macro, value: macro.value })),\n                color: metaData.accentColor,\n              },\n            ]}\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n            sx={{\n              '& .MuiPieElement-root': {\n                strokeWidth: 1.5,\n                stroke: '#FFF',\n              },\n            }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

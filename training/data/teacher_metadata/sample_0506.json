@@ -1,0 +1,56 @@
+{
+  "description": "A community metrics widget showing active members, posts today, and engagement trend",
+  "ui_style": "Neomorphic / soft UI with light gray backgrounds, inset and raised soft shadows, subtle depth.",
+  "mock_data": {
+    "widget": {
+      "id": "community_metrics_001",
+      "app": "Community Hub",
+      "version": "1.0"
+    },
+    "data": {
+      "activeMembers": 2350,
+      "postsToday": 128,
+      "engagementTrend": [
+        {
+          "day": "Mon",
+          "engagement": 75
+        },
+        {
+          "day": "Tue",
+          "engagement": 80
+        },
+        {
+          "day": "Wed",
+          "engagement": 85
+        },
+        {
+          "day": "Thu",
+          "engagement": 78
+        },
+        {
+          "day": "Fri",
+          "engagement": 82
+        },
+        {
+          "day": "Sat",
+          "engagement": 88
+        },
+        {
+          "day": "Sun",
+          "engagement": 90
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#009688",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface EngagementTrend {\n  day: string;\n  engagement: number;\n}\n\ninterface CommunityMetricsData {\n  activeMembers: number;\n  postsToday: number;\n  engagementTrend: EngagementTrend[];\n}\n\nexport default function Widget() {\n  const data = response.data as CommunityMetricsData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Active Members\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#FF5722' }}>\n              {data.activeMembers.toLocaleString()}\n            </Typography>\n          </Box>\n          \n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Posts Today\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#009688' }}>\n              {data.postsToday}\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: data.engagementTrend.map(e => e.engagement),\n                  color: '#FF5722',\n                  label: 'Engagement',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: data.engagementTrend.map(e => e.day),\n                  id: 'days',\n                },\n              ]}\n              yAxis={[{ id: 'engagement' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"days\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"engagement\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

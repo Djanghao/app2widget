@@ -1,0 +1,116 @@
+{
+  "description": "A sankey/flow widget showing user journey from 3 sources through 4 pages to 2 outcomes",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "user_journey_001",
+      "app": "Journey Insights",
+      "version": "1.0"
+    },
+    "data": {
+      "sources": [
+        {
+          "name": "Email Campaign",
+          "users": 320
+        },
+        {
+          "name": "Social Media",
+          "users": 450
+        },
+        {
+          "name": "Organic Search",
+          "users": 230
+        }
+      ],
+      "pages": [
+        {
+          "name": "Landing Page",
+          "users": 600
+        },
+        {
+          "name": "Product Page",
+          "users": 400
+        },
+        {
+          "name": "Signup Page",
+          "users": 350
+        },
+        {
+          "name": "Checkout Page",
+          "users": 200
+        }
+      ],
+      "outcomes": [
+        {
+          "name": "Purchase",
+          "users": 150
+        },
+        {
+          "name": "Abandonment",
+          "users": 450
+        }
+      ],
+      "flow": [
+        {
+          "from": "Email Campaign",
+          "to": "Landing Page",
+          "users": 200
+        },
+        {
+          "from": "Social Media",
+          "to": "Landing Page",
+          "users": 300
+        },
+        {
+          "from": "Organic Search",
+          "to": "Landing Page",
+          "users": 100
+        },
+        {
+          "from": "Landing Page",
+          "to": "Product Page",
+          "users": 400
+        },
+        {
+          "from": "Product Page",
+          "to": "Signup Page",
+          "users": 300
+        },
+        {
+          "from": "Signup Page",
+          "to": "Checkout Page",
+          "users": 200
+        },
+        {
+          "from": "Checkout Page",
+          "to": "Purchase",
+          "users": 150
+        },
+        {
+          "from": "Checkout Page",
+          "to": "Abandonment",
+          "users": 50
+        },
+        {
+          "from": "Product Page",
+          "to": "Abandonment",
+          "users": 100
+        },
+        {
+          "from": "Signup Page",
+          "to": "Abandonment",
+          "users": 150
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { PieChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface SourceData {\n  name: string;\n  users: number;\n}\n\ninterface WidgetData {\n  sources: SourceData[];\n}\n\ninterface MetaData {\n  theme: string;\n  primaryColor: string;\n}\n\nexport default function Widget() {\n  const widgetData = response.data as WidgetData;\n  const metaData = response.meta as MetaData;\n\n  const totalUsers = widgetData.sources.reduce((sum, source) => sum + source.users, 0);\n\n  return (\n    <Card\n      sx={{\n        width: 'fit-content',\n        minWidth: 280,\n        maxWidth: 380,\n        bgcolor: metaData.theme === 'dark' ? '#424242' : '#FFFFFF',\n      }}\n      elevation={2}\n    >\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" color=\"primary\" sx={{ mb: 1 }}>\n            Traffic Sources\n          </Typography>\n          <Stack direction=\"row\" spacing={0.5}>\n            {widgetData.sources.map((source) => (\n              <Chip\n                key={source.name}\n                label={`${source.name}: ${source.users}`}\n                sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: metaData.primaryColor, color: '#FFF' }}\n              />\n            ))}\n          </Stack>\n          <PieChart\n            height={120}\n            series={[\n              {\n                data: widgetData.sources.map((source) => ({\n                  label: source.name,\n                  value: source.users,\n                })),\n                label: { show: true, position: 'outside', formatter: '{b}: {d}%' },\n                color: [metaData.primaryColor, metaData.accentColor, '#FFAB00'],\n              },\n            ]}\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n            sx={{\n              '& .MuiPieSegment-label': {\n                fontSize: 10,\n                fill: '#FFF',\n              },\n            }}\n          />\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Total Users: {totalUsers}\n            </Typography>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

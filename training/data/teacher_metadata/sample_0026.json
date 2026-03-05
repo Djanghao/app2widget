@@ -1,0 +1,61 @@
+{
+  "description": "A project milestone widget with timeline progress and upcoming deadlines",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "project_milestone_001",
+      "app": "Project Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "currentMilestone": {
+        "title": "Phase 2: Development",
+        "progress": 65,
+        "deadline": "2023-12-15"
+      },
+      "upcomingDeadlines": [
+        {
+          "title": "Phase 2 Completion",
+          "date": "2023-12-15"
+        },
+        {
+          "title": "Phase 3: Testing Begins",
+          "date": "2024-01-05"
+        }
+      ],
+      "progressTimeline": [
+        {
+          "date": "2023-10-01",
+          "progress": 15
+        },
+        {
+          "date": "2023-10-15",
+          "progress": 30
+        },
+        {
+          "date": "2023-11-01",
+          "progress": 50
+        },
+        {
+          "date": "2023-11-15",
+          "progress": 60
+        },
+        {
+          "date": "2023-12-01",
+          "progress": 65
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#3B82F6",
+      "accentColor": "#F97316",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Divider } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface MilestoneData {\n  currentMilestone: {\n    title: string;\n    progress: number;\n    deadline: string;\n  };\n  upcomingDeadlines: {\n    title: string;\n    date: string;\n  }[];\n  progressTimeline: {\n    date: string;\n    progress: number;\n  }[];\n}\n\nexport default function Widget() {\n  const data = response.data as MilestoneData;\n  const { currentMilestone, upcomingDeadlines, progressTimeline } = data;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600}>\n              {currentMilestone.title}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Progress: {currentMilestone.progress}%\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Deadline: {new Date(currentMilestone.deadline).toLocaleDateString()}\n            </Typography>\n          </Box>\n\n          <Divider />\n\n          <Box>\n            <Typography variant=\"body2\" fontWeight={600} sx={{ mb: 1 }}>\n              Upcoming Deadlines\n            </Typography>\n            <Stack spacing={0.5}>\n              {upcomingDeadlines.map((deadline) => (\n                <Typography key={deadline.title} variant=\"body2\" color=\"text.secondary\">\n                  {deadline.title}: {new Date(deadline.date).toLocaleDateString()}\n                </Typography>\n              ))}\n            </Stack>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: progressTimeline.map((item) => item.progress),\n                  color: '#3B82F6',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: progressTimeline.map((item) => new Date(item.date).toLocaleDateString()),\n                  id: 'dates',\n                },\n              ]}\n              yAxis={[{ id: 'progress' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"dates\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"progress\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

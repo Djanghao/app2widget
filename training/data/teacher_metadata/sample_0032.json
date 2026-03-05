@@ -1,0 +1,37 @@
+{
+  "description": "A notification center widget with categorized alerts and unread count by type",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "notification_center_001",
+      "app": "Alert Manager",
+      "version": "1.0"
+    },
+    "data": {
+      "unreadCount": 15,
+      "categories": [
+        {
+          "type": "Email",
+          "unread": 5
+        },
+        {
+          "type": "Social",
+          "unread": 3
+        },
+        {
+          "type": "Updates",
+          "unread": 7
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF4500",
+      "accentColor": "#1E90FF",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface Category {\n  type: string;\n  unread: number;\n}\n\ninterface NotificationData {\n  unreadCount: number;\n  categories: Category[];\n}\n\nexport default function Widget() {\n  const { unreadCount, categories } = response.data as NotificationData;\n  const theme = response.meta.theme;\n  const primaryColor = response.meta.primaryColor;\n  const accentColor = response.meta.accentColor;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: theme === 'dark' ? '#2C2C2C' : '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: primaryColor, mb: 1 }}>\n              Notification Center\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              You have {unreadCount} unread notifications\n            </Typography>\n          </Box>\n\n          <Stack direction=\"row\" spacing={0.5}>\n            {categories.map((category, index) => (\n              <Chip\n                key={index}\n                label={`${category.type}: ${category.unread}`}\n                sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: accentColor, color: '#FFFFFF' }}\n              />\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

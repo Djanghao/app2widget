@@ -1,0 +1,40 @@
+{
+  "description": "A cryptocurrency price tracker widget with 24h change and mini price chart",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "crypto_tracker_001",
+      "app": "Crypto Price Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "cryptocurrency": {
+        "name": "Bitcoin",
+        "symbol": "BTC",
+        "currentPrice": 48723.45,
+        "change24h": -2.15,
+        "changePercent24h": -0.44
+      },
+      "priceTrend24h": [
+        49300.12,
+        49120.75,
+        48950.6,
+        48800.3,
+        48723.45,
+        48650.0,
+        48700.89
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#F7931A",
+      "accentColor": "#34D399",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface Cryptocurrency {\n  name: string;\n  symbol: string;\n  currentPrice: number;\n  change24h: number;\n  changePercent24h: number;\n}\n\ninterface CryptoData {\n  cryptocurrency: Cryptocurrency;\n  priceTrend24h: number[];\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n}\n\nexport default function Widget() {\n  const cryptoData = response.data as CryptoData;\n  const metaData = response.meta as MetaData;\n  const { cryptocurrency, priceTrend24h } = cryptoData;\n  const isPositive = cryptocurrency.change24h >= 0;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: metaData.theme === 'dark' ? '#1E293B' : '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8', mb: 0.5 }}>\n              {cryptocurrency.name} ({cryptocurrency.symbol})\n            </Typography>\n            <Typography variant=\"h4\" sx={{ fontWeight: 600, color: '#F8FAFC' }}>\n              ${cryptocurrency.currentPrice.toLocaleString()}\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={0.5} sx={{ mt: 0.5 }}>\n              {isPositive ? <TrendingUp sx={{ fontSize: 16, color: '#10B981' }} /> : <TrendingDown sx={{ fontSize: 16, color: '#EF4444' }} />}\n              <Typography variant=\"body2\" sx={{ color: isPositive ? '#10B981' : '#EF4444' }}>\n                {cryptocurrency.change24h.toFixed(2)} ({cryptocurrency.changePercent24h.toFixed(2)}%)\n              </Typography>\n            </Stack>\n          </Box>\n\n          <LineChart\n            height={80}\n            series={[\n              {\n                data: priceTrend24h,\n                color: metaData.primaryColor,\n                curve: 'natural',\n                showMark: false,\n              },\n            ]}\n            xAxis={[{ data: priceTrend24h.map((_, i) => i), hide: true }]}\n            margin={{ top: 5, bottom: 5, left: 0, right: 0 }}\n            sx={{\n              '& .MuiLineElement-root': {\n                strokeWidth: 1.5,\n              },\n            }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

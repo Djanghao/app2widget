@@ -1,0 +1,59 @@
+{
+  "description": "An email inbox widget showing unread count, priority messages, and daily volume trend",
+  "ui_style": "Material Design 3 inspired with dynamic color, rounded containers, prominent FABs, and elevation.",
+  "mock_data": {
+    "widget": {
+      "id": "email_inbox_001",
+      "app": "Mail Monitor",
+      "version": "1.0"
+    },
+    "data": {
+      "unreadCount": 42,
+      "priorityMessages": [
+        {
+          "from": "john.doe@example.com",
+          "subject": "Meeting Reminder",
+          "time": "10:30 AM"
+        },
+        {
+          "from": "hr@example.com",
+          "subject": "Policy Update",
+          "time": "9:00 AM"
+        }
+      ],
+      "dailyVolumeTrend": [
+        {
+          "day": "Mon",
+          "emails": 55
+        },
+        {
+          "day": "Tue",
+          "emails": 48
+        },
+        {
+          "day": "Wed",
+          "emails": 62
+        },
+        {
+          "day": "Thu",
+          "emails": 38
+        },
+        {
+          "day": "Fri",
+          "emails": 50
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Divider } from '@mui/material';\nimport { BarChart, ResponsiveChartContainer, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface PriorityMessage {\n  from: string;\n  subject: string;\n  time: string;\n}\n\ninterface DailyVolumeTrend {\n  day: string;\n  emails: number;\n}\n\ninterface WidgetData {\n  unreadCount: number;\n  priorityMessages: PriorityMessage[];\n  dailyVolumeTrend: DailyVolumeTrend[];\n}\n\nexport default function Widget() {\n  const widgetData = response.data as WidgetData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#212121', color: '#FFF' }} elevation={3}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600}>\n              Mail Monitor\n            </Typography>\n            <Typography variant=\"body1\" color=\"text.secondary\">\n              Unread Emails: {widgetData.unreadCount}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"subtitle1\" fontWeight={500}>\n              Priority Messages\n            </Typography>\n            <Stack spacing={1}>\n              {widgetData.priorityMessages.slice(0, 2).map((message, index) => (\n                <Box key={index}>\n                  <Typography variant=\"body2\" sx={{ fontWeight: 500 }}>\n                    {message.subject}\n                  </Typography>\n                  <Typography variant=\"caption\" color=\"text.secondary\">\n                    {message.from} - {message.time}\n                  </Typography>\n                  {index < widgetData.priorityMessages.length - 1 && <Divider sx={{ my: 1 }} />}\n                </Box>\n              ))}\n            </Stack>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: widgetData.dailyVolumeTrend.map(d => d.emails),\n                  color: '#FF5722',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: widgetData.dailyVolumeTrend.map(d => d.day),\n                  id: 'days',\n                },\n              ]}\n              yAxis={[{ id: 'emails' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <BarPlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"days\"\n                tickLabelStyle={{ fontSize: 10, fill: '#FFC107' }}\n              />\n              <ChartsYAxis\n                axisId=\"emails\"\n                tickLabelStyle={{ fontSize: 10, fill: '#FFC107' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

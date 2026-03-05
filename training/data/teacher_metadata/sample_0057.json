@@ -1,0 +1,30 @@
+{
+  "description": "A streaming watchlist widget showing next to watch, episodes left, and time to finish",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "streaming_watchlist_001",
+      "app": "StreamList",
+      "version": "1.0"
+    },
+    "data": {
+      "nextToWatch": {
+        "title": "The Crown",
+        "season": 3,
+        "episode": 5,
+        "runtime": "58 min"
+      },
+      "episodesLeft": 18,
+      "estimatedTimeToFinish": "17 hours 24 minutes"
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#6200EA",
+      "accentColor": "#BB86FC",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface NextToWatch {\n  title: string;\n  season: number;\n  episode: number;\n  runtime: string;\n}\n\ninterface WidgetData {\n  nextToWatch: NextToWatch;\n  episodesLeft: number;\n  estimatedTimeToFinish: string;\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n}\n\nexport default function Widget() {\n  const { nextToWatch, episodesLeft, estimatedTimeToFinish } = response.data as WidgetData;\n  const { theme, primaryColor, accentColor } = response.meta as MetaData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 400, bgcolor: theme === 'dark' ? '#303030' : '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: primaryColor }}>\n              Next to Watch\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#B0BEC5' }}>\n              {nextToWatch.title}\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5} sx={{ mt: 0.5 }}>\n              <Chip label={`S${nextToWatch.season}`} sx={{ fontSize: '12px', bgcolor: accentColor, color: '#FFFFFF' }} />\n              <Chip label={`E${nextToWatch.episode}`} sx={{ fontSize: '12px', bgcolor: accentColor, color: '#FFFFFF' }} />\n              <Typography variant=\"body2\" sx={{ color: '#B0BEC5', mt: '2px' }}>\n                {nextToWatch.runtime}\n              </Typography>\n            </Stack>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#B0BEC5' }}>\n              Episodes Left\n            </Typography>\n            <Typography variant=\"h4\" sx={{ color: primaryColor }}>\n              {episodesLeft}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#B0BEC5' }}>\n              Estimated Time to Finish\n            </Typography>\n            <Typography variant=\"h6\" sx={{ color: primaryColor }}>\n              {estimatedTimeToFinish}\n            </Typography>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

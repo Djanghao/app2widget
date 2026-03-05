@@ -1,0 +1,57 @@
+{
+  "description": "A loyalty points widget showing balance, recent transactions, and rewards available",
+  "ui_style": "Dashboard/analytics style with dense data, small fonts, grid layouts, and chart-heavy composition.",
+  "mock_data": {
+    "widget": {
+      "id": "loyalty_points_001",
+      "app": "Loyalty Rewards",
+      "version": "1.0"
+    },
+    "data": {
+      "balance": {
+        "currentPoints": 1200,
+        "tier": "Gold"
+      },
+      "recentTransactions": [
+        {
+          "date": "2023-10-01",
+          "description": "Purchase at Store A",
+          "points": 200
+        },
+        {
+          "date": "2023-09-28",
+          "description": "Online Purchase",
+          "points": 500
+        },
+        {
+          "date": "2023-09-25",
+          "description": "Dining Rewards",
+          "points": 100
+        }
+      ],
+      "rewardsAvailable": [
+        {
+          "name": "10% Discount Coupon",
+          "pointsRequired": 500
+        },
+        {
+          "name": "Free Coffee",
+          "pointsRequired": 200
+        },
+        {
+          "name": "Gift Card",
+          "pointsRequired": 1000
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, Divider } from '@mui/material';\nimport { ArrowUpward, ArrowDownward } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface LoyaltyData {\n  balance: {\n    currentPoints: number;\n    tier: string;\n  };\n  recentTransactions: {\n    date: string;\n    description: string;\n    points: number;\n  }[];\n  rewardsAvailable: {\n    name: string;\n    pointsRequired: number;\n  }[];\n}\n\nexport default function Widget() {\n  const loyaltyData = response.data as LoyaltyData;\n  const { balance, recentTransactions, rewardsAvailable } = loyaltyData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Loyalty Points Balance\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={600} sx={{ color: '#FF5722' }}>\n              {balance.currentPoints}\n            </Typography>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              Tier: {balance.tier}\n            </Typography>\n          </Box>\n\n          <Divider sx={{ my: 1 }} />\n\n          <Typography variant=\"body2\" fontWeight={500} sx={{ mb: 1 }}>\n            Recent Transactions\n          </Typography>\n          <Stack spacing={0.5}>\n            {recentTransactions.slice(0, 3).map((transaction, index) => (\n              <Box key={index} display=\"flex\" justifyContent=\"space-between\">\n                <Box>\n                  <Typography variant=\"body2\">{transaction.description}</Typography>\n                  <Typography variant=\"caption\" color=\"text.secondary\">\n                    {transaction.date}\n                  </Typography>\n                </Box>\n                <Box display=\"flex\" alignItems=\"center\">\n                  {transaction.points > 0 ? (\n                    <ArrowUpward fontSize=\"small\" sx={{ color: '#10B981' }} />\n                  ) : (\n                    <ArrowDownward fontSize=\"small\" sx={{ color: '#EF4444' }} />\n                  )}\n                  <Typography variant=\"body2\" fontWeight={600} sx={{ ml: 0.5 }}>\n                    {transaction.points}\n                  </Typography>\n                </Box>\n              </Box>\n            ))}\n          </Stack>\n\n          <Divider sx={{ my: 1 }} />\n\n          <Typography variant=\"body2\" fontWeight={500} sx={{ mb: 1 }}>\n            Rewards Available\n          </Typography>\n          <Stack direction=\"row\" spacing={0.5}>\n            {rewardsAvailable.slice(0, 3).map((reward, index) => (\n              <Chip\n                key={index}\n                label={`${reward.name} (${reward.pointsRequired} pts)`}\n                sx={{ fontSize: '11px', px: 1, py: 0.5 }}\n              />\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

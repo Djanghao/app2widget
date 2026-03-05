@@ -1,0 +1,56 @@
+{
+  "description": "A revenue dashboard widget showing total revenue, growth percentage, and monthly trend",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "revenue_dashboard_001",
+      "app": "Revenue Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "totalRevenue": 1250000.75,
+      "growthPercentage": 12.5,
+      "monthlyTrend": [
+        {
+          "month": "January",
+          "revenue": 95000
+        },
+        {
+          "month": "February",
+          "revenue": 102000
+        },
+        {
+          "month": "March",
+          "revenue": 115000
+        },
+        {
+          "month": "April",
+          "revenue": 120000
+        },
+        {
+          "month": "May",
+          "revenue": 125000
+        },
+        {
+          "month": "June",
+          "revenue": 130000
+        },
+        {
+          "month": "July",
+          "revenue": 135000
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface MonthlyTrend {\n  month: string;\n  revenue: number;\n}\n\ninterface RevenueData {\n  totalRevenue: number;\n  growthPercentage: number;\n  monthlyTrend: MonthlyTrend[];\n}\n\nexport default function Widget() {\n  const revenueData = response.data as RevenueData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Total Revenue\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#4CAF50' }}>\n              ${revenueData.totalRevenue.toLocaleString()}\n            </Typography>\n            <Typography variant=\"caption\" sx={{ color: '#4CAF50' }}>\n              +{revenueData.growthPercentage}% vs last month\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: revenueData.monthlyTrend.map(m => m.revenue),\n                  color: '#FFC107',\n                  label: 'Revenue',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: revenueData.monthlyTrend.map(m => m.month),\n                  id: 'months',\n                },\n              ]}\n              yAxis={[{ id: 'revenue' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <BarPlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"months\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"revenue\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

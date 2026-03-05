@@ -1,0 +1,54 @@
+{
+  "description": "A medication reminder widget showing today's schedule, adherence rate, and refill dates",
+  "ui_style": "Dark glassmorphism with frosted glass panels, blur effects, translucent overlays, and vibrant gradients.",
+  "mock_data": {
+    "widget": {
+      "id": "medication_reminder_001",
+      "app": "MediTrack",
+      "version": "1.0"
+    },
+    "data": {
+      "todaySchedule": [
+        {
+          "time": "8:00 AM",
+          "medication": "Lisinopril",
+          "dose": "10mg"
+        },
+        {
+          "time": "12:00 PM",
+          "medication": "Metformin",
+          "dose": "500mg"
+        },
+        {
+          "time": "8:00 PM",
+          "medication": "Atorvastatin",
+          "dose": "20mg"
+        }
+      ],
+      "adherenceRate": 92,
+      "refillDates": [
+        {
+          "medication": "Lisinopril",
+          "nextRefill": "2023-11-05"
+        },
+        {
+          "medication": "Metformin",
+          "nextRefill": "2023-11-10"
+        },
+        {
+          "medication": "Atorvastatin",
+          "nextRefill": "2023-11-12"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FF9800",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { Info } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface TodaySchedule {\n  time: string;\n  medication: string;\n  dose: string;\n}\n\ninterface RefillDate {\n  medication: string;\n  nextRefill: string;\n}\n\ninterface MedicationData {\n  todaySchedule: TodaySchedule[];\n  adherenceRate: number;\n  refillDates: RefillDate[];\n}\n\nexport default function Widget() {\n  const { todaySchedule, adherenceRate, refillDates } = response.data as MedicationData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(10px)', borderRadius: 2 }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: response.meta.primaryColor }}>\n              Medication Reminder\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Today's Schedule\n            </Typography>\n            {todaySchedule.map((schedule, index) => (\n              <Box key={index} sx={{ display: 'flex', justifyContent: 'space-between', mt: 0.5 }}>\n                <Typography variant=\"body2\" fontWeight={500}>\n                  {schedule.time}\n                </Typography>\n                <Typography variant=\"body2\" color=\"text.secondary\">\n                  {schedule.medication} - {schedule.dose}\n                </Typography>\n              </Box>\n            ))}\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Adherence Rate\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: response.meta.accentColor }}>\n              {adherenceRate}%\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Upcoming Refills\n            </Typography>\n            <Stack direction=\"row\" spacing={1} mt={0.5}>\n              {refillDates.map((refill, index) => (\n                <Chip\n                  key={index}\n                  label={`${refill.medication}: ${refill.nextRefill}`}\n                  sx={{ fontSize: '10px', bgcolor: response.meta.primaryColor, color: '#fff' }}\n                />\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

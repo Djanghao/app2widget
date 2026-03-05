@@ -1,0 +1,39 @@
+{
+  "description": "A time zone widget showing clocks for 3 cities with local time and date difference",
+  "ui_style": "Brutalist with raw black and white, oversized bold type, sharp edges, no rounded corners.",
+  "mock_data": {
+    "widget": {
+      "id": "timezone_clocks_001",
+      "app": "World Clock",
+      "version": "1.0"
+    },
+    "data": {
+      "cities": [
+        {
+          "name": "New York",
+          "localTime": "3:45 PM",
+          "dateDifference": "Today"
+        },
+        {
+          "name": "London",
+          "localTime": "8:45 PM",
+          "dateDifference": "Today"
+        },
+        {
+          "name": "Tokyo",
+          "localTime": "4:45 AM",
+          "dateDifference": "+1 Day"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#0D47A1",
+      "accentColor": "#FFAB00",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport response from './response.json';\n\ninterface City {\n  name: string;\n  localTime: string;\n  dateDifference: string;\n}\n\ninterface WorldClockData {\n  cities: City[];\n}\n\nexport default function Widget() {\n  const worldClockData = response.data as WorldClockData;\n  const theme = response.meta.theme;\n  const isDarkTheme = theme === 'dark';\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 300, maxWidth: 400, bgcolor: isDarkTheme ? '#333' : '#fff' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" sx={{ color: isDarkTheme ? '#fff' : '#000', fontWeight: 700 }}>\n            World Clock\n          </Typography>\n          {worldClockData.cities.map((city, index) => (\n            <Box key={index} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>\n              <Typography variant=\"body1\" sx={{ color: isDarkTheme ? '#fff' : '#000' }}>\n                {city.name}\n              </Typography>\n              <Box textAlign=\"right\">\n                <Typography variant=\"body1\" sx={{ color: isDarkTheme ? '#fff' : '#000' }}>\n                  {city.localTime}\n                </Typography>\n                <Typography variant=\"caption\" sx={{ color: isDarkTheme ? '#aaa' : '#666' }}>\n                  {city.dateDifference}\n                </Typography>\n              </Box>\n            </Box>\n          ))}\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

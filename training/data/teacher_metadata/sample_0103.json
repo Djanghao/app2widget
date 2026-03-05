@@ -1,0 +1,78 @@
+{
+  "description": "An expense tracker widget with category breakdown and weekly spending bar chart",
+  "ui_style": "Warm and friendly with rounded shapes, pastel colors, and playful typography. Approachable design.",
+  "mock_data": {
+    "widget": {
+      "id": "expense_tracker_001",
+      "app": "Expense Manager",
+      "version": "1.0"
+    },
+    "data": {
+      "totalSpent": 235.5,
+      "weeklySpending": [
+        {
+          "day": "Mon",
+          "amount": 34.0
+        },
+        {
+          "day": "Tue",
+          "amount": 45.75
+        },
+        {
+          "day": "Wed",
+          "amount": 50.0
+        },
+        {
+          "day": "Thu",
+          "amount": 40.25
+        },
+        {
+          "day": "Fri",
+          "amount": 30.5
+        },
+        {
+          "day": "Sat",
+          "amount": 20.0
+        },
+        {
+          "day": "Sun",
+          "amount": 15.0
+        }
+      ],
+      "categoryBreakdown": [
+        {
+          "category": "Groceries",
+          "value": 85.0
+        },
+        {
+          "category": "Transport",
+          "value": 40.0
+        },
+        {
+          "category": "Dining",
+          "value": 60.0
+        },
+        {
+          "category": "Entertainment",
+          "value": 30.5
+        },
+        {
+          "category": "Others",
+          "value": 20.0
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar",
+        "pie"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Grid } from '@mui/material';\nimport { BarChart, PieChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface WeeklySpending {\n  day: string;\n  amount: number;\n}\n\ninterface CategoryBreakdown {\n  category: string;\n  value: number;\n}\n\ninterface ExpenseData {\n  totalSpent: number;\n  weeklySpending: WeeklySpending[];\n  categoryBreakdown: CategoryBreakdown[];\n}\n\nexport default function Widget() {\n  const expenseData = response.data as ExpenseData;\n  const { totalSpent, weeklySpending, categoryBreakdown } = expenseData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#303030', color: '#E0E0E0' }} elevation={3}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={3}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Total Spent This Week\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#FFC107' }}>\n              ${totalSpent.toFixed(2)}\n            </Typography>\n          </Box>\n\n          <BarChart\n            height={140}\n            series={[\n              {\n                data: weeklySpending.map(d => d.amount),\n                color: '#4CAF50',\n              },\n            ]}\n            xAxis={[\n              {\n                data: weeklySpending.map(d => d.day),\n                scaleType: 'band',\n                tickLabelStyle: {\n                  fontSize: 11,\n                  fill: '#B0BEC5',\n                },\n              }\n            ]}\n            margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n            sx={{\n              '& .MuiBarElement-root': {\n                rx: 4,\n              },\n            }}\n          />\n\n          <Box sx={{ width: '100%', height: 220 }}>\n            <PieChart\n              height={220}\n              series={[\n                {\n                  data: categoryBreakdown.map(c => ({ value: c.value, label: c.category })),\n                  color: ['#4CAF50', '#FFC107', '#FF5722', '#03A9F4', '#9E9E9E'],\n                },\n              ]}\n              labelStyle={{ fontSize: 10, fill: '#E0E0E0' }}\n              margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n            />\n          </Box>\n\n          <Grid container spacing={1}>\n            {categoryBreakdown.map((category, index) => (\n              <Grid item xs={6} key={index}>\n                <Typography variant=\"body2\" sx={{ fontSize: '10px', color: '#B0BEC5' }}>\n                  {category.category}: ${category.value.toFixed(2)}\n                </Typography>\n              </Grid>\n            ))}\n          </Grid>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

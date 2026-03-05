@@ -1,0 +1,42 @@
+{
+  "description": "A plant care widget showing watering schedule, soil moisture level, and next care date",
+  "ui_style": "Brutalist with raw black and white, oversized bold type, sharp edges, no rounded corners.",
+  "mock_data": {
+    "widget": {
+      "id": "plant_care_001",
+      "app": "Plant Care Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "plant": {
+        "name": "Fiddle Leaf Fig",
+        "nextWatering": "2023-10-08",
+        "soilMoisture": "Moderate",
+        "lastWatered": "2023-10-04"
+      },
+      "wateringSchedule": [
+        {
+          "day": "2023-10-01",
+          "action": "Watered"
+        },
+        {
+          "day": "2023-10-04",
+          "action": "Watered"
+        },
+        {
+          "day": "2023-10-08",
+          "action": "Scheduled"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FFEB3B",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface WateringSchedule {\n  day: string;\n  action: string;\n}\n\ninterface PlantData {\n  plant: {\n    name: string;\n    nextWatering: string;\n    soilMoisture: string;\n    lastWatered: string;\n  };\n  wateringSchedule: WateringSchedule[];\n}\n\nexport default function Widget() {\n  const plantData = response.data as PlantData;\n  const { plant, wateringSchedule } = plantData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 400, bgcolor: '#FFF', mb: 2 }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={700} sx={{ mb: 0.5 }}>\n              {plant.name}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Soil Moisture: {plant.soilMoisture}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Last Watered: {plant.lastWatered}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Next Watering: {plant.nextWatering}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" fontWeight={700} sx={{ mb: 1 }}>\n              Watering Schedule\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {wateringSchedule.map((schedule, index) => (\n                <Chip\n                  key={index}\n                  label={`${schedule.day}: ${schedule.action}`}\n                  sx={{ fontSize: '11px', px: 1, py: 0.5 }}\n                />\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,32 @@
+{
+  "description": "A menstrual cycle tracker widget showing cycle day, phase, and predicted next dates",
+  "ui_style": "Windows Fluent with acrylic backgrounds, reveal highlights, and clean segmented layouts.",
+  "mock_data": {
+    "widget": {
+      "id": "menstrual_cycle_001",
+      "app": "Cycle Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "currentCycle": {
+        "cycleDay": 15,
+        "phase": "Luteal",
+        "daysUntilNextPeriod": 12
+      },
+      "predictedDates": {
+        "nextPeriodStart": "2023-11-16",
+        "nextOvulation": "2023-11-06"
+      },
+      "cycleLength": 28
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF69B4",
+      "accentColor": "#8B0000",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface CurrentCycle {\n  cycleDay: number;\n  phase: string;\n  daysUntilNextPeriod: number;\n}\n\ninterface PredictedDates {\n  nextPeriodStart: string;\n  nextOvulation: string;\n}\n\ninterface CycleData {\n  currentCycle: CurrentCycle;\n  predictedDates: PredictedDates;\n  cycleLength: number;\n}\n\nexport default function Widget() {\n  const cycleData = response.data as CycleData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 420, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#FF69B4' }}>\n              Cycle Tracker\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 0.5 }}>\n              Current Day: {cycleData.currentCycle.cycleDay}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Phase: {cycleData.currentCycle.phase}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Days Until Next Period: {cycleData.currentCycle.daysUntilNextPeriod}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Predicted Dates\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              <Chip\n                label={`Next Period: ${cycleData.predictedDates.nextPeriodStart}`}\n                sx={{ fontSize: '11px', px: 1 }}\n              />\n              <Chip\n                label={`Next Ovulation: ${cycleData.predictedDates.nextOvulation}`}\n                sx={{ fontSize: '11px', px: 1 }}\n              />\n            </Stack>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Cycle Length\n            </Typography>\n            <Typography variant=\"h6\" fontWeight={500} sx={{ color: '#8B0000' }}>\n              {cycleData.cycleLength} days\n            </Typography>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

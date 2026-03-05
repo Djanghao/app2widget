@@ -1,0 +1,28 @@
+{
+  "description": "A sunrise/sunset widget with golden hour indicator and day length",
+  "ui_style": "Dark glassmorphism with frosted glass panels, blur effects, translucent overlays, and vibrant gradients.",
+  "mock_data": {
+    "widget": {
+      "id": "sunrise_sunset_001",
+      "app": "Sun Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "location": "New York, NY",
+      "sunrise": "6:30 AM",
+      "sunset": "7:45 PM",
+      "goldenHourMorning": "5:50 AM - 6:30 AM",
+      "goldenHourEvening": "7:15 PM - 7:55 PM",
+      "dayLength": "13h 15m"
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FFA000",
+      "accentColor": "#FF5722",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Divider } from '@mui/material';\nimport response from './response.json';\n\ninterface SunData {\n  location: string;\n  sunrise: string;\n  sunset: string;\n  goldenHourMorning: string;\n  goldenHourEvening: string;\n  dayLength: string;\n}\n\nexport default function Widget() {\n  const sunData = response.data as SunData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 400, bgcolor: 'rgba(255, 255, 255, 0.75)', backdropFilter: 'blur(10px)' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"subtitle1\" color=\"primary\">\n              {sunData.location}\n            </Typography>\n            <Divider sx={{ my: 1 }} />\n            <Stack spacing={1}>\n              <Box>\n                <Typography variant=\"body2\" color=\"text.secondary\">\n                  Sunrise\n                </Typography>\n                <Typography variant=\"body1\" fontWeight={500}>\n                  {sunData.sunrise}\n                </Typography>\n              </Box>\n              <Box>\n                <Typography variant=\"body2\" color=\"text.secondary\">\n                  Sunset\n                </Typography>\n                <Typography variant=\"body1\" fontWeight={500}>\n                  {sunData.sunset}\n                </Typography>\n              </Box>\n              <Box>\n                <Typography variant=\"body2\" color=\"text.secondary\">\n                  Golden Hour (Morning)\n                </Typography>\n                <Typography variant=\"body1\" fontWeight={500}>\n                  {sunData.goldenHourMorning}\n                </Typography>\n              </Box>\n              <Box>\n                <Typography variant=\"body2\" color=\"text.secondary\">\n                  Golden Hour (Evening)\n                </Typography>\n                <Typography variant=\"body1\" fontWeight={500}>\n                  {sunData.goldenHourEvening}\n                </Typography>\n              </Box>\n              <Box>\n                <Typography variant=\"body2\" color=\"text.secondary\">\n                  Day Length\n                </Typography>\n                <Typography variant=\"body1\" fontWeight={500}>\n                  {sunData.dayLength}\n                </Typography>\n              </Box>\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

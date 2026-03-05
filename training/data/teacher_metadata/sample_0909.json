@@ -1,0 +1,56 @@
+{
+  "description": "A correlation matrix widget showing relationships between 4 variables with color-coded heatmap",
+  "ui_style": "Dashboard/analytics style with dense data, small fonts, grid layouts, and chart-heavy composition.",
+  "mock_data": {
+    "widget": {
+      "id": "correlation_matrix_001",
+      "app": "Data Insights",
+      "version": "1.0"
+    },
+    "data": {
+      "variables": [
+        "Variable A",
+        "Variable B",
+        "Variable C",
+        "Variable D"
+      ],
+      "correlations": [
+        [
+          1,
+          0.75,
+          -0.4,
+          0.6
+        ],
+        [
+          0.75,
+          1,
+          -0.2,
+          0.8
+        ],
+        [
+          -0.4,
+          -0.2,
+          1,
+          -0.5
+        ],
+        [
+          0.6,
+          0.8,
+          -0.5,
+          1
+        ]
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#4A5568",
+      "accentColor": "#9F7AEA",
+      "chartTypes": [
+        "heatmap"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Grid } from '@mui/material';\nimport { ResponsiveChartContainer, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface WidgetData {\n  variables: string[];\n  correlations: number[][];\n}\n\nexport default function Widget() {\n  const data = response.data as WidgetData;\n  const variables = data.variables;\n  const correlations = data.correlations;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#1A202C' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Typography variant=\"h6\" sx={{ mb: 1, color: '#9F7AEA' }}>\n          Correlation Matrix\n        </Typography>\n        <Box sx={{ width: '100%', height: 250 }}>\n          <ResponsiveChartContainer\n            series={[\n              {\n                type: 'bar',\n                data: correlations.flatMap((row) => row),\n                color: '#4A5568',\n              },\n            ]}\n            xAxis={[\n              {\n                scaleType: 'band',\n                data: variables.flatMap((v) => variables.map(() => v)),\n                id: 'variables',\n              },\n            ]}\n            yAxis={[{ id: 'correlation' }]}\n          >\n            <g clipPath={`url(#${clipPathId})`}>\n              <BarPlot />\n            </g>\n            <ChartsXAxis\n              axisId=\"variables\"\n              tickLabelStyle={{ fontSize: 10, fill: '#A0AEC0' }}\n            />\n            <ChartsYAxis\n              axisId=\"correlation\"\n              tickLabelStyle={{ fontSize: 10, fill: '#A0AEC0' }}\n            />\n            <ChartsClipPath id={clipPathId} />\n          </ResponsiveChartContainer>\n        </Box>\n\n        <Grid container spacing={1} sx={{ mt: 1 }}>\n          {variables.map((variable, index) => (\n            <Grid item xs={6} key={index}>\n              <Typography variant=\"body2\" sx={{ color: '#E2E8F0', textAlign: 'center' }}>\n                {variable}\n              </Typography>\n            </Grid>\n          ))}\n        </Grid>\n      </CardContent>\n    </Card>\n  );\n}"
+}

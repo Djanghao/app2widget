@@ -1,0 +1,48 @@
+{
+  "description": "A code review widget showing pending reviews, average review time, and weekly stats",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "code_review_001",
+      "app": "Code Review Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "pendingReviews": 5,
+      "averageReviewTime": "3h 45m",
+      "weeklyStats": [
+        {
+          "day": "Mon",
+          "reviews": 4
+        },
+        {
+          "day": "Tue",
+          "reviews": 6
+        },
+        {
+          "day": "Wed",
+          "reviews": 5
+        },
+        {
+          "day": "Thu",
+          "reviews": 7
+        },
+        {
+          "day": "Fri",
+          "reviews": 3
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#2C3E50",
+      "accentColor": "#E74C3C",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface WeeklyStat {\n  day: string;\n  reviews: number;\n}\n\ninterface WidgetData {\n  pendingReviews: number;\n  averageReviewTime: string;\n  weeklyStats: WeeklyStat[];\n}\n\nexport default function Widget() {\n  const widgetData = response.data as WidgetData;\n  const { pendingReviews, averageReviewTime, weeklyStats } = widgetData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#2C3E50' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Pending Reviews\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#E74C3C' }}>\n              {pendingReviews}\n            </Typography>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              Avg Review Time: {averageReviewTime}\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <BarChart\n              series={[\n                {\n                  data: weeklyStats.map(stat => stat.reviews),\n                  color: '#E74C3C',\n                },\n              ]}\n              xAxis={[\n                {\n                  data: weeklyStats.map(stat => stat.day),\n                  scaleType: 'band',\n                  tickLabelStyle: {\n                    fontSize: 11,\n                    fill: '#ECF0F1',\n                  },\n                }\n              ]}\n              margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n              sx={{\n                '& .MuiBarElement-root': {\n                  rx: 4,\n                },\n              }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

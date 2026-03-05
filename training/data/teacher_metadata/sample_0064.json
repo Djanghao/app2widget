@@ -1,0 +1,38 @@
+{
+  "description": "An A/B test results widget showing variant performance, confidence level, and lift percentage",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "ab_test_results_001",
+      "app": "A/B Insights",
+      "version": "1.0"
+    },
+    "data": {
+      "testName": "Landing Page Redesign",
+      "variants": [
+        {
+          "name": "Variant A",
+          "conversionRate": 5.4,
+          "confidenceLevel": 95,
+          "lift": 3.2
+        },
+        {
+          "name": "Variant B",
+          "conversionRate": 5.1,
+          "confidenceLevel": 92,
+          "lift": 2.8
+        }
+      ],
+      "overallLift": 3.0
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#0284C7",
+      "accentColor": "#FACC15",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface Variant {\n  name: string;\n  conversionRate: number;\n  confidenceLevel: number;\n  lift: number;\n}\n\ninterface ABTestResults {\n  testName: string;\n  variants: Variant[];\n  overallLift: number;\n}\n\nexport default function Widget() {\n  const abTestResults = response.data as ABTestResults;\n  const { testName, variants, overallLift } = abTestResults;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#0284C7' }}>\n              {testName}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Overall Lift: {overallLift}%\n            </Typography>\n          </Box>\n\n          <Stack spacing={1}>\n            {variants.map((variant) => {\n              const isPositive = variant.lift >= 0;\n              return (\n                <Box key={variant.name}>\n                  <Stack direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\">\n                    <Typography variant=\"body2\" sx={{ fontWeight: 500, color: '#1F2937' }}>\n                      {variant.name}\n                    </Typography>\n                    <Chip\n                      label={`${variant.lift}%`}\n                      color={isPositive ? 'primary' : 'secondary'}\n                      icon={isPositive ? <TrendingUp /> : <TrendingDown />}\n                      sx={{ fontSize: 12, height: 24 }}\n                    />\n                  </Stack>\n                  <Typography variant=\"caption\" color=\"text.secondary\">\n                    Conversion Rate: {variant.conversionRate}%, Confidence Level: {variant.confidenceLevel}%\n                  </Typography>\n                </Box>\n              );\n            })}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

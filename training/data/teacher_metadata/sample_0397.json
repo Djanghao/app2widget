@@ -1,0 +1,51 @@
+{
+  "description": "A customer satisfaction widget showing NPS score, trend, and recent feedback sentiment",
+  "ui_style": "Cyberpunk dark theme with neon green and magenta accents on near-black backgrounds, monospace fonts.",
+  "mock_data": {
+    "widget": {
+      "id": "customer_satisfaction_001",
+      "app": "Customer Feedback",
+      "version": "1.0"
+    },
+    "data": {
+      "npsScore": 45,
+      "trend": [
+        42,
+        43,
+        44,
+        45,
+        46,
+        45,
+        45
+      ],
+      "recentFeedback": [
+        {
+          "id": "feedback_001",
+          "sentiment": "positive",
+          "comment": "Great service and support!"
+        },
+        {
+          "id": "feedback_002",
+          "sentiment": "neutral",
+          "comment": "Service was okay, could improve."
+        },
+        {
+          "id": "feedback_003",
+          "sentiment": "negative",
+          "comment": "Had to wait too long for a response."
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FFD700",
+      "accentColor": "#FF4500",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface Feedback {\n  id: string;\n  sentiment: string;\n  comment: string;\n}\n\ninterface WidgetData {\n  npsScore: number;\n  trend: number[];\n  recentFeedback: Feedback[];\n}\n\nexport default function Widget() {\n  const widgetData = response.data as WidgetData;\n  const { npsScore, trend, recentFeedback } = widgetData;\n  const positiveFeedback = recentFeedback.filter(feedback => feedback.sentiment === 'positive').length;\n  const neutralFeedback = recentFeedback.filter(feedback => feedback.sentiment === 'neutral').length;\n  const negativeFeedback = recentFeedback.filter(feedback => feedback.sentiment === 'negative').length;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#1A1A1B' }} elevation={3}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#39FF14' }}>\n              NPS Score\n            </Typography>\n            <Typography variant=\"h3\" sx={{ color: '#E0115F', fontWeight: 600 }}>\n              {npsScore}\n            </Typography>\n          </Box>\n\n          <LineChart\n            height={100}\n            series={[\n              {\n                data: trend,\n                color: '#39FF14',\n                curve: 'natural',\n                showMark: false,\n              },\n            ]}\n            xAxis={[{ data: trend.map((_, i) => i), hide: true }]}\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n            sx={{\n              '& .MuiLineElement-root': {\n                strokeWidth: 2,\n              },\n            }}\n          />\n\n          <Stack direction=\"row\" spacing={0.5}>\n            <Chip label={`Positive: ${positiveFeedback}`} sx={{ fontSize: '11px', bgcolor: '#39FF14', color: '#1A1A1B' }} />\n            <Chip label={`Neutral: ${neutralFeedback}`} sx={{ fontSize: '11px', bgcolor: '#FFD700', color: '#1A1A1B' }} />\n            <Chip label={`Negative: ${negativeFeedback}`} sx={{ fontSize: '11px', bgcolor: '#FF4500', color: '#1A1A1B' }} />\n          </Stack>\n\n          <Typography variant=\"body2\" sx={{ color: '#C0C0C0' }}>\n            Recent Feedback:\n          </Typography>\n          {recentFeedback.slice(0, 3).map(feedback => (\n            <Typography key={feedback.id} variant=\"caption\" sx={{ color: '#C0C0C0' }}>\n              - {feedback.comment}\n            </Typography>\n          ))}\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

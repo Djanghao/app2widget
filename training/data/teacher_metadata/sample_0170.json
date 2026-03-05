@@ -1,0 +1,29 @@
+{
+  "description": "A calendar widget showing today's date, events count, and next event details",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "calendar_today_001",
+      "app": "Smart Calendar",
+      "version": "1.0"
+    },
+    "data": {
+      "date": "2023-10-05",
+      "eventsCount": 3,
+      "nextEvent": {
+        "time": "14:00",
+        "title": "Project Meeting",
+        "location": "Conference Room A"
+      }
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#3F51B5",
+      "accentColor": "#FF4081",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { Info } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface EventData {\n  date: string;\n  eventsCount: number;\n  nextEvent: {\n    time: string;\n    title: string;\n    location: string;\n  };\n}\n\nexport default function Widget() {\n  const eventData = response.data as EventData;\n  const { date, eventsCount, nextEvent } = eventData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 280, maxWidth: 380, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#3F51B5' }}>\n              Smart Calendar\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {date}\n            </Typography>\n          </Box>\n\n          <Stack direction=\"row\" spacing={1} alignItems=\"center\">\n            <Info sx={{ color: '#FF4081' }} />\n            <Typography variant=\"body2\" sx={{ color: '#1976D2' }}>\n              {eventsCount} event{eventsCount > 1 ? 's' : ''} today\n            </Typography>\n          </Stack>\n\n          <Box>\n            <Typography variant=\"body1\" fontWeight={500} sx={{ mb: 0.5 }}>\n              Next Event\n            </Typography>\n            <Stack direction=\"row\" spacing={1}>\n              <Chip label={nextEvent.time} sx={{ fontSize: '12px', bgcolor: '#E3F2FD', color: '#1976D2' }} />\n              <Typography variant=\"body2\" sx={{ fontWeight: 500 }}>\n                {nextEvent.title}\n              </Typography>\n            </Stack>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              {nextEvent.location}\n            </Typography>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

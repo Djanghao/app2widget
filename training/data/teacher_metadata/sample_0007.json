@@ -1,0 +1,57 @@
+{
+  "description": "A humidity and dew point widget with comfort level indicator and daily range",
+  "ui_style": "Android Material You with pill-shaped elements, tonal colors, large touch targets, and rounded corners.",
+  "mock_data": {
+    "widget": {
+      "id": "humidity_dewpoint_001",
+      "app": "Weather Comfort",
+      "version": "1.0"
+    },
+    "data": {
+      "location": "Austin, TX",
+      "current": {
+        "humidity": 78,
+        "dewPoint": 64,
+        "comfortLevel": "Comfortable"
+      },
+      "dailyRange": [
+        {
+          "day": "Mon",
+          "humidity": 81,
+          "dewPoint": 65
+        },
+        {
+          "day": "Tue",
+          "humidity": 76,
+          "dewPoint": 63
+        },
+        {
+          "day": "Wed",
+          "humidity": 79,
+          "dewPoint": 67
+        },
+        {
+          "day": "Thu",
+          "humidity": 74,
+          "dewPoint": 62
+        },
+        {
+          "day": "Fri",
+          "humidity": 77,
+          "dewPoint": 64
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#3F51B5",
+      "accentColor": "#FF5722",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface DailyRange {\n  day: string;\n  humidity: number;\n  dewPoint: number;\n}\n\ninterface WeatherData {\n  location: string;\n  current: {\n    humidity: number;\n    dewPoint: number;\n    comfortLevel: string;\n  };\n  dailyRange: DailyRange[];\n}\n\nexport default function Widget() {\n  const weatherData = response.data as WeatherData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#121212' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {weatherData.location}\n            </Typography>\n            <Typography variant=\"h6\" fontWeight={500} sx={{ color: '#3F51B5' }}>\n              Current Comfort Level: {weatherData.current.comfortLevel}\n            </Typography>\n            <Stack direction=\"row\" spacing={1}>\n              <Box>\n                <Typography variant=\"caption\" color=\"text.secondary\">\n                  Humidity\n                </Typography>\n                <Typography variant=\"body2\" fontWeight={500} color=\"primary\">\n                  {weatherData.current.humidity}%\n                </Typography>\n              </Box>\n              <Box>\n                <Typography variant=\"caption\" color=\"text.secondary\">\n                  Dew Point\n                </Typography>\n                <Typography variant=\"body2\" fontWeight={500} color=\"primary\">\n                  {weatherData.current.dewPoint}\u00b0F\n                </Typography>\n              </Box>\n            </Stack>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: weatherData.dailyRange.map((d) => d.humidity),\n                  color: '#FF5722',\n                  label: 'Humidity',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: weatherData.dailyRange.map((d) => d.day),\n                  id: 'days',\n                },\n              ]}\n              yAxis={[{ id: 'humidity' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <BarPlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"days\"\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsYAxis\n                axisId=\"humidity\"\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

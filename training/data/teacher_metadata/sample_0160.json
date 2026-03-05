@@ -1,0 +1,57 @@
+{
+  "description": "A fantasy league widget showing team rank, points, and player performance highlights",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "fantasy_league_widget_001",
+      "app": "Fantasy League Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "league": {
+        "name": "Champions League",
+        "rank": 2,
+        "totalPoints": 1450
+      },
+      "topPlayers": [
+        {
+          "name": "John Doe",
+          "team": "Dragons",
+          "points": 320,
+          "position": "Forward",
+          "performanceTrend": [
+            50,
+            45,
+            60,
+            70,
+            95
+          ]
+        },
+        {
+          "name": "Jane Smith",
+          "team": "Warriors",
+          "points": 290,
+          "position": "Midfielder",
+          "performanceTrend": [
+            40,
+            55,
+            65,
+            60,
+            70
+          ]
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#0D47A1",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface LeagueData {\n  league: {\n    name: string;\n    rank: number;\n    totalPoints: number;\n  };\n  topPlayers: {\n    name: string;\n    team: string;\n    points: number;\n    position: string;\n    performanceTrend: number[];\n  }[];\n}\n\nexport default function Widget() {\n  const data = response.data as LeagueData;\n  const { league, topPlayers } = data;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#121212' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#FFC107', fontWeight: 700 }}>\n              {league.name}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#B0BEC5' }}>\n              Rank: {league.rank}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#B0BEC5' }}>\n              Total Points: {league.totalPoints}\n            </Typography>\n          </Box>\n\n          <Stack spacing={1.5}>\n            {topPlayers.slice(0, 2).map((player, index) => (\n              <Box key={index}>\n                <Stack direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\" sx={{ mb: 0.5 }}>\n                  <Box>\n                    <Typography variant=\"body2\" sx={{ color: '#FFF', fontWeight: 600 }}>\n                      {player.name}\n                    </Typography>\n                    <Typography variant=\"caption\" sx={{ color: '#B0BEC5' }}>\n                      {player.team} - {player.position}\n                    </Typography>\n                  </Box>\n                  <Box textAlign=\"right\">\n                    <Typography variant=\"body2\" sx={{ color: '#FFC107', fontWeight: 500 }}>\n                      Points: {player.points}\n                    </Typography>\n                  </Box>\n                </Stack>\n                <LineChart\n                  height={40}\n                  series={[\n                    {\n                      data: player.performanceTrend,\n                      color: '#FFC107',\n                      curve: 'natural',\n                      showMark: false,\n                    },\n                  ]}\n                  xAxis={[{ data: player.performanceTrend.map((_, i) => i), hide: true }]}\n                  margin={{ top: 5, bottom: 5, left: 0, right: 0 }}\n                  sx={{\n                    '& .MuiLineElement-root': {\n                      strokeWidth: 1.5,\n                    },\n                  }}\n                />\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

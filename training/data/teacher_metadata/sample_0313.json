@@ -1,0 +1,50 @@
+{
+  "description": "A humidity and dew point widget with comfort level indicator and daily range",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "humidity_dewpoint_001",
+      "app": "Weather Comfort",
+      "version": "1.0"
+    },
+    "data": {
+      "location": "Austin, TX",
+      "current": {
+        "humidity": 58,
+        "dewPoint": 59,
+        "comfortLevel": "Comfortable"
+      },
+      "dailyRange": [
+        {
+          "time": "6AM",
+          "humidity": 72,
+          "dewPoint": 62
+        },
+        {
+          "time": "12PM",
+          "humidity": 55,
+          "dewPoint": 57
+        },
+        {
+          "time": "6PM",
+          "humidity": 60,
+          "dewPoint": 58
+        },
+        {
+          "time": "12AM",
+          "humidity": 65,
+          "dewPoint": 60
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#673AB7",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface DailyRange {\n  time: string;\n  humidity: number;\n  dewPoint: number;\n}\n\ninterface WeatherData {\n  location: string;\n  current: {\n    humidity: number;\n    dewPoint: number;\n    comfortLevel: string;\n  };\n  dailyRange: DailyRange[];\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n}\n\nexport default function Widget() {\n  const weatherData = response.data as WeatherData;\n  const metaData = response.meta as MetaData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {weatherData.location}\n            </Typography>\n            <Typography variant=\"h5\" fontWeight={500} sx={{ mt: 0.5 }}>\n              {weatherData.current.comfortLevel}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 0.5 }}>\n              Humidity: {weatherData.current.humidity}%, Dew Point: {weatherData.current.dewPoint}\u00b0\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: weatherData.dailyRange.map(d => d.humidity),\n                  color: metaData.primaryColor,\n                  label: 'Humidity',\n                },\n                {\n                  type: 'line',\n                  data: weatherData.dailyRange.map(d => d.dewPoint),\n                  color: metaData.accentColor,\n                  label: 'Dew Point',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: weatherData.dailyRange.map(d => d.time),\n                  id: 'time',\n                },\n              ]}\n              yAxis={[{ id: 'values' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"time\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"values\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,74 @@
+{
+  "description": "A certification progress widget showing exams passed, study hours, and target date",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "cert_progress_001",
+      "app": "CertTracker",
+      "version": "1.0"
+    },
+    "data": {
+      "progress": {
+        "examsPassed": 3,
+        "totalExams": 5,
+        "studyHours": 120,
+        "targetDate": "2023-12-31"
+      },
+      "exams": [
+        {
+          "name": "Exam 1",
+          "status": "Passed"
+        },
+        {
+          "name": "Exam 2",
+          "status": "Passed"
+        },
+        {
+          "name": "Exam 3",
+          "status": "Pending"
+        },
+        {
+          "name": "Exam 4",
+          "status": "Pending"
+        },
+        {
+          "name": "Exam 5",
+          "status": "Pending"
+        }
+      ],
+      "studyHoursPerWeek": [
+        {
+          "week": "Week 1",
+          "hours": 15
+        },
+        {
+          "week": "Week 2",
+          "hours": 20
+        },
+        {
+          "week": "Week 3",
+          "hours": 25
+        },
+        {
+          "week": "Week 4",
+          "hours": 30
+        },
+        {
+          "week": "Week 5",
+          "hours": 30
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4A90E2",
+      "accentColor": "#D0021B",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, CircularProgress } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface ProgressData {\n  examsPassed: number;\n  totalExams: number;\n  studyHours: number;\n  targetDate: string;\n}\n\ninterface Exam {\n  name: string;\n  status: string;\n}\n\ninterface StudyHoursPerWeek {\n  week: string;\n  hours: number;\n}\n\ninterface WidgetData {\n  progress: ProgressData;\n  exams: Exam[];\n  studyHoursPerWeek: StudyHoursPerWeek[];\n}\n\nexport default function Widget() {\n  const data = response.data as WidgetData;\n  const { progress, exams, studyHoursPerWeek } = data;\n  const progressPercentage = (progress.examsPassed / progress.totalExams) * 100;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#4A90E2', mb: 1 }}>\n              Certification Progress\n            </Typography>\n            <Typography variant=\"body1\" color=\"text.secondary\">\n              {progress.examsPassed} of {progress.totalExams} exams passed\n            </Typography>\n          </Box>\n\n          <Box>\n            <Stack direction=\"row\" justifyContent=\"space-between\" sx={{ mb: 0.5 }}>\n              <Typography variant=\"caption\" color=\"text.secondary\">\n                Progress\n              </Typography>\n              <Typography variant=\"caption\" fontWeight={600} sx={{ color: '#4A90E2' }}>\n                {progressPercentage.toFixed(0)}%\n              </Typography>\n            </Stack>\n            <CircularProgress\n              variant=\"determinate\"\n              value={progressPercentage}\n              sx={{\n                color: '#4A90E2',\n                '& svg': {\n                  width: 40,\n                  height: 40,\n                },\n              }}\n            />\n          </Box>\n\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#4A90E2', mb: 1 }}>\n              Study Hours per Week\n            </Typography>\n            <BarChart\n              height={140}\n              series={[\n                {\n                  data: studyHoursPerWeek.map(d => d.hours),\n                  color: '#4A90E2',\n                },\n              ]}\n              xAxis={[\n                {\n                  data: studyHoursPerWeek.map(d => d.week),\n                  scaleType: 'band',\n                  tickLabelStyle: {\n                    fontSize: 11,\n                    fill: '#6B7280',\n                  },\n                }\n              ]}\n              margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n              sx={{\n                '& .MuiBarElement-root': {\n                  rx: 4,\n                },\n              }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

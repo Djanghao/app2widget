@@ -1,0 +1,58 @@
+{
+  "description": "A network speed widget showing download/upload speeds and ping with mini line chart",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "network_speed_001",
+      "app": "Network Speed Monitor",
+      "version": "1.0"
+    },
+    "data": {
+      "currentSpeed": {
+        "download": 75.6,
+        "upload": 20.3,
+        "ping": 12
+      },
+      "speedTrend": {
+        "download": [
+          72.3,
+          74.1,
+          75.6,
+          73.2,
+          74.8,
+          75.2,
+          75.6
+        ],
+        "upload": [
+          19.8,
+          20.0,
+          20.3,
+          19.7,
+          20.1,
+          20.2,
+          20.3
+        ],
+        "ping": [
+          13,
+          13,
+          12,
+          12,
+          13,
+          12,
+          12
+        ]
+      }
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "minimal",
+      "primaryColor": "#0D47A1",
+      "accentColor": "#FF5722",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface CurrentSpeed {\n  download: number;\n  upload: number;\n  ping: number;\n}\n\ninterface SpeedTrend {\n  download: number[];\n  upload: number[];\n  ping: number[];\n}\n\ninterface NetworkSpeedData {\n  currentSpeed: CurrentSpeed;\n  speedTrend: SpeedTrend;\n}\n\nexport default function Widget() {\n  const networkSpeedData = response.data as NetworkSpeedData;\n  const { currentSpeed, speedTrend } = networkSpeedData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#121212' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" color=\"#0D47A1\">\n              Network Speed Monitor\n            </Typography>\n            <Stack direction=\"row\" spacing={3} sx={{ mt: 1 }}>\n              <Box>\n                <Typography variant=\"caption\" color=\"text.secondary\">\n                  Download\n                </Typography>\n                <Typography variant=\"body2\" fontWeight={500} sx={{ color: '#FF5722' }}>\n                  {currentSpeed.download} Mbps\n                </Typography>\n              </Box>\n              <Box>\n                <Typography variant=\"caption\" color=\"text.secondary\">\n                  Upload\n                </Typography>\n                <Typography variant=\"body2\" fontWeight={500} sx={{ color: '#FF5722' }}>\n                  {currentSpeed.upload} Mbps\n                </Typography>\n              </Box>\n              <Box>\n                <Typography variant=\"caption\" color=\"text.secondary\">\n                  Ping\n                </Typography>\n                <Typography variant=\"body2\" fontWeight={500} sx={{ color: '#FF5722' }}>\n                  {currentSpeed.ping} ms\n                </Typography>\n              </Box>\n            </Stack>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: speedTrend.download,\n                  color: '#0D47A1',\n                  label: 'Download',\n                  curve: 'linear',\n                },\n                {\n                  type: 'line',\n                  data: speedTrend.upload,\n                  color: '#FF5722',\n                  label: 'Upload',\n                  curve: 'linear',\n                },\n                {\n                  type: 'line',\n                  data: speedTrend.ping,\n                  color: '#4CAF50',\n                  label: 'Ping',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  data: speedTrend.download.map((_, index) => index),\n                  id: 'time',\n                },\n              ]}\n              yAxis={[{ id: 'speed' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"time\"\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsYAxis\n                axisId=\"speed\"\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,52 @@
+{
+  "description": "A parking spot widget showing available spots, nearest location, and hourly rate",
+  "ui_style": "Retro/vintage with warm sepia tones, rounded retro fonts, subtle paper textures, nostalgic feel.",
+  "mock_data": {
+    "widget": {
+      "id": "parking_spot_001",
+      "app": "Parking Finder",
+      "version": "1.0"
+    },
+    "data": {
+      "location": "Downtown Garage",
+      "availability": {
+        "totalSpots": 200,
+        "availableSpots": 57
+      },
+      "nearestLocation": {
+        "name": "City Center Parking",
+        "distance": "0.5 miles",
+        "hourlyRate": 3.5
+      },
+      "hourlyRates": [
+        {
+          "hour": "8AM",
+          "rate": 3.0
+        },
+        {
+          "hour": "12PM",
+          "rate": 3.5
+        },
+        {
+          "hour": "4PM",
+          "rate": 4.0
+        },
+        {
+          "hour": "8PM",
+          "rate": 2.5
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#3B82F6",
+      "accentColor": "#F97316",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, Divider } from '@mui/material';\nimport { ResponsiveChartContainer, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface AvailabilityData {\n  location: string;\n  availability: {\n    totalSpots: number;\n    availableSpots: number;\n  };\n  nearestLocation: {\n    name: string;\n    distance: string;\n    hourlyRate: number;\n  };\n  hourlyRates: {\n    hour: string;\n    rate: number;\n  }[];\n}\n\nexport default function Widget() {\n  const data = response.data as AvailabilityData;\n  const clipPathId = 'clip-path-id';\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FAF3E0' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body1\" fontWeight={700} sx={{ color: '#6D4C41' }}>\n              {data.location}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1.5 }}>\n              Available Spots: {data.availability.availableSpots} / {data.availability.totalSpots}\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              <Chip label={`Nearest: ${data.nearestLocation.name}`} sx={{ fontSize: '11px', px: 1, py: 0.5 }} />\n              <Chip label={`Distance: ${data.nearestLocation.distance}`} sx={{ fontSize: '11px', px: 1, py: 0.5 }} />\n              <Chip label={`Rate: $${data.nearestLocation.hourlyRate}/hr`} sx={{ fontSize: '11px', px: 1, py: 0.5 }} />\n            </Stack>\n          </Box>\n\n          <Divider sx={{ bgcolor: '#BCAAA4' }} />\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: data.hourlyRates.map((rate) => rate.rate),\n                  color: '#8D6E63',\n                  label: 'Rate',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: data.hourlyRates.map((rate) => rate.hour),\n                  id: 'hours',\n                },\n              ]}\n              yAxis={[{ id: 'rate' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <BarPlot />\n              </g>\n              <ChartsXAxis axisId=\"hours\" tickLabelStyle={{ fontSize: 10, fill: '#6D4C41' }} />\n              <ChartsYAxis axisId=\"rate\" tickLabelStyle={{ fontSize: 10, fill: '#6D4C41' }} />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

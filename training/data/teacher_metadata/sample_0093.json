@@ -1,0 +1,28 @@
+{
+  "description": "A tip calculator widget showing bill total, tip amount by percentage, and per-person split",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "tip_calculator_001",
+      "app": "Easy Tip Calculator",
+      "version": "1.0"
+    },
+    "data": {
+      "billTotal": 75.0,
+      "tipPercentage": 15,
+      "tipAmount": 11.25,
+      "totalWithTip": 86.25,
+      "people": 3,
+      "perPersonAmount": 28.75
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#009688",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Typography, Stack, Box, Divider } from '@mui/material';\nimport response from './response.json';\n\ninterface TipCalculatorData {\n  widget: {\n    id: string;\n    app: string;\n    version: string;\n  };\n  data: {\n    billTotal: number;\n    tipPercentage: number;\n    tipAmount: number;\n    totalWithTip: number;\n    people: number;\n    perPersonAmount: number;\n  };\n  meta: {\n    theme: string;\n    dataMode: string;\n    layout: string;\n    primaryColor: string;\n    accentColor: string;\n    chartTypes: string[];\n  };\n}\n\nexport default function Widget() {\n  const tipCalculatorData = response.data as TipCalculatorData;\n  const { billTotal, tipPercentage, tipAmount, totalWithTip, people, perPersonAmount } = tipCalculatorData.data;\n  const { primaryColor, accentColor } = tipCalculatorData.meta;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 280, maxWidth: 360, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Typography variant=\"h6\" sx={{ color: primaryColor, mb: 2 }}>\n          Easy Tip Calculator\n        </Typography>\n        <Stack spacing={1}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Bill Total\n            </Typography>\n            <Typography variant=\"h5\" fontWeight={500}>\n              ${billTotal.toFixed(2)}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Tip ({tipPercentage}%)\n            </Typography>\n            <Typography variant=\"h5\" fontWeight={500} sx={{ color: accentColor }}>\n              ${tipAmount.toFixed(2)}\n            </Typography>\n          </Box>\n\n          <Divider sx={{ my: 1 }} />\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Total with Tip\n            </Typography>\n            <Typography variant=\"h5\" fontWeight={500}>\n              ${totalWithTip.toFixed(2)}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              People\n            </Typography>\n            <Typography variant=\"h5\" fontWeight={500}>\n              {people}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Per Person\n            </Typography>\n            <Typography variant=\"h5\" fontWeight={500} sx={{ color: primaryColor }}>\n              ${perPersonAmount.toFixed(2)}\n            </Typography>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

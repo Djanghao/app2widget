@@ -1,0 +1,40 @@
+{
+  "description": "A task manager widget showing today's tasks with completion progress and priority indicators",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "task_manager_001",
+      "app": "Task Master",
+      "version": "1.0"
+    },
+    "data": {
+      "todayTasks": [
+        {
+          "task": "Finish project report",
+          "priority": "High",
+          "completed": false
+        },
+        {
+          "task": "Email updates to team",
+          "priority": "Medium",
+          "completed": true
+        },
+        {
+          "task": "Prepare for meeting",
+          "priority": "Low",
+          "completed": false
+        }
+      ],
+      "completionProgress": 33
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#3B82F6",
+      "accentColor": "#F59E0B",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Typography, Stack, Chip, CircularProgress } from '@mui/material';\nimport response from './response.json';\n\ninterface Task {\n  task: string;\n  priority: string;\n  completed: boolean;\n}\n\ninterface TaskManagerData {\n  todayTasks: Task[];\n  completionProgress: number;\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n  chartTypes: string[];\n}\n\nexport default function Widget() {\n  const taskManagerData = response.data as TaskManagerData;\n  const metaData = response.meta as MetaData;\n\n  const { todayTasks, completionProgress } = taskManagerData;\n  const { primaryColor, accentColor } = metaData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#1E293B' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" fontWeight={600} sx={{ color: primaryColor }}>\n            Today's Tasks\n          </Typography>\n\n          <Stack direction=\"column\" spacing={1}>\n            {todayTasks.map((task, index) => (\n              <Stack key={index} direction=\"row\" spacing={1} alignItems=\"center\">\n                <Chip\n                  label={task.priority}\n                  sx={{\n                    bgcolor: task.completed ? '#10B981' : accentColor,\n                    color: '#FFFFFF',\n                    fontSize: '10px',\n                    height: '20px',\n                  }}\n                />\n                <Typography\n                  variant=\"body2\"\n                  sx={{ color: task.completed ? '#6B7280' : '#F8FAFC', textDecoration: task.completed ? 'line-through' : 'none' }}\n                >\n                  {task.task}\n                </Typography>\n              </Stack>\n            ))}\n          </Stack>\n\n          <Stack direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\" sx={{ mt: 2 }}>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Progress\n            </Typography>\n            <CircularProgress\n              variant=\"determinate\"\n              value={completionProgress}\n              size={36}\n              sx={{\n                color: primaryColor,\n                '& .MuiCircularProgress-circle': {\n                  strokeLinecap: 'round',\n                },\n              }}\n            />\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

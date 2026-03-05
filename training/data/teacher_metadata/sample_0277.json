@@ -1,0 +1,29 @@
+{
+  "description": "A VPN status widget showing connection status, server location, and speed impact",
+  "ui_style": "Retro/vintage with warm sepia tones, rounded retro fonts, subtle paper textures, nostalgic feel.",
+  "mock_data": {
+    "widget": {
+      "id": "vpn_status_001",
+      "app": "SecureNet VPN",
+      "version": "1.0"
+    },
+    "data": {
+      "connectionStatus": "Connected",
+      "serverLocation": "Frankfurt, DE",
+      "speedImpact": {
+        "downloadSpeed": 45.3,
+        "uploadSpeed": 12.8,
+        "latencyIncrease": 20
+      }
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#0D47A1",
+      "accentColor": "#FFEB3B",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface SpeedImpact {\n  downloadSpeed: number;\n  uploadSpeed: number;\n  latencyIncrease: number;\n}\n\ninterface VpnStatusData {\n  connectionStatus: string;\n  serverLocation: string;\n  speedImpact: SpeedImpact;\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n  chartTypes: string[];\n}\n\nexport default function Widget() {\n  const vpnData = response.data as VpnStatusData;\n  const metaData = response.meta as MetaData;\n\n  const isConnected = vpnData.connectionStatus === 'Connected';\n\n  return (\n    <Card\n      sx={{\n        width: 'fit-content',\n        minWidth: 300,\n        maxWidth: 400,\n        bgcolor: '#ECEFF1',\n      }}\n      elevation={2}\n    >\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body1\" sx={{ color: metaData.primaryColor, fontWeight: 600 }}>\n              SecureNet VPN\n            </Typography>\n            <Typography variant=\"h6\" sx={{ color: isConnected ? '#4CAF50' : '#F44336', mb: 0.5 }}>\n              {vpnData.connectionStatus}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Server Location: {vpnData.serverLocation}\n            </Typography>\n          </Box>\n\n          <Stack direction=\"row\" spacing={2}>\n            <Chip\n              icon={vpnData.speedImpact.downloadSpeed >= 0 ? <TrendingUp /> : <TrendingDown />}\n              label={`Download: ${vpnData.speedImpact.downloadSpeed} Mbps`}\n              sx={{ bgcolor: '#D1C4E9', color: '#311B92', fontSize: '11px' }}\n            />\n            <Chip\n              icon={vpnData.speedImpact.uploadSpeed >= 0 ? <TrendingUp /> : <TrendingDown />}\n              label={`Upload: ${vpnData.speedImpact.uploadSpeed} Mbps`}\n              sx={{ bgcolor: '#BBDEFB', color: '#0D47A1', fontSize: '11px' }}\n            />\n          </Stack>\n\n          <Box>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              Latency Increase: {vpnData.speedImpact.latencyIncrease} ms\n            </Typography>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

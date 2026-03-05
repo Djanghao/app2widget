@@ -1,0 +1,29 @@
+{
+  "description": "A savings goal widget with progress bar, target amount, and projected completion date",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "savings_goal_001",
+      "app": "Budget Planner",
+      "version": "1.0"
+    },
+    "data": {
+      "goal": {
+        "name": "Vacation Fund",
+        "targetAmount": 5000,
+        "currentAmount": 3200,
+        "progressPercentage": 64,
+        "projectedCompletionDate": "2024-06-15"
+      }
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, LinearProgress } from '@mui/material';\nimport response from './response.json';\n\ninterface GoalData {\n  goal: {\n    name: string;\n    targetAmount: number;\n    currentAmount: number;\n    progressPercentage: number;\n    projectedCompletionDate: string;\n  };\n}\n\nexport default function Widget() {\n  const data = response.data as GoalData;\n  const { goal } = data;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2.5}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#4CAF50' }}>\n              {goal.name}\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#1F2937' }}>\n              ${goal.currentAmount.toLocaleString()}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 0.5 }}>\n              of ${goal.targetAmount.toLocaleString()} goal\n            </Typography>\n          </Box>\n\n          <Box>\n            <Stack direction=\"row\" justifyContent=\"space-between\" sx={{ mb: 0.5 }}>\n              <Typography variant=\"caption\" color=\"text.secondary\">\n                Progress\n              </Typography>\n              <Typography variant=\"caption\" fontWeight={600} sx={{ color: '#4CAF50' }}>\n                {goal.progressPercentage}%\n              </Typography>\n            </Stack>\n            <LinearProgress\n              variant=\"determinate\"\n              value={goal.progressPercentage}\n              sx={{\n                height: 8,\n                borderRadius: 4,\n                bgcolor: '#E8F5E9',\n                '& .MuiLinearProgress-bar': {\n                  bgcolor: '#4CAF50',\n                  borderRadius: 4,\n                }\n              }}\n            />\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Projected Completion Date\n            </Typography>\n            <Typography variant=\"body1\" fontWeight={500} sx={{ color: '#FFC107' }}>\n              {new Date(goal.projectedCompletionDate).toLocaleDateString()}\n            </Typography>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

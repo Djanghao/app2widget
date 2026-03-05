@@ -1,0 +1,58 @@
+{
+  "description": "A loan amortization widget showing remaining balance, next payment, and principal vs interest chart",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "loan_amortization_001",
+      "app": "Loan Manager",
+      "version": "1.0"
+    },
+    "data": {
+      "loanDetails": {
+        "remainingBalance": 152350.75,
+        "nextPayment": {
+          "amount": 1230.5,
+          "dueDate": "2023-12-05"
+        }
+      },
+      "paymentBreakdown": [
+        {
+          "month": "Jan",
+          "principal": 700,
+          "interest": 530
+        },
+        {
+          "month": "Feb",
+          "principal": 710,
+          "interest": 520
+        },
+        {
+          "month": "Mar",
+          "principal": 720,
+          "interest": 510
+        },
+        {
+          "month": "Apr",
+          "principal": 730,
+          "interest": 500
+        },
+        {
+          "month": "May",
+          "principal": 740,
+          "interest": 490
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4A90E2",
+      "accentColor": "#D0021B",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface PaymentBreakdown {\n  month: string;\n  principal: number;\n  interest: number;\n}\n\ninterface LoanDetails {\n  remainingBalance: number;\n  nextPayment: {\n    amount: number;\n    dueDate: string;\n  };\n}\n\ninterface WidgetData {\n  loanDetails: LoanDetails;\n  paymentBreakdown: PaymentBreakdown[];\n}\n\nexport default function Widget() {\n  const { loanDetails, paymentBreakdown } = response.data as WidgetData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Remaining Balance\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#4A90E2' }}>\n              ${loanDetails.remainingBalance.toLocaleString()}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 1 }}>\n              Next Payment: ${loanDetails.nextPayment.amount.toFixed(2)} due on {loanDetails.nextPayment.dueDate}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#D0021B' }}>\n              Payment Breakdown\n            </Typography>\n            <BarChart\n              height={140}\n              series={[\n                {\n                  data: paymentBreakdown.map(p => p.principal),\n                  color: '#4A90E2',\n                  label: 'Principal',\n                },\n                {\n                  data: paymentBreakdown.map(p => p.interest),\n                  color: '#D0021B',\n                  label: 'Interest',\n                },\n              ]}\n              xAxis={[\n                {\n                  data: paymentBreakdown.map(p => p.month),\n                  scaleType: 'band',\n                  tickLabelStyle: {\n                    fontSize: 11,\n                    fill: '#6B7280',\n                  },\n                }\n              ]}\n              margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n              sx={{\n                '& .MuiBarElement-root': {\n                  rx: 4,\n                },\n              }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

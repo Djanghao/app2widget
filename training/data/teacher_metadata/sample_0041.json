@@ -1,0 +1,61 @@
+{
+  "description": "A gas price widget showing local average, cheapest nearby, and price trend chart",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "gas_price_001",
+      "app": "Gas Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "location": "Los Angeles, CA",
+      "averagePrice": 4.19,
+      "cheapestNearby": {
+        "station": "Shell",
+        "price": 3.95,
+        "address": "123 Main St, Los Angeles, CA"
+      },
+      "priceTrend": [
+        {
+          "day": "Mon",
+          "price": 4.2
+        },
+        {
+          "day": "Tue",
+          "price": 4.18
+        },
+        {
+          "day": "Wed",
+          "price": 4.19
+        },
+        {
+          "day": "Thu",
+          "price": 4.21
+        },
+        {
+          "day": "Fri",
+          "price": 4.23
+        },
+        {
+          "day": "Sat",
+          "price": 4.22
+        },
+        {
+          "day": "Sun",
+          "price": 4.19
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface PriceTrend {\n  day: string;\n  price: number;\n}\n\ninterface GasData {\n  location: string;\n  averagePrice: number;\n  cheapestNearby: {\n    station: string;\n    price: number;\n    address: string;\n  };\n  priceTrend: PriceTrend[];\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n  chartTypes: string[];\n}\n\nexport default function Widget() {\n  const gasData = response.data as GasData;\n  const metaData = response.meta as MetaData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#2E3B4E' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {gasData.location}\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={600} sx={{ color: '#FFC107', my: 0.5 }}>\n              Average: ${gasData.averagePrice.toFixed(2)}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Cheapest: {gasData.cheapestNearby.station} - ${gasData.cheapestNearby.price.toFixed(2)}\n            </Typography>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              {gasData.cheapestNearby.address}\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: gasData.priceTrend.map(pt => pt.price),\n                  color: metaData.primaryColor,\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: gasData.priceTrend.map(pt => pt.day),\n                  id: 'days',\n                },\n              ]}\n              yAxis={[{ id: 'price', min: Math.min(...gasData.priceTrend.map(pt => pt.price)) - 0.05 }]}\n            >\n              <ChartsClipPath id={clipPathId} />\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"days\"\n                tickLabelStyle={{ fontSize: 10, fill: '#94A3B8' }}\n              />\n              <ChartsYAxis\n                axisId=\"price\"\n                tickLabelStyle={{ fontSize: 10, fill: '#94A3B8' }}\n              />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

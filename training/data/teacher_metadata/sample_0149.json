@@ -1,0 +1,42 @@
+{
+  "description": "A movie rating widget showing top picks with ratings, genre, and runtime",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "movies_top_picks_001",
+      "app": "Movie Ratings",
+      "version": "1.0"
+    },
+    "data": {
+      "topPicks": [
+        {
+          "title": "Inception",
+          "rating": 8.8,
+          "genre": "Sci-Fi",
+          "runtime": 148
+        },
+        {
+          "title": "The Shawshank Redemption",
+          "rating": 9.3,
+          "genre": "Drama",
+          "runtime": 142
+        },
+        {
+          "title": "The Dark Knight",
+          "rating": 9.0,
+          "genre": "Action",
+          "runtime": 152
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { Star } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface Movie {\n  title: string;\n  rating: number;\n  genre: string;\n  runtime: number;\n}\n\ninterface MoviesData {\n  topPicks: Movie[];\n}\n\nexport default function Widget() {\n  const moviesData = response.data as MoviesData;\n  const { topPicks } = moviesData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 400, bgcolor: '#2C2C2C' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" sx={{ color: '#FF5722', fontWeight: 600 }}>\n            Top Movie Picks\n          </Typography>\n          {topPicks.map((movie, index) => (\n            <Box key={index} sx={{ bgcolor: '#1F1F1F', borderRadius: 1, p: 1.5 }}>\n              <Typography variant=\"body1\" sx={{ color: '#FFFFFF', fontWeight: 500 }}>\n                {movie.title}\n              </Typography>\n              <Stack direction=\"row\" alignItems=\"center\" spacing={0.5} sx={{ mt: 0.5 }}>\n                <Star sx={{ fontSize: 16, color: '#FFC107' }} />\n                <Typography variant=\"body2\" sx={{ color: '#FFC107' }}>\n                  {movie.rating}\n                </Typography>\n              </Stack>\n              <Stack direction=\"row\" spacing={0.5} sx={{ mt: 1 }}>\n                <Chip label={movie.genre} sx={{ fontSize: '10px', bgcolor: '#FF5722', color: '#FFFFFF', px: 1 }} />\n                <Chip label={`${movie.runtime} min`} sx={{ fontSize: '10px', bgcolor: '#FF5722', color: '#FFFFFF', px: 1 }} />\n              </Stack>\n            </Box>\n          ))}\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

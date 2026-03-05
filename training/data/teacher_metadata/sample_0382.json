@@ -1,0 +1,62 @@
+{
+  "description": "A security camera widget showing active cameras count, recent motion alerts, and status",
+  "ui_style": "Neomorphic / soft UI with light gray backgrounds, inset and raised soft shadows, subtle depth.",
+  "mock_data": {
+    "widget": {
+      "id": "security_camera_001",
+      "app": "Home Secure",
+      "version": "1.0"
+    },
+    "data": {
+      "activeCameras": 5,
+      "recentAlerts": [
+        {
+          "time": "10:00 AM",
+          "alertType": "Motion Detected",
+          "cameraId": "Cam1"
+        },
+        {
+          "time": "11:15 AM",
+          "alertType": "Motion Detected",
+          "cameraId": "Cam3"
+        },
+        {
+          "time": "2:30 PM",
+          "alertType": "Motion Detected",
+          "cameraId": "Cam2"
+        }
+      ],
+      "cameraStatus": [
+        {
+          "id": "Cam1",
+          "status": "Online"
+        },
+        {
+          "id": "Cam2",
+          "status": "Offline"
+        },
+        {
+          "id": "Cam3",
+          "status": "Online"
+        },
+        {
+          "id": "Cam4",
+          "status": "Online"
+        },
+        {
+          "id": "Cam5",
+          "status": "Online"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#000000",
+      "accentColor": "#FF0000",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { CircularProgress, Tooltip } from '@mui/material';\nimport { Info } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface RecentAlert {\n  time: string;\n  alertType: string;\n  cameraId: string;\n}\n\ninterface CameraStatus {\n  id: string;\n  status: string;\n}\n\ninterface SecurityData {\n  activeCameras: number;\n  recentAlerts: RecentAlert[];\n  cameraStatus: CameraStatus[];\n}\n\nexport default function Widget() {\n  const securityData = response.data as SecurityData;\n  const { activeCameras, recentAlerts, cameraStatus } = securityData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#2E2E2E' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Active Cameras\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#FFFFFF' }}>\n              {activeCameras}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Recent Alerts\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {recentAlerts.slice(0, 3).map((alert, index) => (\n                <Tooltip key={index} title={`${alert.alertType} at ${alert.time}`}>\n                  <Chip\n                    label={`Cam ${alert.cameraId}`}\n                    sx={{ fontSize: '11px', color: '#FFFFFF', bgcolor: '#FF0000', px: 1 }}\n                  />\n                </Tooltip>\n              ))}\n            </Stack>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Camera Status\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {cameraStatus.slice(0, 5).map((camera) => (\n                <Chip\n                  key={camera.id}\n                  label={camera.id}\n                  sx={{\n                    fontSize: '11px',\n                    color: '#FFFFFF',\n                    bgcolor: camera.status === 'Online' ? '#4CAF50' : '#FF5722',\n                    px: 1,\n                  }}\n                />\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

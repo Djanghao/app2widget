@@ -1,0 +1,31 @@
+{
+  "description": "A password health widget showing weak passwords count, reused, and overall security score",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "password_health_001",
+      "app": "Password Manager",
+      "version": "1.0"
+    },
+    "data": {
+      "securityScore": {
+        "score": 78,
+        "grade": "B"
+      },
+      "passwordDetails": {
+        "totalPasswords": 120,
+        "weakPasswords": 15,
+        "reusedPasswords": 8
+      }
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, CircularProgress } from '@mui/material';\nimport { Info } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface SecurityScore {\n  score: number;\n  grade: string;\n}\n\ninterface PasswordDetails {\n  totalPasswords: number;\n  weakPasswords: number;\n  reusedPasswords: number;\n}\n\ninterface WidgetData {\n  securityScore: SecurityScore;\n  passwordDetails: PasswordDetails;\n}\n\nexport default function Widget() {\n  const widgetData = response.data as WidgetData;\n  const { securityScore, passwordDetails } = widgetData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 400, bgcolor: '#1E1E1E', color: '#FFFFFF' }} elevation={3}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1 }}>\n              Password Health\n            </Typography>\n            <Box sx={{ display: 'flex', alignItems: 'center' }}>\n              <CircularProgress variant=\"determinate\" value={securityScore.score} size={50} sx={{ color: response.meta.primaryColor, mr: 2 }} />\n              <Box>\n                <Typography variant=\"h4\" fontWeight={700} sx={{ color: response.meta.primaryColor }}>\n                  {securityScore.score}\n                </Typography>\n                <Typography variant=\"body2\" color=\"text.secondary\">\n                  Grade: {securityScore.grade}\n                </Typography>\n              </Box>\n            </Box>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ mb: 1 }}>\n              Password Details\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              <Chip label={`Total: ${passwordDetails.totalPasswords}`} sx={{ fontSize: '11px', bgcolor: '#424242', color: '#FFFFFF' }} />\n              <Chip label={`Weak: ${passwordDetails.weakPasswords}`} sx={{ fontSize: '11px', bgcolor: '#424242', color: '#FFFFFF' }} />\n              <Chip label={`Reused: ${passwordDetails.reusedPasswords}`} sx={{ fontSize: '11px', bgcolor: '#424242', color: '#FFFFFF' }} />\n            </Stack>\n          </Box>\n\n          <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>\n            <Info sx={{ fontSize: 20, color: response.meta.accentColor, mr: 1 }} />\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              Improve your password health by updating weak and reused passwords.\n            </Typography>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,52 @@
+{
+  "description": "A smart home widget showing connected devices count, energy usage, and room temperatures",
+  "ui_style": "Brutalist with raw black and white, oversized bold type, sharp edges, no rounded corners.",
+  "mock_data": {
+    "widget": {
+      "id": "smart_home_overview_001",
+      "app": "Smart Home Manager",
+      "version": "1.0"
+    },
+    "data": {
+      "connectedDevices": 12,
+      "energyUsage": {
+        "current": 350,
+        "unit": "kWh"
+      },
+      "roomTemperatures": [
+        {
+          "room": "Living Room",
+          "temperature": 72
+        },
+        {
+          "room": "Bedroom",
+          "temperature": 68
+        },
+        {
+          "room": "Kitchen",
+          "temperature": 70
+        }
+      ],
+      "temperatureTrend": [
+        70,
+        72,
+        71,
+        73,
+        72,
+        70,
+        68
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface RoomTemperature {\n  room: string;\n  temperature: number;\n}\n\ninterface EnergyUsage {\n  current: number;\n  unit: string;\n}\n\ninterface WidgetData {\n  connectedDevices: number;\n  energyUsage: EnergyUsage;\n  roomTemperatures: RoomTemperature[];\n  temperatureTrend: number[];\n}\n\nexport default function Widget() {\n  const widgetData = response.data as WidgetData;\n  const { connectedDevices, energyUsage, roomTemperatures, temperatureTrend } = widgetData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1 }}>\n              Smart Home Overview\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 0.5 }}>\n              Connected Devices: {connectedDevices}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Energy Usage: {energyUsage.current} {energyUsage.unit}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" fontWeight={600} sx={{ mb: 1 }}>\n              Room Temperatures\n            </Typography>\n            <Stack direction=\"row\" spacing={1}>\n              {roomTemperatures.slice(0, 3).map((room, index) => (\n                <Box key={index}>\n                  <Typography variant=\"caption\" color=\"text.secondary\">\n                    {room.room}\n                  </Typography>\n                  <Typography variant=\"body2\">\n                    {room.temperature}\u00b0F\n                  </Typography>\n                </Box>\n              ))}\n            </Stack>\n          </Box>\n\n          <LineChart\n            height={100}\n            series={[\n              {\n                data: temperatureTrend,\n                color: '#4CAF50',\n                showMark: false,\n              },\n            ]}\n            xAxis={[{ data: temperatureTrend.map((_, i) => i), hide: true }]}\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n            sx={{\n              '& .MuiLineElement-root': {\n                strokeWidth: 1.5,\n              },\n            }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

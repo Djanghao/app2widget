@@ -1,0 +1,59 @@
+{
+  "description": "A carbon footprint widget showing daily emissions, category breakdown, and monthly trend",
+  "ui_style": "iOS-inspired with SF Pro-style fonts, vibrancy effects, system-like cards, and Apple HIG spacing.",
+  "mock_data": {
+    "widget": {
+      "id": "carbon_footprint_001",
+      "app": "Eco Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "dailyEmissions": {
+        "total": 15.2,
+        "unit": "kg CO2"
+      },
+      "categoryBreakdown": [
+        {
+          "category": "Transport",
+          "emissions": 5.8
+        },
+        {
+          "category": "Home Energy",
+          "emissions": 4.3
+        },
+        {
+          "category": "Food",
+          "emissions": 3.2
+        },
+        {
+          "category": "Other",
+          "emissions": 1.9
+        }
+      ],
+      "monthlyTrend": [
+        14.5,
+        13.2,
+        15.6,
+        16.0,
+        15.2,
+        14.9,
+        15.4,
+        15.2,
+        14.7,
+        15.2
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#388E3C",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "pie",
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { PieChart, ResponsiveChartContainer, ChartsClipPath, LinePlot, ChartsXAxis, ChartsYAxis } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface DailyEmissions {\n  total: number;\n  unit: string;\n}\n\ninterface CategoryBreakdown {\n  category: string;\n  emissions: number;\n}\n\ninterface CarbonData {\n  widget: {\n    id: string;\n    app: string;\n    version: string;\n  };\n  data: {\n    dailyEmissions: DailyEmissions;\n    categoryBreakdown: CategoryBreakdown[];\n    monthlyTrend: number[];\n  };\n  meta: {\n    theme: string;\n    dataMode: string;\n    layout: string;\n    primaryColor: string;\n    accentColor: string;\n    chartTypes: string[];\n  };\n}\n\nexport default function Widget() {\n  const carbonData = response.data as CarbonData;\n  const { dailyEmissions, categoryBreakdown, monthlyTrend } = carbonData.data;\n  const { primaryColor, accentColor } = carbonData.meta;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#333' }} elevation={2}>\n      <CardContent sx={{ p: 2.5, color: '#fff' }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: primaryColor }}>\n              Daily Carbon Footprint\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={600}>\n              {dailyEmissions.total} {dailyEmissions.unit}\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <PieChart\n              series={[\n                {\n                  data: categoryBreakdown.map((item) => ({\n                    label: item.category,\n                    value: item.emissions,\n                  })),\n                  color: accentColor,\n                },\n              ]}\n              sx={{\n                '& .MuiPieChartLabel-root': {\n                  fill: '#fff',\n                },\n              }}\n            />\n          </Box>\n\n          <Box sx={{ width: '100%', height: 150 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: monthlyTrend,\n                  color: primaryColor,\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  data: monthlyTrend.map((_, index) => index + 1),\n                  id: 'months',\n                },\n              ]}\n              yAxis={[{ id: 'emissions' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"months\"\n                tickLabelStyle={{ fontSize: 10, fill: '#fff' }}\n              />\n              <ChartsYAxis\n                axisId=\"emissions\"\n                tickLabelStyle={{ fontSize: 10, fill: '#fff' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n\n          <Stack direction=\"row\" spacing={0.5}>\n            {categoryBreakdown.map((item, index) => (\n              <Chip\n                key={index}\n                label={item.category}\n                sx={{ backgroundColor: primaryColor, color: '#fff', fontSize: '12px', px: 1 }}\n              />\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

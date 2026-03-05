@@ -1,0 +1,61 @@
+{
+  "description": "A league standings widget showing top 5 teams with wins, losses, and points",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "league_standings_001",
+      "app": "League Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "league": "Premier League",
+      "season": "2023/2024",
+      "topTeams": [
+        {
+          "position": 1,
+          "teamName": "Team A",
+          "wins": 14,
+          "losses": 3,
+          "points": 45
+        },
+        {
+          "position": 2,
+          "teamName": "Team B",
+          "wins": 13,
+          "losses": 4,
+          "points": 42
+        },
+        {
+          "position": 3,
+          "teamName": "Team C",
+          "wins": 12,
+          "losses": 5,
+          "points": 39
+        },
+        {
+          "position": 4,
+          "teamName": "Team D",
+          "wins": 11,
+          "losses": 6,
+          "points": 36
+        },
+        {
+          "position": 5,
+          "teamName": "Team E",
+          "wins": 10,
+          "losses": 7,
+          "points": 33
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#004D40",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport response from './response.json';\n\ninterface Team {\n  position: number;\n  teamName: string;\n  wins: number;\n  losses: number;\n  points: number;\n}\n\ninterface LeagueData {\n  league: string;\n  season: string;\n  topTeams: Team[];\n}\n\nexport default function Widget() {\n  const leagueData = response.data as LeagueData;\n  const { league, season, topTeams } = leagueData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#263238' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#FFC107' }}>\n              {league} Standings\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Season: {season}\n            </Typography>\n          </Box>\n          <Stack spacing={1.5}>\n            {topTeams.map((team) => (\n              <Box key={team.position} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>\n                <Typography variant=\"body2\" sx={{ color: '#FFFFFF', fontWeight: 500 }}>\n                  {team.position}. {team.teamName}\n                </Typography>\n                <Typography variant=\"body2\" sx={{ color: '#B0BEC5' }}>\n                  W: {team.wins} - L: {team.losses} - Pts: {team.points}\n                </Typography>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

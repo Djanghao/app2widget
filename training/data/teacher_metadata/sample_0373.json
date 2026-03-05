@@ -1,0 +1,61 @@
+{
+  "description": "A grade tracker widget showing GPA, recent grades, and subject performance bar chart",
+  "ui_style": "Neomorphic / soft UI with light gray backgrounds, inset and raised soft shadows, subtle depth.",
+  "mock_data": {
+    "widget": {
+      "id": "grade_tracker_001",
+      "app": "Grade Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "currentGPA": 3.75,
+      "recentGrades": [
+        {
+          "subject": "Mathematics",
+          "grade": "A"
+        },
+        {
+          "subject": "Biology",
+          "grade": "B+"
+        },
+        {
+          "subject": "History",
+          "grade": "A-"
+        }
+      ],
+      "subjectPerformance": [
+        {
+          "subject": "Mathematics",
+          "score": 95
+        },
+        {
+          "subject": "Biology",
+          "score": 88
+        },
+        {
+          "subject": "History",
+          "score": 92
+        },
+        {
+          "subject": "English",
+          "score": 85
+        },
+        {
+          "subject": "Chemistry",
+          "score": 90
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#3B82F6",
+      "accentColor": "#F59E0B",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface RecentGrade {\n  subject: string;\n  grade: string;\n}\n\ninterface SubjectPerformance {\n  subject: string;\n  score: number;\n}\n\ninterface GradeTrackerData {\n  currentGPA: number;\n  recentGrades: RecentGrade[];\n  subjectPerformance: SubjectPerformance[];\n}\n\nexport default function Widget() {\n  const data = response.data as GradeTrackerData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#3B82F6' }}>\n              Current GPA\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#1F2937' }}>\n              {data.currentGPA.toFixed(2)}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Recent Grades\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {data.recentGrades.map((grade, index) => (\n                <Typography key={index} variant=\"body2\" color=\"text.primary\" sx={{ fontWeight: 500 }}>\n                  {grade.subject}: {grade.grade}\n                </Typography>\n              ))}\n            </Stack>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <BarChart\n              height={140}\n              series={[\n                {\n                  data: data.subjectPerformance.map((sp) => sp.score),\n                  color: '#F59E0B',\n                },\n              ]}\n              xAxis={[\n                {\n                  data: data.subjectPerformance.map((sp) => sp.subject),\n                  scaleType: 'band',\n                  tickLabelStyle: {\n                    fontSize: 11,\n                    fill: '#6B7280',\n                  },\n                },\n              ]}\n              margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n              sx={{\n                '& .MuiBarElement-root': {\n                  rx: 4,\n                },\n              }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

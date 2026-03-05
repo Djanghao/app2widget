@@ -1,0 +1,46 @@
+{
+  "description": "A thermostat widget showing current temperature, target, and schedule preview",
+  "ui_style": "Retro/vintage with warm sepia tones, rounded retro fonts, subtle paper textures, nostalgic feel.",
+  "mock_data": {
+    "widget": {
+      "id": "thermostat_widget_001",
+      "app": "Smart Home Thermostat",
+      "version": "1.0"
+    },
+    "data": {
+      "currentTemperature": 72,
+      "targetTemperature": 75,
+      "schedulePreview": [
+        {
+          "time": "6AM",
+          "targetTemp": 70
+        },
+        {
+          "time": "9AM",
+          "targetTemp": 72
+        },
+        {
+          "time": "12PM",
+          "targetTemp": 74
+        },
+        {
+          "time": "3PM",
+          "targetTemp": 76
+        },
+        {
+          "time": "6PM",
+          "targetTemp": 75
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface SchedulePreview {\n  time: string;\n  targetTemp: number;\n}\n\ninterface ThermostatData {\n  currentTemperature: number;\n  targetTemperature: number;\n  schedulePreview: SchedulePreview[];\n}\n\nexport default function Widget() {\n  const thermostatData = response.data as ThermostatData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#F5F5DC' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 0.5, color: '#FF5722' }}>\n              Smart Home Thermostat\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={500} sx={{ color: '#4A4A4A' }}>\n              {thermostatData.currentTemperature}\u00b0F\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Target: {thermostatData.targetTemperature}\u00b0F\n            </Typography>\n          </Box>\n\n          <LineChart\n            height={100}\n            series={[\n              {\n                data: thermostatData.schedulePreview.map(item => item.targetTemp),\n                color: '#FFC107',\n                curve: 'natural',\n                showMark: false,\n              },\n            ]}\n            xAxis={[{ data: thermostatData.schedulePreview.map(item => item.time), hide: true }]}\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n            sx={{\n              '& .MuiLineElement-root': {\n                strokeWidth: 2,\n              },\n            }}\n          />\n\n          <Stack direction=\"row\" spacing={1}>\n            {thermostatData.schedulePreview.map((item, index) => (\n              <Chip\n                key={index}\n                label={`${item.time}: ${item.targetTemp}\u00b0F`}\n                sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: '#FFFFFF', color: '#4A4A4A' }}\n              />\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

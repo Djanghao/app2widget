@@ -1,0 +1,44 @@
+{
+  "description": "A ride-sharing widget showing estimated fare, arrival time, and driver rating",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "rideshare_estimate_001",
+      "app": "RideShare Buddy",
+      "version": "1.0"
+    },
+    "data": {
+      "currentRide": {
+        "estimatedFare": 18.5,
+        "arrivalTime": "5 mins",
+        "driver": {
+          "name": "John Doe",
+          "rating": 4.8
+        }
+      },
+      "previousRides": [
+        {
+          "date": "2023-10-20",
+          "fare": 22.3
+        },
+        {
+          "date": "2023-10-18",
+          "fare": 15.75
+        },
+        {
+          "date": "2023-10-17",
+          "fare": 12.4
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#0D47A1",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Typography, Box, Stack, Chip } from '@mui/material';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface CurrentRide {\n  estimatedFare: number;\n  arrivalTime: string;\n  driver: {\n    name: string;\n    rating: number;\n  };\n}\n\ninterface PreviousRide {\n  date: string;\n  fare: number;\n}\n\ninterface RideShareData {\n  currentRide: CurrentRide;\n  previousRides: PreviousRide[];\n}\n\nexport default function Widget() {\n  const { currentRide, previousRides } = response.data as RideShareData;\n  const isFareIncreased = previousRides.length > 0 && currentRide.estimatedFare > previousRides[0].fare;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#1E293B' }} elevation={3}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8', mb: 0.5 }}>\n              Current Ride\n            </Typography>\n            <Typography variant=\"h4\" sx={{ color: '#F8FAFC', fontWeight: 600 }}>\n              ${currentRide.estimatedFare.toFixed(2)}\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={0.5} sx={{ mt: 0.5 }}>\n              {isFareIncreased ? <TrendingUp sx={{ fontSize: 16, color: '#10B981' }} /> : <TrendingDown sx={{ fontSize: 16, color: '#EF4444' }} />}\n              <Typography variant=\"body2\" sx={{ color: isFareIncreased ? '#10B981' : '#EF4444' }}>\n                {currentRide.arrivalTime} to arrival\n              </Typography>\n            </Stack>\n          </Box>\n\n          <Stack direction=\"row\" spacing={1.5} alignItems=\"center\">\n            <Typography variant=\"body2\" sx={{ color: '#F8FAFC', fontWeight: 500 }}>\n              Driver: {currentRide.driver.name}\n            </Typography>\n            <Chip label={`Rating: ${currentRide.driver.rating}`} sx={{ fontSize: '11px', bgcolor: '#FFC107', color: '#000' }} />\n          </Stack>\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8', mb: 0.5 }}>\n              Previous Rides\n            </Typography>\n            <Stack spacing={0.5}>\n              {previousRides.slice(0, 3).map((ride, index) => (\n                <Box key={index}>\n                  <Typography variant=\"body2\" sx={{ color: '#F8FAFC' }}>\n                    {ride.date}: ${ride.fare.toFixed(2)}\n                  </Typography>\n                </Box>\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

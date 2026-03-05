@@ -1,0 +1,41 @@
+{
+  "description": "A CI/CD pipeline widget showing recent builds, success rate, and average deploy time",
+  "ui_style": "Android Material You with pill-shaped elements, tonal colors, large touch targets, and rounded corners.",
+  "mock_data": {
+    "widget": {
+      "id": "cicd_pipeline_001",
+      "app": "Build Monitor",
+      "version": "1.0"
+    },
+    "data": {
+      "recentBuilds": [
+        {
+          "buildId": "build_101",
+          "status": "success",
+          "duration": "5m 32s"
+        },
+        {
+          "buildId": "build_102",
+          "status": "failed",
+          "duration": "4m 45s"
+        },
+        {
+          "buildId": "build_103",
+          "status": "success",
+          "duration": "6m 10s"
+        }
+      ],
+      "successRate": 85,
+      "averageDeployTime": "5m 30s"
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#3B82F6",
+      "accentColor": "#EF4444",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface Build {\n  buildId: string;\n  status: string;\n  duration: string;\n}\n\ninterface CICDPipelineData {\n  recentBuilds: Build[];\n  successRate: number;\n  averageDeployTime: string;\n}\n\nexport default function Widget() {\n  const cicdData = response.data as CICDPipelineData;\n  const { recentBuilds, successRate, averageDeployTime } = cicdData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#1E1E1E', color: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1 }}>\n              Build Monitor\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Success Rate: {successRate}%\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Avg Deploy Time: {averageDeployTime}\n            </Typography>\n          </Box>\n\n          <Stack spacing={1}>\n            {recentBuilds.map((build) => (\n              <Stack key={build.buildId} direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\">\n                <Chip \n                  label={build.buildId} \n                  sx={{ fontSize: '11px', color: '#FFFFFF', bgcolor: build.status === 'success' ? '#10B981' : '#EF4444' }}\n                />\n                <Typography variant=\"body2\" sx={{ color: '#D1D5DB' }}>\n                  {build.duration}\n                </Typography>\n              </Stack>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,56 @@
+{
+  "description": "An air quality index widget with a circular gauge and pollutant breakdown",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "air_quality_001",
+      "app": "Air Quality Monitor",
+      "version": "1.0"
+    },
+    "data": {
+      "location": "New York, NY",
+      "currentAQI": {
+        "value": 42,
+        "category": "Good"
+      },
+      "pollutants": [
+        {
+          "name": "PM2.5",
+          "value": 15,
+          "unit": "\u00b5g/m\u00b3"
+        },
+        {
+          "name": "PM10",
+          "value": 20,
+          "unit": "\u00b5g/m\u00b3"
+        },
+        {
+          "name": "O3",
+          "value": 10,
+          "unit": "ppb"
+        },
+        {
+          "name": "NO2",
+          "value": 12,
+          "unit": "ppb"
+        },
+        {
+          "name": "SO2",
+          "value": 5,
+          "unit": "ppb"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FF5722",
+      "chartTypes": [
+        "pie"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { PieChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface AQIData {\n  location: string;\n  currentAQI: {\n    value: number;\n    category: string;\n  };\n  pollutants: {\n    name: string;\n    value: number;\n    unit: string;\n  }[];\n}\n\nexport default function Widget() {\n  const aqiData = response.data as AQIData;\n  const { location, currentAQI, pollutants } = aqiData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {location}\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#4CAF50', my: 0.5 }}>\n              AQI: {currentAQI.value}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Category: {currentAQI.category}\n            </Typography>\n          </Box>\n\n          <PieChart\n            height={150}\n            series={[\n              {\n                data: pollutants.map(p => p.value),\n                labels: pollutants.map(p => p.name),\n                colors: ['#FF5722', '#FFC107', '#8BC34A', '#00BCD4', '#673AB7'],\n              },\n            ]}\n            sx={{\n              '& .MuiPieElement-root': {\n                strokeWidth: 1,\n              },\n              '& .MuiPieLabel-root': {\n                fontSize: 10,\n              },\n            }}\n          />\n\n          <Stack direction=\"row\" spacing={0.5}>\n            {pollutants.map((pollutant, index) => (\n              <Chip\n                key={index}\n                label={`${pollutant.name}: ${pollutant.value} ${pollutant.unit}`}\n                sx={{ fontSize: '11px', px: 1, py: 0.5 }}\n              />\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,47 @@
+{
+  "description": "A Pomodoro timer widget with completed sessions, total focus time, and daily goal progress",
+  "ui_style": "Neomorphic / soft UI with light gray backgrounds, inset and raised soft shadows, subtle depth.",
+  "mock_data": {
+    "widget": {
+      "id": "pomodoro_timer_001",
+      "app": "Focus Time",
+      "version": "1.0"
+    },
+    "data": {
+      "sessionsCompleted": 4,
+      "totalFocusTime": "2h 20m",
+      "dailyGoal": {
+        "target": "3h",
+        "current": "2h 20m",
+        "percentage": 78
+      },
+      "sessionHistory": [
+        {
+          "time": "9AM",
+          "duration": 25
+        },
+        {
+          "time": "10AM",
+          "duration": 25
+        },
+        {
+          "time": "11AM",
+          "duration": 30
+        },
+        {
+          "time": "1PM",
+          "duration": 25
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#F44336",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, LinearProgress } from '@mui/material';\nimport { ResponsiveChartContainer, BarPlot, ChartsXAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface PomodoroData {\n  sessionsCompleted: number;\n  totalFocusTime: string;\n  dailyGoal: {\n    target: string;\n    current: string;\n    percentage: number;\n  };\n  sessionHistory: { time: string; duration: number }[];\n}\n\nexport default function Widget() {\n  const pomodoroData = response.data as PomodoroData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#1E1E1E' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#F44336' }}>\n              Focus Time\n            </Typography>\n            <Typography variant=\"h5\" sx={{ color: '#FFC107', fontWeight: 600 }}>\n              {pomodoroData.totalFocusTime}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 0.5 }}>\n              of {pomodoroData.dailyGoal.target} goal\n            </Typography>\n          </Box>\n\n          <Box>\n            <Stack direction=\"row\" justifyContent=\"space-between\" sx={{ mb: 0.5 }}>\n              <Typography variant=\"caption\" color=\"text.secondary\">\n                Progress\n              </Typography>\n              <Typography variant=\"caption\" fontWeight={600} sx={{ color: '#FFC107' }}>\n                {pomodoroData.dailyGoal.percentage}%\n              </Typography>\n            </Stack>\n            <LinearProgress\n              variant=\"determinate\"\n              value={pomodoroData.dailyGoal.percentage}\n              sx={{\n                height: 8,\n                borderRadius: 4,\n                bgcolor: '#424242',\n                '& .MuiLinearProgress-bar': {\n                  bgcolor: '#FFC107',\n                  borderRadius: 4,\n                },\n              }}\n            />\n          </Box>\n\n          <Box sx={{ width: '100%', height: 100 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: pomodoroData.sessionHistory.map(session => session.duration),\n                  color: '#F44336',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: pomodoroData.sessionHistory.map(session => session.time),\n                  id: 'sessions',\n                  tickLabelStyle: {\n                    fontSize: 11,\n                    fill: '#FFFFFF',\n                  },\n                },\n              ]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <BarPlot />\n              </g>\n              <ChartsXAxis axisId=\"sessions\" />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

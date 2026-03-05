@@ -1,0 +1,59 @@
+{
+  "description": "A hydration tracker widget with daily water intake progress and hourly consumption chart",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "hydration_tracker_001",
+      "app": "Hydration Manager",
+      "version": "1.0"
+    },
+    "data": {
+      "dailyGoal": {
+        "target": 3000,
+        "current": 2100,
+        "percentage": 70
+      },
+      "hourlyIntake": [
+        {
+          "hour": "8AM",
+          "amount": 300
+        },
+        {
+          "hour": "10AM",
+          "amount": 500
+        },
+        {
+          "hour": "12PM",
+          "amount": 400
+        },
+        {
+          "hour": "2PM",
+          "amount": 350
+        },
+        {
+          "hour": "4PM",
+          "amount": 250
+        },
+        {
+          "hour": "6PM",
+          "amount": 300
+        },
+        {
+          "hour": "8PM",
+          "amount": 400
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#00BCD4",
+      "accentColor": "#FFEB3B",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, LinearProgress } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface HourlyIntake {\n  hour: string;\n  amount: number;\n}\n\ninterface HydrationData {\n  dailyGoal: {\n    target: number;\n    current: number;\n    percentage: number;\n  };\n  hourlyIntake: HourlyIntake[];\n}\n\nexport default function Widget() {\n  const hydrationData = response.data as HydrationData;\n  const { dailyGoal, hourlyIntake } = hydrationData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 3 }}>\n        <Stack spacing={2.5}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#00BCD4' }}>\n              Hydration Tracker\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#1F2937' }}>\n              {dailyGoal.current} ml\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 0.5 }}>\n              of {dailyGoal.target} ml goal\n            </Typography>\n          </Box>\n\n          <Box>\n            <Stack direction=\"row\" justifyContent=\"space-between\" sx={{ mb: 0.5 }}>\n              <Typography variant=\"caption\" color=\"text.secondary\">\n                Progress\n              </Typography>\n              <Typography variant=\"caption\" fontWeight={600} sx={{ color: '#00BCD4' }}>\n                {dailyGoal.percentage}%\n              </Typography>\n            </Stack>\n            <LinearProgress\n              variant=\"determinate\"\n              value={dailyGoal.percentage}\n              sx={{\n                height: 8,\n                borderRadius: 4,\n                bgcolor: '#E0F7FA',\n                '& .MuiLinearProgress-bar': {\n                  bgcolor: '#00BCD4',\n                  borderRadius: 4,\n                }\n              }}\n            />\n          </Box>\n\n          <BarChart\n            height={140}\n            series={[\n              {\n                data: hourlyIntake.map(d => d.amount),\n                color: '#00BCD4',\n              },\n            ]}\n            xAxis={[\n              {\n                data: hourlyIntake.map(d => d.hour),\n                scaleType: 'band',\n                tickLabelStyle: {\n                  fontSize: 11,\n                  fill: '#6B7280',\n                },\n              }\n            ]}\n            margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n            sx={{\n              '& .MuiBarElement-root': {\n                rx: 4,\n              },\n            }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,39 @@
+{
+  "description": "An A/B test results widget showing variant performance, confidence level, and lift percentage",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "ab_test_results_001",
+      "app": "Experiment Insights",
+      "version": "1.0"
+    },
+    "data": {
+      "testName": "Homepage Banner Test",
+      "variants": [
+        {
+          "name": "Variant A",
+          "conversionRate": 0.15,
+          "visitors": 1500,
+          "conversions": 225
+        },
+        {
+          "name": "Variant B",
+          "conversionRate": 0.18,
+          "visitors": 1520,
+          "conversions": 274
+        }
+      ],
+      "confidenceLevel": 0.95,
+      "liftPercentage": 20.0
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface Variant {\n  name: string;\n  conversionRate: number;\n  visitors: number;\n  conversions: number;\n}\n\ninterface AbTestData {\n  testName: string;\n  variants: Variant[];\n  confidenceLevel: number;\n  liftPercentage: number;\n}\n\nexport default function Widget() {\n  const abTestData = response.data.data as AbTestData;\n  const { testName, variants, liftPercentage } = abTestData;\n  const { theme, primaryColor } = response.data.meta;\n  const isPositiveLift = liftPercentage >= 0;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: theme === 'dark' ? '#2D2D2D' : '#FFFFFF' }} elevation={3}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {testName}\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5} alignItems=\"center\">\n              {isPositiveLift ? <TrendingUp sx={{ fontSize: 18, color: primaryColor }} /> : <TrendingDown sx={{ fontSize: 18, color: primaryColor }} />}\n              <Typography variant=\"h5\" fontWeight={600} sx={{ color: primaryColor }}>\n                {liftPercentage}%\n              </Typography>\n            </Stack>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              Lift Percentage\n            </Typography>\n          </Box>\n\n          <BarChart\n            height={140}\n            series={[\n              {\n                data: variants.map(v => v.conversionRate * 100),\n                color: primaryColor,\n              },\n            ]}\n            xAxis={[\n              {\n                data: variants.map(v => v.name),\n                scaleType: 'band',\n                tickLabelStyle: {\n                  fontSize: 11,\n                  fill: theme === 'dark' ? '#FFFFFF' : '#6B7280',\n                },\n              }\n            ]}\n            margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n            sx={{\n              '& .MuiBarElement-root': {\n                rx: 4,\n              },\n            }}\n          />\n\n          <Stack direction=\"row\" spacing={0.5}>\n            {variants.map((variant, index) => (\n              <Chip\n                key={index}\n                label={`${variant.name}: ${variant.conversionRate * 100}%`}\n                sx={{ fontSize: '11px', px: 1, py: 0.5 }}\n              />\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

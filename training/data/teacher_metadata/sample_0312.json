@@ -1,0 +1,52 @@
+{
+  "description": "A wind speed widget with compass direction indicator, gust speed, and hourly trend",
+  "ui_style": "Playful and colorful with bright primary colors, thick rounded borders, and large friendly fonts.",
+  "mock_data": {
+    "widget": {
+      "id": "wind_speed_001",
+      "app": "Wind Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "location": "Chicago, IL",
+      "currentWind": {
+        "speed": 15,
+        "direction": "NW",
+        "gust": 25
+      },
+      "hourlyTrend": [
+        {
+          "hour": "9AM",
+          "speed": 12
+        },
+        {
+          "hour": "10AM",
+          "speed": 14
+        },
+        {
+          "hour": "11AM",
+          "speed": 15
+        },
+        {
+          "hour": "12PM",
+          "speed": 16
+        },
+        {
+          "hour": "1PM",
+          "speed": 15
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#0D47A1",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface HourlyTrend {\n  hour: string;\n  speed: number;\n}\n\ninterface WindData {\n  location: string;\n  currentWind: {\n    speed: number;\n    direction: string;\n    gust: number;\n  };\n  hourlyTrend: HourlyTrend[];\n}\n\nexport default function Widget() {\n  const windData = response.data as WindData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#0D47A1' }} elevation={2}>\n      <CardContent sx={{ p: 2.5, color: '#FFFFFF' }}>\n        <Stack spacing={1.5}>\n          <Box>\n            <Typography variant=\"body2\" color=\"inherit\">\n              {windData.location}\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={600} sx={{ mt: 0.5 }}>\n              {windData.currentWind.speed} mph\n            </Typography>\n            <Typography variant=\"body2\" sx={{ mb: 1 }}>\n              Wind Direction: {windData.currentWind.direction}, Gusts up to {windData.currentWind.gust} mph\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: windData.hourlyTrend.map((trend) => trend.speed),\n                  color: '#FFC107',\n                  curve: 'natural',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: windData.hourlyTrend.map((trend) => trend.hour),\n                  id: 'hours',\n                },\n              ]}\n              yAxis={[{ id: 'speed' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"hours\"\n                tickLabelStyle={{ fontSize: 10, fill: '#FFFFFF' }}\n              />\n              <ChartsYAxis\n                axisId=\"speed\"\n                tickLabelStyle={{ fontSize: 10, fill: '#FFFFFF' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

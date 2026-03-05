@@ -1,0 +1,42 @@
+{
+  "description": "A vocabulary builder widget showing words learned, streak, and daily goal progress",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "vocab_builder_001",
+      "app": "Vocabulary Builder",
+      "version": "1.0"
+    },
+    "data": {
+      "currentStreak": 5,
+      "dailyGoal": {
+        "targetWords": 20,
+        "learnedWords": 15,
+        "percentage": 75
+      },
+      "recentWords": [
+        {
+          "word": "elucidate",
+          "meaning": "make (something) clear; explain"
+        },
+        {
+          "word": "ephemeral",
+          "meaning": "lasting for a very short time"
+        },
+        {
+          "word": "gregarious",
+          "meaning": "fond of company; sociable"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, LinearProgress, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface DailyGoal {\n  targetWords: number;\n  learnedWords: number;\n  percentage: number;\n}\n\ninterface RecentWord {\n  word: string;\n  meaning: string;\n}\n\ninterface VocabularyData {\n  currentStreak: number;\n  dailyGoal: DailyGoal;\n  recentWords: RecentWord[];\n}\n\nexport default function Widget() {\n  const vocabularyData = response.data as VocabularyData;\n  const { currentStreak, dailyGoal, recentWords } = vocabularyData;\n  const { theme, primaryColor, accentColor } = response.meta;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: theme === 'dark' ? '#1C1C1E' : '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: primaryColor }}>\n              Vocabulary Builder\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Current Streak: {currentStreak} days\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 0.5 }}>\n              Daily Goal\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: primaryColor }}>\n              {dailyGoal.learnedWords}/{dailyGoal.targetWords}\n            </Typography>\n            <LinearProgress\n              variant=\"determinate\"\n              value={dailyGoal.percentage}\n              sx={{\n                height: 8,\n                borderRadius: 4,\n                bgcolor: '#E0E0E0',\n                '& .MuiLinearProgress-bar': {\n                  bgcolor: accentColor,\n                  borderRadius: 4,\n                },\n              }}\n            />\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 0.5 }}>\n              Recent Words\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {recentWords.map((word) => (\n                <Chip\n                  key={word.word}\n                  label={word.word}\n                  sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: theme === 'dark' ? '#2C2C2E' : '#F5F5F5', color: primaryColor }}\n                />\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

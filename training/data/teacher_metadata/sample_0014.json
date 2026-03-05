@@ -1,0 +1,51 @@
+{
+  "description": "A subscription revenue widget showing MRR, churn rate, and growth trend",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "subscription_revenue_001",
+      "app": "Revenue Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "subscriptionMetrics": {
+        "monthlyRecurringRevenue": {
+          "current": 12000,
+          "lastMonth": 11500,
+          "growthRate": 4.35
+        },
+        "churnRate": 1.2,
+        "newSubscriptions": 300
+      },
+      "growthTrend": [
+        {
+          "month": "Jan",
+          "MRR": 10500
+        },
+        {
+          "month": "Feb",
+          "MRR": 11000
+        },
+        {
+          "month": "Mar",
+          "MRR": 11500
+        },
+        {
+          "month": "Apr",
+          "MRR": 12000
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#009688",
+      "accentColor": "#FF5722",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface SubscriptionMetrics {\n  monthlyRecurringRevenue: {\n    current: number;\n    lastMonth: number;\n    growthRate: number;\n  };\n  churnRate: number;\n  newSubscriptions: number;\n}\n\ninterface GrowthTrend {\n  month: string;\n  MRR: number;\n}\n\ninterface RevenueData {\n  subscriptionMetrics: SubscriptionMetrics;\n  growthTrend: GrowthTrend[];\n}\n\nexport default function Widget() {\n  const data = response.data as RevenueData;\n  const { subscriptionMetrics, growthTrend } = data;\n  const isGrowthPositive = subscriptionMetrics.growthRate >= 0;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Monthly Recurring Revenue\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#009688' }}>\n              ${subscriptionMetrics.monthlyRecurringRevenue.current.toLocaleString()}\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={0.5}>\n              {isGrowthPositive ? (\n                <TrendingUp sx={{ fontSize: 16, color: '#009688' }} />\n              ) : (\n                <TrendingDown sx={{ fontSize: 16, color: '#FF5722' }} />\n              )}\n              <Typography variant=\"body2\" sx={{ color: isGrowthPositive ? '#009688' : '#FF5722' }}>\n                {subscriptionMetrics.growthRate.toFixed(2)}% from last month\n              </Typography>\n            </Stack>\n          </Box>\n\n          <Stack direction=\"row\" spacing={1}>\n            <Chip label={`Churn Rate: ${subscriptionMetrics.churnRate}%`} sx={{ fontSize: '11px', px: 1 }} />\n            <Chip label={`New Subs: ${subscriptionMetrics.newSubscriptions}`} sx={{ fontSize: '11px', px: 1 }} />\n          </Stack>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <LineChart\n              height={140}\n              series={[\n                {\n                  data: growthTrend.map((item) => item.MRR),\n                  color: '#009688',\n                  curve: 'linear',\n                  showMark: false,\n                },\n              ]}\n              xAxis={[\n                {\n                  data: growthTrend.map((item) => item.month),\n                  scaleType: 'band',\n                  tickLabelStyle: { fontSize: 10, fill: '#6B7280' },\n                },\n              ]}\n              yAxis={[\n                { tickLabelStyle: { fontSize: 10, fill: '#6B7280' } },\n              ]}\n              margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

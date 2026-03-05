@@ -1,93 +1,66 @@
 import React from 'react';
-import { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';
-import { BarChart } from '@mui/x-charts';
+import { Card, CardContent, Box, Typography, Stack } from '@mui/material';
+import { LineChart } from '@mui/x-charts';
 import response from './response.json';
 
-interface PollenLevel {
-  level: number;
-  severity: string;
+interface RetentionRate {
+  day: string;
+  percentage: number;
 }
 
-interface HourlyPollenData {
-  hour: string;
-  tree: number;
-  grass: number;
-  weed: number;
-}
-
-interface PollenData {
-  location: string;
-  currentPollenLevel: {
-    tree: PollenLevel;
-    grass: PollenLevel;
-    weed: PollenLevel;
+interface UserEngagementData {
+  metrics: {
+    DAU_MAU_ratio: number;
+    averageSessionDuration: string;
+    retentionRates: RetentionRate[];
   };
-  hourlyPollenTrend: HourlyPollenData[];
 }
 
 export default function Widget() {
-  const pollenData = response.data as PollenData;
-  const { currentPollenLevel, hourlyPollenTrend } = pollenData;
+  const data = response.data as UserEngagementData;
+  const { DAU_MAU_ratio, averageSessionDuration, retentionRates } = data.metrics;
 
   return (
-    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>
+    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#0D47A1' }} elevation={2}>
       <CardContent sx={{ p: 2.5 }}>
         <Stack spacing={2}>
           <Box>
-            <Typography variant="body2" color="text.secondary">
-              {pollenData.location}
+            <Typography variant="body2" sx={{ color: '#FF5722', mb: 0.5 }}>
+              DAU/MAU Ratio
             </Typography>
-            <Stack direction="row" spacing={0.5}>
-              {Object.entries(currentPollenLevel).map(([type, data]) => (
-                <Chip
-                  key={type}
-                  label={`${type.charAt(0).toUpperCase() + type.slice(1)}: ${data.severity}`}
-                  sx={{ fontSize: '11px', px: 1, py: 0.5 }}
-                  color={
-                    data.severity === 'High'
-                      ? 'error'
-                      : data.severity === 'Moderate'
-                      ? 'warning'
-                      : 'success'
-                  }
-                />
-              ))}
-            </Stack>
+            <Typography variant="h4" sx={{ color: '#FFFFFF', fontWeight: 700 }}>
+              {(DAU_MAU_ratio * 100).toFixed(0)}%
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#B0BEC5' }}>
+              Avg. Session Duration: {averageSessionDuration}
+            </Typography>
           </Box>
 
-          <BarChart
-            height={140}
+          <LineChart
+            height={120}
             series={[
               {
-                data: hourlyPollenTrend.map(d => d.tree),
+                data: retentionRates.map(r => r.percentage),
                 color: '#FF5722',
-                label: 'Tree',
-              },
-              {
-                data: hourlyPollenTrend.map(d => d.grass),
-                color: '#4CAF50',
-                label: 'Grass',
-              },
-              {
-                data: hourlyPollenTrend.map(d => d.weed),
-                color: '#2196F3',
-                label: 'Weed',
+                curve: 'natural',
+                showMark: false,
               },
             ]}
             xAxis={[
               {
-                data: hourlyPollenTrend.map(d => d.hour),
+                data: retentionRates.map(r => r.day),
                 scaleType: 'band',
                 tickLabelStyle: {
-                  fontSize: 11,
-                  fill: '#6B7280',
+                  fontSize: 10,
+                  fill: '#B0BEC5',
                 },
               }
             ]}
-            margin={{ top: 10, bottom: 30, left: 40, right: 10 }}
+            yAxis={null}
+            margin={{ top: 10, bottom: 30, left: 10, right: 10 }}
             sx={{
-              '& .MuiBarElement-root': {
-                rx: 4,
+              '& .MuiLineElement-root': {
+                strokeWidth: 2,
               },
             }}
           />

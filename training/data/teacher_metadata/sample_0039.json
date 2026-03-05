@@ -1,0 +1,43 @@
+{
+  "description": "A transit tracker widget showing next 3 arrivals with real-time delay indicators",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "transit_tracker_001",
+      "app": "Transit Watch",
+      "version": "1.0"
+    },
+    "data": {
+      "station": "Downtown Hub",
+      "nextArrivals": [
+        {
+          "route": "Bus 52",
+          "destination": "Central Park",
+          "arrivalTime": "5 mins",
+          "realTimeDelay": "+2 mins"
+        },
+        {
+          "route": "Train Red Line",
+          "destination": "Uptown",
+          "arrivalTime": "12 mins",
+          "realTimeDelay": "On time"
+        },
+        {
+          "route": "Bus 16",
+          "destination": "City Square",
+          "arrivalTime": "18 mins",
+          "realTimeDelay": "-1 min"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#37474F",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface Arrival {\n  route: string;\n  destination: string;\n  arrivalTime: string;\n  realTimeDelay: string;\n}\n\ninterface TransitData {\n  station: string;\n  nextArrivals: Arrival[];\n}\n\nexport default function Widget() {\n  const transitData = response.data as TransitData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#37474F' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#FFC107', mb: 1 }}>\n              {transitData.station}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ color: '#FFFFFF' }}>\n              Next Arrivals\n            </Typography>\n          </Box>\n\n          <Stack spacing={1.5}>\n            {transitData.nextArrivals.map((arrival, index) => (\n              <Box key={index} sx={{ p: 1, borderRadius: 1, bgcolor: '#455A64' }}>\n                <Stack direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\">\n                  <Box>\n                    <Typography variant=\"body2\" sx={{ color: '#FFC107', fontWeight: 600 }}>\n                      {arrival.route}\n                    </Typography>\n                    <Typography variant=\"caption\" sx={{ color: '#CFD8DC' }}>\n                      To {arrival.destination}\n                    </Typography>\n                  </Box>\n                  <Box textAlign=\"right\">\n                    <Typography variant=\"body2\" sx={{ color: '#FFFFFF', fontWeight: 500 }}>\n                      {arrival.arrivalTime}\n                    </Typography>\n                    <Typography variant=\"caption\" sx={{ color: arrival.realTimeDelay.includes('+') ? '#FF7043' : '#66BB6A' }}>\n                      {arrival.realTimeDelay}\n                    </Typography>\n                  </Box>\n                </Stack>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

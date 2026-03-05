@@ -1,0 +1,68 @@
+{
+  "description": "A stock market summary widget showing major indices with change percentages",
+  "ui_style": "Dark minimal with pure black background, white text, single accent color, ultra-clean lines.",
+  "mock_data": {
+    "widget": {
+      "id": "stock_indices_001",
+      "app": "Market Watch",
+      "version": "1.0"
+    },
+    "data": {
+      "indices": [
+        {
+          "name": "S&P 500",
+          "currentValue": 4420.52,
+          "change": -23.45,
+          "changePercent": -0.53,
+          "sparkline": [
+            4450.1,
+            4440.32,
+            4435.67,
+            4428.5,
+            4425.0,
+            4420.52
+          ]
+        },
+        {
+          "name": "NASDAQ",
+          "currentValue": 13620.77,
+          "change": 47.26,
+          "changePercent": 0.35,
+          "sparkline": [
+            13580.5,
+            13600.1,
+            13610.0,
+            13615.2,
+            13618.3,
+            13620.77
+          ]
+        },
+        {
+          "name": "Dow Jones",
+          "currentValue": 34789.12,
+          "change": -67.45,
+          "changePercent": -0.19,
+          "sparkline": [
+            34850.0,
+            34820.3,
+            34795.5,
+            34790.0,
+            34788.0,
+            34789.12
+          ]
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#374151",
+      "accentColor": "#E5E7EB",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface IndexData {\n  name: string;\n  currentValue: number;\n  change: number;\n  changePercent: number;\n  sparkline: number[];\n}\n\ninterface WidgetData {\n  indices: IndexData[];\n}\n\nexport default function Widget() {\n  const { indices } = response.data as WidgetData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#000000' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          {indices.map((index) => {\n            const positive = index.change >= 0;\n            return (\n              <Box key={index.name}>\n                <Stack direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\" sx={{ mb: 0.5 }}>\n                  <Box>\n                    <Typography variant=\"body2\" sx={{ color: '#FFFFFF', fontWeight: 600 }}>\n                      {index.name}\n                    </Typography>\n                    <Typography variant=\"body1\" sx={{ color: '#E5E7EB', fontWeight: 500 }}>\n                      {index.currentValue.toFixed(2)}\n                    </Typography>\n                  </Box>\n                  <Box textAlign=\"right\">\n                    <Stack direction=\"row\" alignItems=\"center\" spacing={0.5}>\n                      {positive ? (\n                        <TrendingUp sx={{ fontSize: 16, color: '#10B981' }} />\n                      ) : (\n                        <TrendingDown sx={{ fontSize: 16, color: '#EF4444' }} />\n                      )}\n                      <Typography variant=\"body2\" sx={{ color: positive ? '#10B981' : '#EF4444' }}>\n                        {positive ? '+' : ''}\n                        {index.change.toFixed(2)} ({index.changePercent.toFixed(2)}%)\n                      </Typography>\n                    </Stack>\n                  </Box>\n                </Stack>\n                <LineChart\n                  height={40}\n                  series={[\n                    {\n                      data: index.sparkline,\n                      color: positive ? '#10B981' : '#EF4444',\n                      curve: 'natural',\n                      showMark: false,\n                    },\n                  ]}\n                  xAxis={[{ data: index.sparkline.map((_, i) => i), hide: true }]}\n                  margin={{ top: 5, bottom: 5, left: 0, right: 0 }}\n                  sx={{\n                    '& .MuiLineElement-root': {\n                      strokeWidth: 1.5,\n                    },\n                  }}\n                />\n              </Box>\n            );\n          })}\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

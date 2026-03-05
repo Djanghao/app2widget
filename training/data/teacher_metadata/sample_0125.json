@@ -1,0 +1,64 @@
+{
+  "description": "A messaging widget showing unread conversations, recent contacts, and message volume",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "messaging_overview_001",
+      "app": "ChatEase",
+      "version": "1.0"
+    },
+    "data": {
+      "unreadConversations": 3,
+      "recentContacts": [
+        {
+          "name": "Alice Johnson",
+          "lastMessage": "See you at 6!",
+          "time": "2:15 PM"
+        },
+        {
+          "name": "Bob Smith",
+          "lastMessage": "Thanks for the update.",
+          "time": "1:45 PM"
+        },
+        {
+          "name": "Charlie Brown",
+          "lastMessage": "Can we reschedule?",
+          "time": "12:30 PM"
+        }
+      ],
+      "messageVolume": [
+        {
+          "hour": "9AM",
+          "messages": 5
+        },
+        {
+          "hour": "12PM",
+          "messages": 8
+        },
+        {
+          "hour": "3PM",
+          "messages": 12
+        },
+        {
+          "hour": "6PM",
+          "messages": 9
+        },
+        {
+          "hour": "9PM",
+          "messages": 4
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#374151",
+      "accentColor": "#F59E0B",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Grid } from '@mui/material';\nimport { ResponsiveChartContainer, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface RecentContact {\n  name: string;\n  lastMessage: string;\n  time: string;\n}\n\ninterface MessageVolume {\n  hour: string;\n  messages: number;\n}\n\ninterface MessagingData {\n  unreadConversations: number;\n  recentContacts: RecentContact[];\n  messageVolume: MessageVolume[];\n}\n\nexport default function Widget() {\n  const data = response.data as MessagingData;\n  const meta = response.meta;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: meta.theme === 'dark' ? '#374151' : '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: meta.accentColor }}>\n              ChatEase Overview\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Unread Conversations: {data.unreadConversations}\n            </Typography>\n          </Box>\n\n          <Grid container spacing={1}>\n            {data.recentContacts.map((contact, index) => (\n              <Grid item xs={12} key={index}>\n                <Stack direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\">\n                  <Box>\n                    <Typography variant=\"body2\" sx={{ color: '#F8FAFC', fontWeight: 500 }}>\n                      {contact.name}\n                    </Typography>\n                    <Typography variant=\"caption\" sx={{ color: '#9CA3AF' }}>\n                      {contact.lastMessage}\n                    </Typography>\n                  </Box>\n                  <Typography variant=\"caption\" sx={{ color: '#D1D5DB' }}>\n                    {contact.time}\n                  </Typography>\n                </Stack>\n              </Grid>\n            ))}\n          </Grid>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: data.messageVolume.map(v => v.messages),\n                  color: meta.accentColor,\n                  label: 'Messages',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: data.messageVolume.map(v => v.hour),\n                  id: 'hours',\n                },\n              ]}\n              yAxis={[{ id: 'messages' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <BarPlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"hours\"\n                tickLabelStyle={{ fontSize: 10, fill: '#9CA3AF' }}\n              />\n              <ChartsYAxis\n                axisId=\"messages\"\n                tickLabelStyle={{ fontSize: 10, fill: '#9CA3AF' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

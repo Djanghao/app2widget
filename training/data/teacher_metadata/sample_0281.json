@@ -1,0 +1,56 @@
+{
+  "description": "A recycling tracker widget showing items recycled, CO2 saved, and community leaderboard position",
+  "ui_style": "Cyberpunk dark theme with neon green and magenta accents on near-black backgrounds, monospace fonts.",
+  "mock_data": {
+    "widget": {
+      "id": "recycle_tracker_001",
+      "app": "EcoTrack",
+      "version": "1.0"
+    },
+    "data": {
+      "recyclingStats": {
+        "itemsRecycled": 125,
+        "co2SavedKg": 34.5,
+        "leaderboardPosition": 5
+      },
+      "communityLeaderboard": [
+        {
+          "position": 1,
+          "user": "GreenGuru",
+          "itemsRecycled": 450
+        },
+        {
+          "position": 2,
+          "user": "EcoWarrior",
+          "itemsRecycled": 410
+        },
+        {
+          "position": 3,
+          "user": "RecycleRanger",
+          "itemsRecycled": 389
+        },
+        {
+          "position": 4,
+          "user": "SustainMaster",
+          "itemsRecycled": 350
+        },
+        {
+          "position": 5,
+          "user": "EcoTrackUser",
+          "itemsRecycled": 125
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FFEB3B",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Divider, Chip } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\nconst Widget: React.FC = () => {\n  const { recyclingStats, communityLeaderboard } = response.data;\n  const { meta } = response;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#1C1C1E', color: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2.5}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#4CAF50', mb: 1 }}>\n              Recycling Stats\n            </Typography>\n            <Typography variant=\"body1\">\n              Items Recycled: {recyclingStats.itemsRecycled}\n            </Typography>\n            <Typography variant=\"body1\">\n              CO2 Saved: {recyclingStats.co2SavedKg} kg\n            </Typography>\n            <Typography variant=\"body1\">\n              Leaderboard Position: #{recyclingStats.leaderboardPosition}\n            </Typography>\n          </Box>\n\n          <Divider sx={{ bgcolor: '#4CAF50' }} />\n\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#FFEB3B', mb: 1 }}>\n              Leaderboard Top 5\n            </Typography>\n            <Stack spacing={1.5}>\n              {communityLeaderboard.slice(0, 5).map((user) => (\n                <Box key={user.position} sx={{ display: 'flex', justifyContent: 'space-between' }}>\n                  <Typography variant=\"body2\">{user.user}</Typography>\n                  <Chip label={`${user.itemsRecycled} items`} sx={{ fontSize: '10px', bgcolor: '#4CAF50', color: '#FFFFFF' }} />\n                </Box>\n              ))}\n            </Stack>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: communityLeaderboard.map(user => user.itemsRecycled),\n                  color: meta.primaryColor,\n                },\n              ]}\n              xAxis={[\n                {\n                  data: communityLeaderboard.map(user => user.user),\n                  scaleType: 'band',\n                  hide: true,\n                },\n              ]}\n              yAxis={[{ hide: true }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <BarPlot />\n              </g>\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n};\n\nexport default Widget;"
+}

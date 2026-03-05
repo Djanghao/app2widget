@@ -1,0 +1,46 @@
+{
+  "description": "A trip planner widget showing upcoming trip details with countdown and packing progress",
+  "ui_style": "Airy and modern with lots of white space, thin borders, muted blues and grays. Calm and focused.",
+  "mock_data": {
+    "widget": {
+      "id": "trip_planner_001",
+      "app": "Trip Planner",
+      "version": "1.0"
+    },
+    "data": {
+      "tripDetails": {
+        "destination": "Paris, France",
+        "departureDate": "2023-11-15",
+        "countdown": "12 days",
+        "packingProgress": {
+          "itemsPacked": 15,
+          "totalItems": 20,
+          "percentagePacked": 75
+        }
+      },
+      "packingList": [
+        {
+          "item": "Passport",
+          "packed": true
+        },
+        {
+          "item": "Toothbrush",
+          "packed": true
+        },
+        {
+          "item": "Camera",
+          "packed": false
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#009688",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, CircularProgress, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface PackingItem {\n  item: string;\n  packed: boolean;\n}\n\ninterface TripDetails {\n  destination: string;\n  departureDate: string;\n  countdown: string;\n  packingProgress: {\n    itemsPacked: number;\n    totalItems: number;\n    percentagePacked: number;\n  };\n}\n\ninterface TripData {\n  tripDetails: TripDetails;\n  packingList: PackingItem[];\n}\n\nexport default function Widget() {\n  const { tripDetails, packingList } = response.data as TripData;\n  const { theme, primaryColor, accentColor } = response.meta;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: theme === 'light' ? '#FFFFFF' : '#1E1E1E' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Next Trip to\n            </Typography>\n            <Typography variant=\"h5\" fontWeight={600} sx={{ color: primaryColor }}>\n              {tripDetails.destination}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Departure: {tripDetails.departureDate}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Countdown: {tripDetails.countdown}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Packing Progress\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={1}>\n              <CircularProgress variant=\"determinate\" value={tripDetails.packingProgress.percentagePacked} sx={{ color: accentColor }} />\n              <Typography variant=\"body2\" fontWeight={500}>\n                {tripDetails.packingProgress.itemsPacked}/{tripDetails.packingProgress.totalItems} packed\n              </Typography>\n            </Stack>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Packing List\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {packingList.map((item, index) => (\n                <Chip\n                  key={index}\n                  label={item.item}\n                  sx={{\n                    fontSize: '11px',\n                    px: 1,\n                    py: 0.5,\n                    bgcolor: item.packed ? primaryColor : '#E0E0E0',\n                    color: item.packed ? '#FFFFFF' : '#000000',\n                  }}\n                />\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

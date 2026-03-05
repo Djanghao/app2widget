@@ -1,0 +1,59 @@
+{
+  "description": "A meditation streak widget showing current streak, total sessions, and weekly minutes bar chart",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "meditation_streak_001",
+      "app": "Mindful Moments",
+      "version": "1.0"
+    },
+    "data": {
+      "currentStreak": {
+        "days": 15,
+        "longestStreak": 30
+      },
+      "totalSessions": 120,
+      "weeklyMinutes": [
+        {
+          "day": "Mon",
+          "minutes": 45
+        },
+        {
+          "day": "Tue",
+          "minutes": 30
+        },
+        {
+          "day": "Wed",
+          "minutes": 50
+        },
+        {
+          "day": "Thu",
+          "minutes": 40
+        },
+        {
+          "day": "Fri",
+          "minutes": 35
+        },
+        {
+          "day": "Sat",
+          "minutes": 20
+        },
+        {
+          "day": "Sun",
+          "minutes": 60
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#3B82F6",
+      "accentColor": "#EF4444",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface WeeklyMinutes {\n  day: string;\n  minutes: number;\n}\n\ninterface MeditationData {\n  currentStreak: {\n    days: number;\n    longestStreak: number;\n  };\n  totalSessions: number;\n  weeklyMinutes: WeeklyMinutes[];\n}\n\nexport default function Widget() {\n  const meditationData = response.data as MeditationData;\n  const { currentStreak, totalSessions, weeklyMinutes } = meditationData;\n  \n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#1F2937', color: '#F8FAFC' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1 }}>\n              Meditation Streak\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8' }}>\n              Current Streak: {currentStreak.days} days\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8' }}>\n              Longest Streak: {currentStreak.longestStreak} days\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8', mt: 1 }}>\n              Total Sessions: {totalSessions}\n            </Typography>\n          </Box>\n\n          <BarChart\n            height={120}\n            series={[\n              {\n                data: weeklyMinutes.map(d => d.minutes),\n                color: '#3B82F6',\n              },\n            ]}\n            xAxis={[\n              {\n                data: weeklyMinutes.map(d => d.day),\n                scaleType: 'band',\n                tickLabelStyle: {\n                  fontSize: 11,\n                  fill: '#CBD5E1',\n                },\n              }\n            ]}\n            margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n            sx={{\n              '& .MuiBarElement-root': {\n                rx: 4,\n              },\n            }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

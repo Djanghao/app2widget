@@ -1,0 +1,70 @@
+{
+  "description": "A currency exchange rate widget with live rates and 7-day trend for a pair",
+  "ui_style": "Brutalist with raw black and white, oversized bold type, sharp edges, no rounded corners.",
+  "mock_data": {
+    "widget": {
+      "id": "currency_exchange_001",
+      "app": "Currency Converter",
+      "version": "1.0"
+    },
+    "data": {
+      "currencyPair": {
+        "base": "USD",
+        "quote": "EUR",
+        "currentRate": 0.9456,
+        "change": -0.0012,
+        "changePercent": -0.13
+      },
+      "weeklyTrend": [
+        {
+          "day": "Mon",
+          "rate": 0.9478
+        },
+        {
+          "day": "Tue",
+          "rate": 0.9465
+        },
+        {
+          "day": "Wed",
+          "rate": 0.948
+        },
+        {
+          "day": "Thu",
+          "rate": 0.9492
+        },
+        {
+          "day": "Fri",
+          "rate": 0.9505
+        },
+        {
+          "day": "Sat",
+          "rate": 0.9468
+        },
+        {
+          "day": "Sun",
+          "rate": 0.9456
+        }
+      ],
+      "rateTrend": [
+        0.9478,
+        0.9465,
+        0.948,
+        0.9492,
+        0.9505,
+        0.9468,
+        0.9456
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#0D47A1",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface CurrencyPair {\n  base: string;\n  quote: string;\n  currentRate: number;\n  change: number;\n  changePercent: number;\n}\n\ninterface WeeklyTrend {\n  day: string;\n  rate: number;\n}\n\ninterface CurrencyData {\n  currencyPair: CurrencyPair;\n  weeklyTrend: WeeklyTrend[];\n  rateTrend: number[];\n}\n\nexport default function Widget() {\n  const currencyData = response.data as CurrencyData;\n  const { currencyPair, weeklyTrend } = currencyData;\n  const clipPathId = useId();\n  const isPositive = currencyPair.change >= 0;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 360, maxWidth: 480, bgcolor: '#212121' }} elevation={2}>\n      <CardContent sx={{ p: 3 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#B0BEC5' }}>\n              {currencyPair.base}/{currencyPair.quote}\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#FFFFFF' }}>\n              {currencyPair.currentRate.toFixed(4)}\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={0.5} sx={{ mt: 0.5 }}>\n              {isPositive ? <ArrowUpward sx={{ fontSize: 16, color: '#4CAF50' }} /> : <ArrowDownward sx={{ fontSize: 16, color: '#F44336' }} />}\n              <Typography variant=\"body2\" sx={{ color: isPositive ? '#4CAF50' : '#F44336' }}>\n                {currencyPair.change.toFixed(4)} ({currencyPair.changePercent.toFixed(2)}%)\n              </Typography>\n            </Stack>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: currencyData.rateTrend,\n                  color: '#FFC107',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: weeklyTrend.map(w => w.day),\n                  id: 'days',\n                },\n              ]}\n              yAxis={[{ id: 'rates' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"days\"\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsYAxis\n                axisId=\"rates\"\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

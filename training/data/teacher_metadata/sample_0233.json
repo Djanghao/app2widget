@@ -1,0 +1,55 @@
+{
+  "description": "A solar panel widget showing current generation, daily yield, and savings this month",
+  "ui_style": "Retro/vintage with warm sepia tones, rounded retro fonts, subtle paper textures, nostalgic feel.",
+  "mock_data": {
+    "widget": {
+      "id": "solar_panel_001",
+      "app": "Solar Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "currentGeneration": {
+        "power": 3500,
+        "unit": "W",
+        "condition": "Sunny"
+      },
+      "dailyYield": [
+        {
+          "hour": "6AM",
+          "energy": 0.5
+        },
+        {
+          "hour": "9AM",
+          "energy": 1.5
+        },
+        {
+          "hour": "12PM",
+          "energy": 2.8
+        },
+        {
+          "hour": "3PM",
+          "energy": 3.0
+        },
+        {
+          "hour": "6PM",
+          "energy": 1.2
+        }
+      ],
+      "monthlySavings": {
+        "amount": 45.75,
+        "currency": "USD"
+      }
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FFEB3B",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface CurrentGeneration {\n  power: number;\n  unit: string;\n  condition: string;\n}\n\ninterface DailyYield {\n  hour: string;\n  energy: number;\n}\n\ninterface MonthlySavings {\n  amount: number;\n  currency: string;\n}\n\ninterface SolarData {\n  currentGeneration: CurrentGeneration;\n  dailyYield: DailyYield[];\n  monthlySavings: MonthlySavings;\n}\n\nexport default function Widget() {\n  const solarData = response.data as SolarData;\n  const { currentGeneration, dailyYield, monthlySavings } = solarData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFF8E1' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" color=\"text.primary\" sx={{ mb: 0.5 }}>\n              Solar Power Generation\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} color=\"text.secondary\">\n              {currentGeneration.power} {currentGeneration.unit}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Condition: {currentGeneration.condition}\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 120 }}>\n            <LineChart\n              height={120}\n              series={[\n                {\n                  data: dailyYield.map(d => d.energy),\n                  color: '#FFC107',\n                  curve: 'natural',\n                  showMark: false,\n                },\n              ]}\n              xAxis={[\n                {\n                  data: dailyYield.map(d => d.hour),\n                  scaleType: 'band',\n                  tickLabelStyle: {\n                    fontSize: 10,\n                    fill: '#6B7280',\n                  },\n                },\n              ]}\n              margin={{\n                top: 10,\n                bottom: 30,\n                left: 40,\n                right: 10,\n              }}\n              sx={{\n                '& .MuiLineElement-root': {\n                  strokeWidth: 2,\n                },\n              }}\n            />\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Monthly Savings\n            </Typography>\n            <Typography variant=\"h5\" fontWeight={600} color=\"primary\">\n              {monthlySavings.currency} {monthlySavings.amount.toFixed(2)}\n            </Typography>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

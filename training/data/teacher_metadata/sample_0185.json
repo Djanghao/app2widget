@@ -1,0 +1,66 @@
+{
+  "description": "A pet care widget showing feeding schedule, vet appointment, and activity level",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "petcare_001",
+      "app": "Pet Care Companion",
+      "version": "1.0"
+    },
+    "data": {
+      "petName": "Buddy",
+      "feedingSchedule": {
+        "morning": "8:00 AM",
+        "afternoon": "12:00 PM",
+        "evening": "6:00 PM"
+      },
+      "nextVetAppointment": {
+        "date": "2023-11-15",
+        "time": "3:00 PM",
+        "vetName": "Dr. Smith",
+        "location": "Happy Pets Clinic"
+      },
+      "activityLevel": [
+        {
+          "day": "Mon",
+          "level": "High"
+        },
+        {
+          "day": "Tue",
+          "level": "Moderate"
+        },
+        {
+          "day": "Wed",
+          "level": "High"
+        },
+        {
+          "day": "Thu",
+          "level": "Low"
+        },
+        {
+          "day": "Fri",
+          "level": "Moderate"
+        },
+        {
+          "day": "Sat",
+          "level": "High"
+        },
+        {
+          "day": "Sun",
+          "level": "Low"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Grid } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface FeedingSchedule {\n  morning: string;\n  afternoon: string;\n  evening: string;\n}\n\ninterface VetAppointment {\n  date: string;\n  time: string;\n  vetName: string;\n  location: string;\n}\n\ninterface ActivityLevel {\n  day: string;\n  level: string;\n}\n\ninterface PetCareData {\n  petName: string;\n  feedingSchedule: FeedingSchedule;\n  nextVetAppointment: VetAppointment;\n  activityLevel: ActivityLevel[];\n}\n\nexport default function Widget() {\n  const petCareData = response.data as PetCareData;\n  const { petName, feedingSchedule, nextVetAppointment, activityLevel } = petCareData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#FF5722' }}>\n              {petName}'s Care Summary\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Feeding Schedule\n            </Typography>\n            <Stack direction=\"row\" spacing={2} sx={{ mt: 0.5 }}>\n              <Typography variant=\"body2\">{`Morning: ${feedingSchedule.morning}`}</Typography>\n              <Typography variant=\"body2\">{`Afternoon: ${feedingSchedule.afternoon}`}</Typography>\n              <Typography variant=\"body2\">{`Evening: ${feedingSchedule.evening}`}</Typography>\n            </Stack>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Next Vet Appointment\n            </Typography>\n            <Typography variant=\"body2\" sx={{ mt: 0.5 }}>\n              {`${nextVetAppointment.date} at ${nextVetAppointment.time} with ${nextVetAppointment.vetName}, ${nextVetAppointment.location}`}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Weekly Activity Level\n            </Typography>\n            <BarChart\n              height={140}\n              series={[\n                {\n                  data: activityLevel.map(d => d.level === \"High\" ? 3 : d.level === \"Moderate\" ? 2 : 1),\n                  color: '#FFC107',\n                },\n              ]}\n              xAxis={[\n                {\n                  data: activityLevel.map(d => d.day),\n                  scaleType: 'band',\n                  tickLabelStyle: {\n                    fontSize: 11,\n                    fill: '#6B7280',\n                  },\n                }\n              ]}\n              yAxis={[\n                {\n                  scaleType: 'linear',\n                  tickFormat: (value) => [\"Low\", \"Moderate\", \"High\"][value - 1],\n                  tickLabelStyle: {\n                    fontSize: 11,\n                    fill: '#6B7280',\n                  },\n                }\n              ]}\n              margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n              sx={{\n                '& .MuiBarElement-root': {\n                  rx: 4,\n                },\n              }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

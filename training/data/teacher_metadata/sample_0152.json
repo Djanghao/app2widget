@@ -1,0 +1,51 @@
+{
+  "description": "A geographic heatmap widget showing sales intensity across 6 regions with totals",
+  "ui_style": "iOS-inspired with SF Pro-style fonts, vibrancy effects, system-like cards, and Apple HIG spacing.",
+  "mock_data": {
+    "widget": {
+      "id": "sales_heatmap_001",
+      "app": "Sales Heatmap",
+      "version": "1.0"
+    },
+    "data": {
+      "totalSales": 156000,
+      "regions": [
+        {
+          "region": "North",
+          "sales": 32000
+        },
+        {
+          "region": "South",
+          "sales": 28000
+        },
+        {
+          "region": "East",
+          "sales": 26000
+        },
+        {
+          "region": "West",
+          "sales": 29000
+        },
+        {
+          "region": "Central",
+          "sales": 23000
+        },
+        {
+          "region": "International",
+          "sales": 19000
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "pie"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { PieChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface RegionSales {\n  region: string;\n  sales: number;\n}\n\ninterface SalesHeatmapData {\n  totalSales: number;\n  regions: RegionSales[];\n}\n\nexport default function Widget() {\n  const salesData = response.data as SalesHeatmapData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#1E1E1E' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Total Sales\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#FF5722' }}>\n              ${salesData.totalSales.toLocaleString()}\n            </Typography>\n          </Box>\n\n          <PieChart\n            height={200}\n            series={[\n              {\n                data: salesData.regions.map((region) => ({\n                  value: region.sales,\n                  label: region.region,\n                })),\n                colors: ['#FFC107', '#FF5722', '#FF7043', '#FF8A65', '#FFAB91', '#FFCCBC'],\n              },\n            ]}\n            legendPosition=\"left\"\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n            sx={{\n              '& .MuiPieElement-root': {\n                strokeWidth: 1,\n                stroke: '#1E1E1E',\n              },\n              '& text': {\n                fill: '#FFFFFF',\n              },\n            }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

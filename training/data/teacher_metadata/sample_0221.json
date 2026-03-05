@@ -1,0 +1,62 @@
+{
+  "description": "An order tracking widget showing current order status, delivery progress, and ETA",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "order_tracking_001",
+      "app": "Order Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "order": {
+        "orderId": "ORD123456",
+        "status": "In Transit",
+        "estimatedDelivery": "2023-11-05",
+        "lastUpdated": "2023-11-01T14:30:00Z"
+      },
+      "deliveryProgress": [
+        {
+          "checkpoint": "Order Placed",
+          "timestamp": "2023-10-30T09:00:00Z"
+        },
+        {
+          "checkpoint": "Order Processed",
+          "timestamp": "2023-10-31T11:00:00Z"
+        },
+        {
+          "checkpoint": "Shipped",
+          "timestamp": "2023-11-01T08:00:00Z"
+        },
+        {
+          "checkpoint": "In Transit",
+          "timestamp": "2023-11-01T14:00:00Z"
+        }
+      ],
+      "progressTrend": [
+        {
+          "date": "2023-10-30",
+          "progress": 20
+        },
+        {
+          "date": "2023-10-31",
+          "progress": 40
+        },
+        {
+          "date": "2023-11-01",
+          "progress": 80
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FF5722",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface OrderData {\n  order: {\n    orderId: string;\n    status: string;\n    estimatedDelivery: string;\n    lastUpdated: string;\n  };\n  deliveryProgress: {\n    checkpoint: string;\n    timestamp: string;\n  }[];\n  progressTrend: {\n    date: string;\n    progress: number;\n  }[];\n}\n\nexport default function Widget() {\n  const data = response.data as OrderData;\n  const { order, deliveryProgress, progressTrend } = data;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 0.5 }}>\n              Order ID: {order.orderId}\n            </Typography>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#4CAF50' }}>\n              Status: {order.status}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Estimated Delivery: {order.estimatedDelivery}\n            </Typography>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              Last Updated: {new Date(order.lastUpdated).toLocaleString()}\n            </Typography>\n          </Box>\n\n          <Stack direction=\"row\" spacing={0.5}>\n            {deliveryProgress.map((progress, index) => (\n              <Chip key={index} label={progress.checkpoint} sx={{ fontSize: '11px', px: 1, py: 0.5 }} />\n            ))}\n          </Stack>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: progressTrend.map(pt => pt.progress),\n                  color: '#FF5722',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: progressTrend.map(pt => new Date(pt.date).toLocaleDateString()),\n                  id: 'dates',\n                },\n              ]}\n              yAxis={[{ id: 'progress', min: 0, max: 100 }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"dates\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"progress\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

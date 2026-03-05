@@ -1,0 +1,39 @@
+{
+  "description": "A habit tracker widget showing today's habits checklist with streak counts",
+  "ui_style": "Cyberpunk dark theme with neon green and magenta accents on near-black backgrounds, monospace fonts.",
+  "mock_data": {
+    "widget": {
+      "id": "habit_tracker_001",
+      "app": "Habit Master",
+      "version": "1.0"
+    },
+    "data": {
+      "todayHabits": [
+        {
+          "name": "Drink Water",
+          "completed": true,
+          "streak": 7
+        },
+        {
+          "name": "Exercise",
+          "completed": false,
+          "streak": 3
+        },
+        {
+          "name": "Read a Book",
+          "completed": true,
+          "streak": 5
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FF5722",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { CheckCircle, Cancel } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface Habit {\n  name: string;\n  completed: boolean;\n  streak: number;\n}\n\ninterface HabitData {\n  todayHabits: Habit[];\n}\n\nexport default function Widget() {\n  const habitData = response.data as HabitData;\n  const { todayHabits } = habitData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#1A1A1A' }} elevation={3}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" sx={{ color: '#76FF03', fontWeight: 600 }}>\n            Today's Habits\n          </Typography>\n          <Stack spacing={1}>\n            {todayHabits.map((habit, index) => (\n              <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>\n                {habit.completed ? (\n                  <CheckCircle sx={{ color: '#76FF03', mr: 1 }} />\n                ) : (\n                  <Cancel sx={{ color: '#FF1744', mr: 1 }} />\n                )}\n                <Typography variant=\"body2\" sx={{ color: '#E0E0E0', flexGrow: 1 }}>\n                  {habit.name}\n                </Typography>\n                <Chip\n                  label={`Streak: ${habit.streak}`}\n                  sx={{ bgcolor: '#333', color: '#E0E0E0', fontSize: '11px' }}\n                />\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

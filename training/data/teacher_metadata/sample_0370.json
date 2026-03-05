@@ -1,0 +1,46 @@
+{
+  "description": "An EV charging widget showing nearest stations, availability, and charge cost estimate",
+  "ui_style": "Android Material You with pill-shaped elements, tonal colors, large touch targets, and rounded corners.",
+  "mock_data": {
+    "widget": {
+      "id": "ev_charging_001",
+      "app": "EV Charge Finder",
+      "version": "1.0"
+    },
+    "data": {
+      "nearestStations": [
+        {
+          "name": "GreenCharge Station",
+          "distance": "0.5 miles",
+          "availability": "4/10",
+          "costPerKWh": 0.12
+        },
+        {
+          "name": "QuickCharge Hub",
+          "distance": "1.2 miles",
+          "availability": "7/12",
+          "costPerKWh": 0.15
+        },
+        {
+          "name": "EcoPlug Center",
+          "distance": "2.0 miles",
+          "availability": "2/8",
+          "costPerKWh": 0.11
+        }
+      ],
+      "estimatedChargeCost": {
+        "kWhNeeded": 20,
+        "totalCost": 2.4
+      }
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#009688",
+      "accentColor": "#FF5722",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, Divider } from '@mui/material';\nimport { Info } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface Station {\n  name: string;\n  distance: string;\n  availability: string;\n  costPerKWh: number;\n}\n\ninterface EstimatedChargeCost {\n  kWhNeeded: number;\n  totalCost: number;\n}\n\ninterface EVChargingData {\n  nearestStations: Station[];\n  estimatedChargeCost: EstimatedChargeCost;\n}\n\nexport default function Widget() {\n  const evChargingData = response.data as EVChargingData;\n  const { nearestStations, estimatedChargeCost } = evChargingData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#009688' }}>\n              Nearest Charging Stations\n            </Typography>\n            <Divider sx={{ mb: 1 }} />\n            <Stack spacing={1.5}>\n              {nearestStations.slice(0, 3).map((station, index) => (\n                <Box key={index}>\n                  <Typography variant=\"body1\" fontWeight={500} sx={{ color: '#37474F' }}>\n                    {station.name}\n                  </Typography>\n                  <Stack direction=\"row\" justifyContent=\"space-between\">\n                    <Typography variant=\"caption\" color=\"text.secondary\">\n                      {station.distance}\n                    </Typography>\n                    <Chip label={`Availability: ${station.availability}`} size=\"small\" sx={{ color: '#FFF', bgcolor: '#009688', fontSize: '10px' }} />\n                    <Typography variant=\"caption\" color=\"text.secondary\">\n                      ${station.costPerKWh.toFixed(2)} per kWh\n                    </Typography>\n                  </Stack>\n                </Box>\n              ))}\n            </Stack>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>\n              <Info sx={{ fontSize: 16, mr: 0.5 }} />\n              Estimated Charge Cost\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#FF5722' }}>\n              ${estimatedChargeCost.totalCost.toFixed(2)}\n            </Typography>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              {estimatedChargeCost.kWhNeeded} kWh needed\n            </Typography>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,38 @@
+{
+  "description": "An invoice summary widget showing pending, paid, and overdue counts with total amounts",
+  "ui_style": "Dark minimal with pure black background, white text, single accent color, ultra-clean lines.",
+  "mock_data": {
+    "widget": {
+      "id": "invoice_summary_001",
+      "app": "Finance Suite",
+      "version": "1.0"
+    },
+    "data": {
+      "invoices": {
+        "totalPending": {
+          "count": 14,
+          "amount": 7200.5
+        },
+        "totalPaid": {
+          "count": 50,
+          "amount": 37500.0
+        },
+        "totalOverdue": {
+          "count": 5,
+          "amount": 2150.0
+        }
+      }
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "minimal",
+      "primaryColor": "#4A5568",
+      "accentColor": "#E53E3E",
+      "chartTypes": [
+        "pie"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { PieChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface InvoiceData {\n  invoices: {\n    totalPending: {\n      count: number;\n      amount: number;\n    };\n    totalPaid: {\n      count: number;\n      amount: number;\n    };\n    totalOverdue: {\n      count: number;\n      amount: number;\n    };\n  };\n}\n\nexport default function Widget() {\n  const invoiceData = response.data as InvoiceData;\n  const { totalPending, totalPaid, totalOverdue } = invoiceData.invoices;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 380, bgcolor: '#000000' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#FFFFFF' }}>\n              Invoice Summary\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8' }}>\n              Finance Suite v1.0\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <PieChart\n              series={[\n                {\n                  data: [\n                    { id: 'Paid', value: totalPaid.amount, label: 'Paid' },\n                    { id: 'Pending', value: totalPending.amount, label: 'Pending' },\n                    { id: 'Overdue', value: totalOverdue.amount, label: 'Overdue' },\n                  ],\n                  colors: ['#4A5568', '#E53E3E', '#E0E7FF'],\n                },\n              ]}\n              sx={{\n                '& .MuiPieChart-label': {\n                  fill: '#FFFFFF',\n                  fontSize: 12,\n                },\n              }}\n            />\n          </Box>\n\n          <Stack direction=\"row\" spacing={1.5} sx={{ justifyContent: 'space-between' }}>\n            <Box>\n              <Typography variant=\"caption\" sx={{ color: '#94A3B8' }}>\n                Pending\n              </Typography>\n              <Typography variant=\"body2\" sx={{ color: '#FFFFFF' }}>\n                {totalPending.count} (${totalPending.amount.toLocaleString()})\n              </Typography>\n            </Box>\n            <Box>\n              <Typography variant=\"caption\" sx={{ color: '#94A3B8' }}>\n                Paid\n              </Typography>\n              <Typography variant=\"body2\" sx={{ color: '#FFFFFF' }}>\n                {totalPaid.count} (${totalPaid.amount.toLocaleString()})\n              </Typography>\n            </Box>\n            <Box>\n              <Typography variant=\"caption\" sx={{ color: '#94A3B8' }}>\n                Overdue\n              </Typography>\n              <Typography variant=\"body2\" sx={{ color: '#FFFFFF' }}>\n                {totalOverdue.count} (${totalOverdue.amount.toLocaleString()})\n              </Typography>\n            </Box>\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

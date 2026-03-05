@@ -1,0 +1,57 @@
+{
+  "description": "A travel expense widget showing trip budget vs spent with category breakdown",
+  "ui_style": "Dark minimal with pure black background, white text, single accent color, ultra-clean lines.",
+  "mock_data": {
+    "widget": {
+      "id": "travel_expense_001",
+      "app": "Travel Budget Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "trip": {
+        "destination": "Paris, France",
+        "budget": 2500.0,
+        "spent": 1850.0,
+        "remaining": 650.0
+      },
+      "categoryBreakdown": [
+        {
+          "category": "Accommodation",
+          "budget": 1000.0,
+          "spent": 900.0
+        },
+        {
+          "category": "Food",
+          "budget": 800.0,
+          "spent": 640.0
+        },
+        {
+          "category": "Transport",
+          "budget": 300.0,
+          "spent": 150.0
+        },
+        {
+          "category": "Entertainment",
+          "budget": 250.0,
+          "spent": 110.0
+        },
+        {
+          "category": "Miscellaneous",
+          "budget": 150.0,
+          "spent": 50.0
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF6F61",
+      "accentColor": "#FFD700",
+      "chartTypes": [
+        "pie"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Grid, Chip } from '@mui/material';\nimport { PieChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface TripData {\n  destination: string;\n  budget: number;\n  spent: number;\n  remaining: number;\n}\n\ninterface CategoryBreakdown {\n  category: string;\n  budget: number;\n  spent: number;\n}\n\ninterface WidgetData {\n  trip: TripData;\n  categoryBreakdown: CategoryBreakdown[];\n}\n\nexport default function Widget() {\n  const widgetData = response.data as WidgetData;\n  const { trip, categoryBreakdown } = widgetData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 3 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#FF6F61' }}>\n              {trip.destination}\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#1F2937' }}>\n              ${trip.spent.toLocaleString()}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#64748B', mt: 0.5 }}>\n              Spent of ${trip.budget.toLocaleString()} budget\n            </Typography>\n          </Box>\n\n          <PieChart\n            height={200}\n            series={[\n              {\n                data: [\n                  { value: trip.spent, name: 'Spent' },\n                  { value: trip.remaining, name: 'Remaining' },\n                ],\n                colors: ['#FF6F61', '#FFD700'],\n              },\n            ]}\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n            sx={{\n              '& .MuiChartLabel-root': {\n                fontSize: 11,\n                fill: '#6B7280',\n              },\n            }}\n          />\n\n          <Grid container spacing={1}>\n            {categoryBreakdown.map((category, index) => (\n              <Grid item xs={6} key={index}>\n                <Chip\n                  label={`${category.category}: $${category.spent.toLocaleString()}`}\n                  sx={{ width: '100%', fontSize: '10px' }}\n                />\n              </Grid>\n            ))}\n          </Grid>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

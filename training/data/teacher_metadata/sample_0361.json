@@ -1,0 +1,61 @@
+{
+  "description": "A customer lifetime value widget showing average CLV, top segments, and retention chart",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "clv_widget_001",
+      "app": "Customer Insights",
+      "version": "1.0"
+    },
+    "data": {
+      "averageCLV": 2500.75,
+      "topSegments": [
+        {
+          "name": "Loyal Customers",
+          "percentage": 45
+        },
+        {
+          "name": "New Customers",
+          "percentage": 30
+        },
+        {
+          "name": "At-risk Customers",
+          "percentage": 25
+        }
+      ],
+      "retentionTrend": [
+        {
+          "month": "Jan",
+          "retention": 75
+        },
+        {
+          "month": "Feb",
+          "retention": 78
+        },
+        {
+          "month": "Mar",
+          "retention": 76
+        },
+        {
+          "month": "Apr",
+          "retention": 80
+        },
+        {
+          "month": "May",
+          "retention": 82
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4A90E2",
+      "accentColor": "#E94E77",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Divider } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface Segment {\n  name: string;\n  percentage: number;\n}\n\ninterface RetentionTrend {\n  month: string;\n  retention: number;\n}\n\ninterface CLVData {\n  averageCLV: number;\n  topSegments: Segment[];\n  retentionTrend: RetentionTrend[];\n}\n\nexport default function Widget() {\n  const { averageCLV, topSegments, retentionTrend } = response.data as CLVData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#2C2C2C' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#B0BEC5' }}>\n              Average Customer Lifetime Value\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#4A90E2' }}>\n              ${averageCLV.toFixed(2)}\n            </Typography>\n          </Box>\n\n          <Stack spacing={1.5}>\n            {topSegments.map((segment) => (\n              <Box key={segment.name}>\n                <Typography variant=\"body2\" sx={{ color: '#B0BEC5' }}>\n                  {segment.name}\n                </Typography>\n                <Typography variant=\"h6\" fontWeight={500} sx={{ color: '#E94E77' }}>\n                  {segment.percentage}%\n                </Typography>\n                <Divider sx={{ borderColor: '#B0BEC5', my: 1 }} />\n              </Box>\n            ))}\n          </Stack>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: retentionTrend.map(r => r.retention),\n                  color: '#4A90E2',\n                  curve: 'linear',\n                  showMark: true,\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: retentionTrend.map(r => r.month),\n                  id: 'months',\n                },\n              ]}\n              yAxis={[{ id: 'retention' }]}\n              margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"months\"\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsYAxis\n                axisId=\"retention\"\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

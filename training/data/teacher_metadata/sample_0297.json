@@ -1,0 +1,80 @@
+{
+  "description": "A correlation matrix widget showing relationships between 4 variables with color-coded heatmap",
+  "ui_style": "Brutalist with raw black and white, oversized bold type, sharp edges, no rounded corners.",
+  "mock_data": {
+    "widget": {
+      "id": "correlation_matrix_001",
+      "app": "Data Insights",
+      "version": "1.0"
+    },
+    "data": {
+      "variables": [
+        "Variable A",
+        "Variable B",
+        "Variable C",
+        "Variable D"
+      ],
+      "correlationMatrix": [
+        [
+          1,
+          0.8,
+          -0.3,
+          0.2
+        ],
+        [
+          0.8,
+          1,
+          -0.5,
+          0.4
+        ],
+        [
+          -0.3,
+          -0.5,
+          1,
+          -0.1
+        ],
+        [
+          0.2,
+          0.4,
+          -0.1,
+          1
+        ]
+      ],
+      "heatmapColors": [
+        [
+          "#FF0000",
+          "#FF6666",
+          "#99FF99",
+          "#66B2FF"
+        ],
+        [
+          "#FF6666",
+          "#FF0000",
+          "#66CCFF",
+          "#FFB266"
+        ],
+        [
+          "#99FF99",
+          "#66CCFF",
+          "#FF0000",
+          "#FF9999"
+        ],
+        [
+          "#66B2FF",
+          "#FFB266",
+          "#FF9999",
+          "#FF0000"
+        ]
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#2D3748",
+      "accentColor": "#D53F8C",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Grid } from '@mui/material';\nimport response from './response.json';\n\ninterface WidgetData {\n  variables: string[];\n  correlationMatrix: number[][];\n  heatmapColors: string[][];\n}\n\nexport default function Widget() {\n  const widgetData = response.data as WidgetData;\n  const { variables, correlationMatrix, heatmapColors } = widgetData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 400, maxWidth: 600, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Typography variant=\"h6\" fontWeight={700} sx={{ mb: 2, color: '#000000' }}>\n          Correlation Matrix\n        </Typography>\n        <Grid container spacing={0.5}>\n          {variables.map((variable, index) => (\n            <Grid item xs={3} key={index}>\n              <Typography variant=\"body2\" sx={{ color: '#000000', textAlign: 'center', fontWeight: 600 }}>\n                {variable}\n              </Typography>\n            </Grid>\n          ))}\n          {correlationMatrix.map((row, rowIndex) =>\n            row.map((value, colIndex) => (\n              <Grid item xs={3} key={`${rowIndex}-${colIndex}`}>\n                <Box\n                  sx={{\n                    bgcolor: heatmapColors[rowIndex][colIndex],\n                    height: 40,\n                    display: 'flex',\n                    justifyContent: 'center',\n                    alignItems: 'center',\n                    border: '1px solid #e0e0e0',\n                  }}\n                >\n                  <Typography variant=\"body2\" sx={{ color: '#FFFFFF', fontWeight: 500 }}>\n                    {value.toFixed(1)}\n                  </Typography>\n                </Box>\n              </Grid>\n            ))\n          )}\n        </Grid>\n      </CardContent>\n    </Card>\n  );\n}"
+}

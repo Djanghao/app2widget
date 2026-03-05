@@ -1,0 +1,60 @@
+{
+  "description": "A currency exchange rate widget with live rates and 7-day trend for a pair",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "currency_exchange_001",
+      "app": "Currency Converter",
+      "version": "1.0"
+    },
+    "data": {
+      "currencyPair": {
+        "baseCurrency": "USD",
+        "targetCurrency": "EUR",
+        "currentRate": 0.945,
+        "lastUpdated": "2023-10-10T14:30:00Z"
+      },
+      "weeklyTrend": [
+        {
+          "date": "2023-10-03",
+          "rate": 0.938
+        },
+        {
+          "date": "2023-10-04",
+          "rate": 0.942
+        },
+        {
+          "date": "2023-10-05",
+          "rate": 0.94
+        },
+        {
+          "date": "2023-10-06",
+          "rate": 0.946
+        },
+        {
+          "date": "2023-10-07",
+          "rate": 0.944
+        },
+        {
+          "date": "2023-10-08",
+          "rate": 0.947
+        },
+        {
+          "date": "2023-10-09",
+          "rate": 0.945
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FFD700",
+      "accentColor": "#4682B4",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface CurrencyPair {\n  baseCurrency: string;\n  targetCurrency: string;\n  currentRate: number;\n  lastUpdated: string;\n}\n\ninterface WeeklyTrend {\n  date: string;\n  rate: number;\n}\n\ninterface CurrencyData {\n  currencyPair: CurrencyPair;\n  weeklyTrend: WeeklyTrend[];\n}\n\nexport default function Widget() {\n  const currencyData = response.data as CurrencyData;\n  const { currencyPair, weeklyTrend } = currencyData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#F5F7FA' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {currencyPair.baseCurrency}/{currencyPair.targetCurrency}\n            </Typography>\n            <Typography variant=\"h3\" fontWeight={300} sx={{ my: 0.5 }}>\n              {currencyPair.currentRate.toFixed(3)}\n            </Typography>\n            <Typography variant=\"body1\" color=\"text.secondary\">\n              Last Updated: {new Date(currencyPair.lastUpdated).toLocaleString()}\n            </Typography>\n          </Box>\n\n          <LineChart\n            height={120}\n            series={[\n              {\n                data: weeklyTrend.map((trend) => trend.rate),\n                color: '#4682B4',\n                curve: 'natural',\n                showMark: false,\n              },\n            ]}\n            xAxis={[{ data: weeklyTrend.map((trend) => trend.date), hide: true }]}\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n            sx={{\n              '& .MuiLineElement-root': {\n                strokeWidth: 2,\n              },\n            }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

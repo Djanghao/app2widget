@@ -1,0 +1,42 @@
+{
+  "description": "A movie rating widget showing top picks with ratings, genre, and runtime",
+  "ui_style": "Elegant and luxurious with serif fonts, gold accents on cream backgrounds, refined spacing.",
+  "mock_data": {
+    "widget": {
+      "id": "movie_rating_top_picks_001",
+      "app": "Movie Ratings",
+      "version": "1.0"
+    },
+    "data": {
+      "topPicks": [
+        {
+          "title": "The Silent Shore",
+          "rating": 8.7,
+          "genre": "Drama",
+          "runtime": 127
+        },
+        {
+          "title": "Galactic Voyage",
+          "rating": 7.9,
+          "genre": "Science Fiction",
+          "runtime": 142
+        },
+        {
+          "title": "Comedy Nights",
+          "rating": 8.3,
+          "genre": "Comedy",
+          "runtime": 102
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#F59E0B",
+      "accentColor": "#2563EB",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface TopPick {\n  title: string;\n  rating: number;\n  genre: string;\n  runtime: number;\n}\n\ninterface MovieData {\n  topPicks: TopPick[];\n}\n\nexport default function Widget() {\n  const movieData = response.data as MovieData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#1F2937' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#F59E0B' }}>\n            Top Picks\n          </Typography>\n          {movieData.topPicks.map((pick) => (\n            <Box key={pick.title} sx={{ mb: 1 }}>\n              <Typography variant=\"body1\" sx={{ color: '#F3F4F6', fontWeight: 500 }}>\n                {pick.title}\n              </Typography>\n              <Stack direction=\"row\" spacing={0.5}>\n                <Chip label={`${pick.rating}/10`} sx={{ fontSize: '11px', color: '#E5E7EB', bgcolor: '#2563EB' }} />\n                <Chip label={pick.genre} sx={{ fontSize: '11px', color: '#E5E7EB', bgcolor: '#2563EB' }} />\n                <Chip label={`${pick.runtime} mins`} sx={{ fontSize: '11px', color: '#E5E7EB', bgcolor: '#2563EB' }} />\n              </Stack>\n            </Box>\n          ))}\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

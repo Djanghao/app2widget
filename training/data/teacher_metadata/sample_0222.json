@@ -1,0 +1,51 @@
+{
+  "description": "A product rating widget showing average rating, review count, and rating distribution bar chart",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "product_rating_001",
+      "app": "Rating Insights",
+      "version": "1.0"
+    },
+    "data": {
+      "product": {
+        "name": "Wireless Headphones",
+        "averageRating": 4.5,
+        "reviewCount": 1250
+      },
+      "ratingDistribution": [
+        {
+          "stars": 5,
+          "count": 850
+        },
+        {
+          "stars": 4,
+          "count": 250
+        },
+        {
+          "stars": 3,
+          "count": 100
+        },
+        {
+          "stars": 2,
+          "count": 30
+        },
+        {
+          "stars": 1,
+          "count": 20
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FFB300",
+      "accentColor": "#8E24AA",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface RatingDistribution {\n  stars: number;\n  count: number;\n}\n\ninterface ProductRatingData {\n  product: {\n    name: string;\n    averageRating: number;\n    reviewCount: number;\n  };\n  ratingDistribution: RatingDistribution[];\n}\n\nexport default function Widget() {\n  const ratingData = response.data as ProductRatingData;\n  const { product, ratingDistribution } = ratingData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 400, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#FFB300' }}>\n              {product.name}\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#8E24AA' }}>\n              {product.averageRating.toFixed(1)}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 0.5 }}>\n              Based on {product.reviewCount.toLocaleString()} reviews\n            </Typography>\n          </Box>\n\n          <BarChart\n            height={140}\n            series={[\n              {\n                data: ratingDistribution.map(d => d.count),\n                color: '#FFB300',\n              },\n            ]}\n            xAxis={[\n              {\n                data: ratingDistribution.map(d => `${d.stars}\u2605`),\n                scaleType: 'band',\n                tickLabelStyle: {\n                  fontSize: 11,\n                  fill: '#6B7280',\n                },\n              }\n            ]}\n            margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n            sx={{\n              '& .MuiBarElement-root': {\n                rx: 4,\n              },\n            }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

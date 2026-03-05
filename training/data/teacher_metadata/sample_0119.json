@@ -1,0 +1,39 @@
+{
+  "description": "A meeting agenda widget showing next 3 upcoming meetings with time and location",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "meetings_agenda_001",
+      "app": "Agenda Manager",
+      "version": "1.0"
+    },
+    "data": {
+      "upcomingMeetings": [
+        {
+          "title": "Project Kickoff",
+          "time": "10:00 AM",
+          "location": "Conference Room A"
+        },
+        {
+          "title": "Weekly Sync",
+          "time": "1:00 PM",
+          "location": "Zoom"
+        },
+        {
+          "title": "Client Presentation",
+          "time": "3:30 PM",
+          "location": "Office Room 305"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#3F51B5",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport response from './response.json';\n\ninterface UpcomingMeeting {\n  title: string;\n  time: string;\n  location: string;\n}\n\ninterface AgendaData {\n  upcomingMeetings: UpcomingMeeting[];\n}\n\nexport default function Widget() {\n  const agendaData = response.data as AgendaData;\n  const { theme, primaryColor, accentColor } = response.meta;\n\n  return (\n    <Card\n      sx={{\n        width: 'fit-content',\n        minWidth: 280,\n        maxWidth: 380,\n        bgcolor: theme === 'light' ? '#FFFFFF' : '#1E293B',\n        borderColor: primaryColor,\n        borderWidth: 2,\n        borderStyle: 'solid'\n      }}\n      elevation={2}\n    >\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" sx={{ color: primaryColor }}>\n            Upcoming Meetings\n          </Typography>\n          <Stack spacing={1}>\n            {agendaData.upcomingMeetings.map((meeting, index) => (\n              <Box key={index}>\n                <Typography variant=\"body1\" sx={{ fontWeight: 600, color: primaryColor }}>\n                  {meeting.title}\n                </Typography>\n                <Typography variant=\"body2\" sx={{ color: accentColor }}>\n                  {meeting.time} - {meeting.location}\n                </Typography>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

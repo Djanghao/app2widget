@@ -1,0 +1,33 @@
+{
+  "description": "A podcast widget showing current episode, progress, and listening stats",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "podcast_episode_001",
+      "app": "PodTrack",
+      "version": "1.0"
+    },
+    "data": {
+      "currentEpisode": {
+        "title": "The Future of Tech",
+        "host": "Tech Insights",
+        "duration": 3600,
+        "progress": 1800,
+        "progressPercent": 50
+      },
+      "listeningStats": {
+        "totalHours": 48,
+        "episodesCompleted": 12
+      }
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#222222",
+      "accentColor": "#FF5722",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, CircularProgress } from '@mui/material';\nimport response from './response.json';\n\ninterface CurrentEpisode {\n  title: string;\n  host: string;\n  duration: number;\n  progress: number;\n  progressPercent: number;\n}\n\ninterface ListeningStats {\n  totalHours: number;\n  episodesCompleted: number;\n}\n\ninterface PodcastData {\n  currentEpisode: CurrentEpisode;\n  listeningStats: ListeningStats;\n}\n\nexport default function Widget() {\n  const podcastData = response.data as PodcastData;\n  const { currentEpisode, listeningStats } = podcastData;\n  const remainingTime = currentEpisode.duration - currentEpisode.progress;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#222222' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#FF5722', mb: 0.5 }}>\n              Now Playing\n            </Typography>\n            <Typography variant=\"h5\" sx={{ color: '#FFFFFF', fontWeight: 600 }}>\n              {currentEpisode.title}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#B0BEC5' }}>\n              Host: {currentEpisode.host}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Stack direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\">\n              <Typography variant=\"caption\" sx={{ color: '#B0BEC5' }}>\n                Progress\n              </Typography>\n              <Typography variant=\"caption\" sx={{ color: '#B0BEC5' }}>\n                {Math.floor(remainingTime / 60)} min left\n              </Typography>\n            </Stack>\n            <CircularProgress\n              variant=\"determinate\"\n              value={currentEpisode.progressPercent}\n              sx={{\n                color: '#FF5722',\n                '& .MuiCircularProgress-circle': {\n                  strokeLinecap: 'round',\n                },\n              }}\n              size={60}\n              thickness={4}\n            />\n          </Box>\n\n          <Stack spacing={1.5}>\n            <Box>\n              <Typography variant=\"body2\" sx={{ color: '#FF5722', mb: 0.5 }}>\n                Listening Stats\n              </Typography>\n              <Stack direction=\"row\" justifyContent=\"space-between\">\n                <Typography variant=\"body2\" sx={{ color: '#B0BEC5' }}>\n                  Total Hours\n                </Typography>\n                <Typography variant=\"body2\" sx={{ color: '#FFFFFF', fontWeight: 600 }}>\n                  {listeningStats.totalHours} hrs\n                </Typography>\n              </Stack>\n              <Stack direction=\"row\" justifyContent=\"space-between\">\n                <Typography variant=\"body2\" sx={{ color: '#B0BEC5' }}>\n                  Episodes Completed\n                </Typography>\n                <Typography variant=\"body2\" sx={{ color: '#FFFFFF', fontWeight: 600 }}>\n                  {listeningStats.episodesCompleted}\n                </Typography>\n              </Stack>\n            </Box>\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

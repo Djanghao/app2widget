@@ -1,0 +1,44 @@
+{
+  "description": "A meal planner widget showing today's meals with calorie totals and prep time",
+  "ui_style": "Airy and modern with lots of white space, thin borders, muted blues and grays. Calm and focused.",
+  "mock_data": {
+    "widget": {
+      "id": "meal_planner_001",
+      "app": "Meal Master",
+      "version": "1.0"
+    },
+    "data": {
+      "mealsToday": [
+        {
+          "mealType": "Breakfast",
+          "name": "Oatmeal with Berries",
+          "calories": 350,
+          "prepTimeMinutes": 10
+        },
+        {
+          "mealType": "Lunch",
+          "name": "Grilled Chicken Salad",
+          "calories": 520,
+          "prepTimeMinutes": 15
+        },
+        {
+          "mealType": "Dinner",
+          "name": "Salmon with Quinoa",
+          "calories": 600,
+          "prepTimeMinutes": 20
+        }
+      ],
+      "totalCalories": 1470,
+      "averagePrepTime": 15
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface Meal {\n  mealType: string;\n  name: string;\n  calories: number;\n  prepTimeMinutes: number;\n}\n\ninterface MealsData {\n  mealsToday: Meal[];\n  totalCalories: number;\n  averagePrepTime: number;\n}\n\nexport default function Widget() {\n  const mealsData = response.data as MealsData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFF' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#FF5722' }}>\n              Today's Meals\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Total Calories: {mealsData.totalCalories}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Avg. Prep Time: {mealsData.averagePrepTime} mins\n            </Typography>\n          </Box>\n\n          <Stack spacing={1}>\n            {mealsData.mealsToday.map((meal, index) => (\n              <Box key={index}>\n                <Stack direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\">\n                  <Typography variant=\"body2\" fontWeight={500}>\n                    {meal.mealType}: {meal.name}\n                  </Typography>\n                  <Typography variant=\"caption\" color=\"text.secondary\">\n                    {meal.calories} cal, {meal.prepTimeMinutes} mins\n                  </Typography>\n                </Stack>\n                <Chip\n                  label={meal.mealType}\n                  sx={{ fontSize: '10px', bgcolor: '#FFC107', color: '#FFF', mt: 0.5 }}\n                />\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

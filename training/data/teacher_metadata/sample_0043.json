@@ -1,0 +1,50 @@
+{
+  "description": "A course progress widget showing completed modules, quiz scores, and time spent trend",
+  "ui_style": "Warm and friendly with rounded shapes, pastel colors, and playful typography. Approachable design.",
+  "mock_data": {
+    "widget": {
+      "id": "course_progress_001",
+      "app": "Learning Hub",
+      "version": "1.0"
+    },
+    "data": {
+      "course": {
+        "name": "Advanced Data Science",
+        "completedModules": 5,
+        "totalModules": 10
+      },
+      "quizScores": [
+        {
+          "quiz": "Module 1 Quiz",
+          "score": 85
+        },
+        {
+          "quiz": "Module 2 Quiz",
+          "score": 90
+        },
+        {
+          "quiz": "Module 3 Quiz",
+          "score": 78
+        }
+      ],
+      "timeSpentTrend": [
+        30,
+        45,
+        50,
+        40,
+        60
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4A5568",
+      "accentColor": "#38B2AC",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface CourseProgressData {\n  course: {\n    name: string;\n    completedModules: number;\n    totalModules: number;\n  };\n  quizScores: {\n    quiz: string;\n    score: number;\n  }[];\n  timeSpentTrend: number[];\n}\n\nexport default function Widget() {\n  const data = response.data as CourseProgressData;\n  const { course, quizScores, timeSpentTrend } = data;\n\n  return (\n    <Card\n      sx={{\n        width: 'fit-content',\n        minWidth: 350,\n        maxWidth: 500,\n        bgcolor: '#1A202C',\n        color: '#F7FAFC',\n      }}\n      elevation={2}\n    >\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#38B2AC' }}>\n              {course.name}\n            </Typography>\n            <Typography variant=\"body2\">\n              Modules Completed: {course.completedModules} / {course.totalModules}\n            </Typography>\n          </Box>\n\n          <LineChart\n            height={120}\n            series={[\n              {\n                data: timeSpentTrend,\n                color: '#38B2AC',\n                curve: 'linear',\n                showMark: false,\n              },\n            ]}\n            xAxis={[{ data: timeSpentTrend.map((_, i) => i), hide: true }]}\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n            sx={{\n              '& .MuiLineElement-root': {\n                strokeWidth: 2,\n              },\n            }}\n          />\n\n          <Stack spacing={1.5}>\n            {quizScores.slice(0, 3).map((quizScore, index) => (\n              <Box key={index}>\n                <Typography variant=\"body2\" sx={{ color: '#E2E8F0' }}>\n                  {quizScore.quiz}: <span style={{ fontWeight: 600 }}>{quizScore.score}%</span>\n                </Typography>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

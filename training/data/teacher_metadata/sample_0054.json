@@ -1,0 +1,58 @@
+{
+  "description": "An inventory status widget showing stock levels, low-stock alerts, and reorder suggestions",
+  "ui_style": "Dark glassmorphism with frosted glass panels, blur effects, translucent overlays, and vibrant gradients.",
+  "mock_data": {
+    "widget": {
+      "id": "inventory_status_001",
+      "app": "Inventory Manager",
+      "version": "1.0"
+    },
+    "data": {
+      "stockOverview": {
+        "totalItems": 150,
+        "lowStockItems": 5,
+        "reorderSuggestions": 8
+      },
+      "lowStockItems": [
+        {
+          "item": "Wireless Mouse",
+          "currentStock": 2,
+          "reorderLevel": 10
+        },
+        {
+          "item": "Keyboard",
+          "currentStock": 5,
+          "reorderLevel": 15
+        },
+        {
+          "item": "USB Cable",
+          "currentStock": 1,
+          "reorderLevel": 20
+        }
+      ],
+      "reorderSuggestions": [
+        {
+          "item": "Wireless Mouse",
+          "suggestedOrderQty": 20
+        },
+        {
+          "item": "Keyboard",
+          "suggestedOrderQty": 30
+        },
+        {
+          "item": "USB Cable",
+          "suggestedOrderQty": 50
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, Grid } from '@mui/material';\nimport response from './response.json';\n\ninterface InventoryData {\n  stockOverview: {\n    totalItems: number;\n    lowStockItems: number;\n    reorderSuggestions: number;\n  };\n  lowStockItems: {\n    item: string;\n    currentStock: number;\n    reorderLevel: number;\n  }[];\n  reorderSuggestions: {\n    item: string;\n    suggestedOrderQty: number;\n  }[];\n}\n\nexport default function Widget() {\n  const inventoryData = response.data as InventoryData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Inventory Summary\n            </Typography>\n            <Typography variant=\"h6\" fontWeight={700} sx={{ color: '#FF5722' }}>\n              Total Items: {inventoryData.stockOverview.totalItems}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#FF5722' }}>\n              Low Stock: {inventoryData.stockOverview.lowStockItems} | Reorder Suggestions: {inventoryData.stockOverview.reorderSuggestions}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Low Stock Items\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {inventoryData.lowStockItems.slice(0, 3).map((item, index) => (\n                <Chip\n                  key={index}\n                  label={`${item.item} (${item.currentStock})`}\n                  sx={{ fontSize: '11px', px: 1, py: 0.5 }}\n                />\n              ))}\n            </Stack>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Reorder Suggestions\n            </Typography>\n            <Grid container spacing={1}>\n              {inventoryData.reorderSuggestions.slice(0, 3).map((suggestion, index) => (\n                <Grid item xs={4} key={index}>\n                  <Chip\n                    label={`${suggestion.item} (${suggestion.suggestedOrderQty})`}\n                    sx={{ width: '100%', fontSize: '10px' }}\n                  />\n                </Grid>\n              ))}\n            </Grid>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

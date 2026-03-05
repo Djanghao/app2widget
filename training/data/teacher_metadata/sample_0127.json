@@ -1,0 +1,51 @@
+{
+  "description": "An order tracking widget showing current order status, delivery progress, and ETA",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "order_tracking_001",
+      "app": "Order Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "orderId": "ORD123456",
+      "currentStatus": "Out for Delivery",
+      "estimatedDelivery": "2023-10-15T16:30:00Z",
+      "deliveryProgress": [
+        {
+          "stage": "Order Placed",
+          "completed": true
+        },
+        {
+          "stage": "Processed",
+          "completed": true
+        },
+        {
+          "stage": "Shipped",
+          "completed": true
+        },
+        {
+          "stage": "Out for Delivery",
+          "completed": false
+        }
+      ],
+      "progressChart": [
+        100,
+        100,
+        100,
+        60
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface DeliveryProgress {\n  stage: string;\n  completed: boolean;\n}\n\ninterface OrderTrackingData {\n  orderId: string;\n  currentStatus: string;\n  estimatedDelivery: string;\n  deliveryProgress: DeliveryProgress[];\n  progressChart: number[];\n}\n\nexport default function Widget() {\n  const orderData = response.data as OrderTrackingData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Order ID\n            </Typography>\n            <Typography variant=\"h6\" fontWeight={500} sx={{ mb: 1 }}>\n              {orderData.orderId}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Status\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={600} sx={{ color: '#FF5722', mb: 1 }}>\n              {orderData.currentStatus}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Estimated Delivery\n            </Typography>\n            <Typography variant=\"body1\" fontWeight={500}>\n              {new Date(orderData.estimatedDelivery).toLocaleString()}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Delivery Progress\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {orderData.deliveryProgress.map((progress, index) => (\n                <Chip\n                  key={index}\n                  label={progress.stage}\n                  sx={{\n                    fontSize: '11px',\n                    px: 1,\n                    py: 0.5,\n                    bgcolor: progress.completed ? '#FFC107' : '#F5F5F5',\n                    color: progress.completed ? '#FFFFFF' : '#BDBDBD',\n                  }}\n                />\n              ))}\n            </Stack>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 100 }}>\n            <LineChart\n              series={[\n                {\n                  data: orderData.progressChart,\n                  color: '#FF5722',\n                  curve: 'linear',\n                  showMark: false,\n                },\n              ]}\n              xAxis={[\n                {\n                  data: orderData.deliveryProgress.map((_, i) => i),\n                  hide: true,\n                },\n              ]}\n              margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n              sx={{\n                '& .MuiLineElement-root': {\n                  strokeWidth: 2,\n                },\n              }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

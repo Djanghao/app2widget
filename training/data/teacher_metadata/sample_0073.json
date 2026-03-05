@@ -1,0 +1,42 @@
+{
+  "description": "A grocery list widget showing item count by category and estimated total cost",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "grocery_list_001",
+      "app": "Grocery Buddy",
+      "version": "1.0"
+    },
+    "data": {
+      "categories": [
+        {
+          "name": "Fruits",
+          "itemCount": 5,
+          "estimatedCost": 15.0
+        },
+        {
+          "name": "Vegetables",
+          "itemCount": 8,
+          "estimatedCost": 20.0
+        },
+        {
+          "name": "Dairy",
+          "itemCount": 3,
+          "estimatedCost": 10.0
+        }
+      ],
+      "totalEstimatedCost": 45.0
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "pie"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Divider } from '@mui/material';\nimport { PieChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface Category {\n  name: string;\n  itemCount: number;\n  estimatedCost: number;\n}\n\ninterface GroceryData {\n  widget: {\n    id: string;\n    app: string;\n    version: string;\n  };\n  data: {\n    categories: Category[];\n    totalEstimatedCost: number;\n  };\n  meta: {\n    theme: string;\n    dataMode: string;\n    layout: string;\n    primaryColor: string;\n    accentColor: string;\n    chartTypes: string[];\n  };\n}\n\nexport default function Widget() {\n  const groceryData = response.data as GroceryData;\n  const { categories, totalEstimatedCost } = groceryData.data;\n  const { primaryColor } = groceryData.meta;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#1E293B' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#F8FAFC', mb: 1 }}>\n              Grocery Categories\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8' }}>\n              Total Estimated Cost: ${totalEstimatedCost.toFixed(2)}\n            </Typography>\n          </Box>\n\n          <Divider sx={{ bgcolor: '#374151' }} />\n\n          <PieChart\n            height={200}\n            series={[\n              {\n                data: categories.map((category) => ({\n                  id: category.name,\n                  value: category.estimatedCost,\n                  fill: primaryColor,\n                })),\n                innerRadius: 0.5,\n                outerRadius: 0.9,\n              },\n            ]}\n            sx={{\n              '& .MuiPieArc-root': {\n                stroke: '#1E293B',\n                strokeWidth: 1,\n              },\n            }}\n          />\n\n          <Stack spacing={1}>\n            {categories.map((category) => (\n              <Box key={category.name} sx={{ display: 'flex', justifyContent: 'space-between', color: '#F8FAFC' }}>\n                <Typography variant=\"body2\">{category.name}</Typography>\n                <Typography variant=\"body2\">${category.estimatedCost.toFixed(2)}</Typography>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

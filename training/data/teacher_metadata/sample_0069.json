@@ -1,0 +1,42 @@
+{
+  "description": "A restaurant menu widget showing featured dishes with prices and ratings",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "menu_featured_001",
+      "app": "Gourmet Menu",
+      "version": "1.0"
+    },
+    "data": {
+      "featuredDishes": [
+        {
+          "name": "Truffle Risotto",
+          "price": 24.99,
+          "rating": 4.8,
+          "reviews": 125
+        },
+        {
+          "name": "Seared Salmon",
+          "price": 28.5,
+          "rating": 4.7,
+          "reviews": 98
+        },
+        {
+          "name": "Vegan Burger",
+          "price": 18.75,
+          "rating": 4.5,
+          "reviews": 87
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface FeaturedDish {\n  name: string;\n  price: number;\n  rating: number;\n  reviews: number;\n}\n\ninterface FeaturedDishesData {\n  featuredDishes: FeaturedDish[];\n}\n\nexport default function Widget() {\n  const { featuredDishes } = response.data as FeaturedDishesData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#333' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" sx={{ color: '#FFC107' }}>\n            Featured Dishes\n          </Typography>\n          <Stack spacing={1}>\n            {featuredDishes.map((dish) => (\n              <Box key={dish.name} sx={{ bgcolor: '#424242', p: 1.5, borderRadius: 1 }}>\n                <Typography variant=\"body1\" sx={{ color: '#FFFFFF', fontWeight: 600 }}>\n                  {dish.name}\n                </Typography>\n                <Typography variant=\"body2\" sx={{ color: '#FF5722' }}>\n                  ${dish.price.toFixed(2)}\n                </Typography>\n                <Stack direction=\"row\" spacing={0.5} alignItems=\"center\">\n                  <Typography variant=\"body2\" sx={{ color: '#FFC107' }}>\n                    {dish.rating.toFixed(1)}\n                  </Typography>\n                  <Typography variant=\"body2\" sx={{ color: '#BDBDBD' }}>\n                    ({dish.reviews} reviews)\n                  </Typography>\n                </Stack>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

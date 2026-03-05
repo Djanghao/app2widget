@@ -1,0 +1,44 @@
+{
+  "description": "A smart lock widget showing lock status, recent access log, and authorized users count",
+  "ui_style": "iOS-inspired with SF Pro-style fonts, vibrancy effects, system-like cards, and Apple HIG spacing.",
+  "mock_data": {
+    "widget": {
+      "id": "smart_lock_status_001",
+      "app": "Smart Lock",
+      "version": "1.0"
+    },
+    "data": {
+      "lockStatus": {
+        "currentState": "Locked",
+        "batteryLevel": 85
+      },
+      "recentAccessLog": [
+        {
+          "time": "08:45 AM",
+          "user": "Alice",
+          "action": "Unlocked"
+        },
+        {
+          "time": "12:10 PM",
+          "user": "Bob",
+          "action": "Locked"
+        },
+        {
+          "time": "03:15 PM",
+          "user": "Charlie",
+          "action": "Unlocked"
+        }
+      ],
+      "authorizedUsersCount": 5
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#4A90E2",
+      "accentColor": "#D0021B",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { Lock, LockOpen, BatteryChargingFull } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface LockStatus {\n  currentState: string;\n  batteryLevel: number;\n}\n\ninterface RecentAccess {\n  time: string;\n  user: string;\n  action: string;\n}\n\ninterface WidgetData {\n  lockStatus: LockStatus;\n  recentAccessLog: RecentAccess[];\n  authorizedUsersCount: number;\n}\n\nexport default function Widget() {\n  const data = response.data as WidgetData;\n  const { lockStatus, recentAccessLog, authorizedUsersCount } = data;\n\n  const lockIcon = lockStatus.currentState === 'Locked' ? <Lock /> : <LockOpen />;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#1E1E1E', color: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={1}>\n              {lockIcon}\n              <Typography variant=\"h6\" fontWeight={700}>\n                {lockStatus.currentState}\n              </Typography>\n            </Stack>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={1} sx={{ mt: 0.5 }}>\n              <BatteryChargingFull sx={{ fontSize: 16, color: '#4A90E2' }} />\n              <Typography variant=\"body2\" color=\"text.secondary\">\n                Battery: {lockStatus.batteryLevel}%\n              </Typography>\n            </Stack>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Recent Access Log\n            </Typography>\n            <Stack spacing={1}>\n              {recentAccessLog.slice(0, 3).map((log, index) => (\n                <Box key={index}>\n                  <Typography variant=\"caption\" color=\"text.secondary\">\n                    {log.time} - {log.user} - {log.action}\n                  </Typography>\n                </Box>\n              ))}\n            </Stack>\n          </Box>\n\n          <Box>\n            <Stack direction=\"row\" justifyContent=\"space-between\">\n              <Typography variant=\"body2\" color=\"text.secondary\">\n                Authorized Users\n              </Typography>\n              <Chip label={authorizedUsersCount} sx={{ bgcolor: '#D0021B', color: '#FFFFFF', fontWeight: 600 }} />\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

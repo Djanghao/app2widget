@@ -1,0 +1,54 @@
+{
+  "description": "A music listening stats widget showing top artists, genres, and listening hours this week",
+  "ui_style": "Material Design 3 inspired with dynamic color, rounded containers, prominent FABs, and elevation.",
+  "mock_data": {
+    "widget": {
+      "id": "music_stats_001",
+      "app": "Music Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "listeningSummary": {
+        "totalHours": 15.5,
+        "averagePerDay": 2.2
+      },
+      "topArtists": [
+        {
+          "name": "Artist A",
+          "hours": 5.0
+        },
+        {
+          "name": "Artist B",
+          "hours": 3.5
+        },
+        {
+          "name": "Artist C",
+          "hours": 2.5
+        }
+      ],
+      "topGenres": [
+        {
+          "genre": "Rock",
+          "hours": 6.0
+        },
+        {
+          "genre": "Pop",
+          "hours": 4.0
+        },
+        {
+          "genre": "Jazz",
+          "hours": 2.5
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#1DB954",
+      "accentColor": "#1ED760",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { PieChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface ListeningSummary {\n  totalHours: number;\n  averagePerDay: number;\n}\n\ninterface Artist {\n  name: string;\n  hours: number;\n}\n\ninterface Genre {\n  genre: string;\n  hours: number;\n}\n\ninterface MusicData {\n  listeningSummary: ListeningSummary;\n  topArtists: Artist[];\n  topGenres: Genre[];\n}\n\nexport default function Widget() {\n  const musicData = response.data as MusicData;\n  const { listeningSummary, topArtists, topGenres } = musicData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#1DB954' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#FFFFFF' }}>\n              Music Listening Summary\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#D1FAE5', mb: 1 }}>\n              Total Hours: {listeningSummary.totalHours.toFixed(1)}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#D1FAE5' }}>\n              Average Per Day: {listeningSummary.averagePerDay.toFixed(1)}\n            </Typography>\n          </Box>\n          \n          <Stack spacing={1.5}>\n            <Typography variant=\"body2\" sx={{ color: '#FFFFFF' }}>\n              Top Artists\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {topArtists.map((artist) => (\n                <Chip\n                  key={artist.name}\n                  label={`${artist.name}: ${artist.hours.toFixed(1)}h`}\n                  sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: '#1ED760', color: '#000000' }}\n                />\n              ))}\n            </Stack>\n          </Stack>\n\n          <Box sx={{ width: '100%', height: 150 }}>\n            <PieChart\n              height={150}\n              series={[\n                {\n                  data: topGenres.map((genre) => ({ id: genre.genre, value: genre.hours })),\n                  label: {\n                    type: 'donut',\n                    text: topGenres.map((g) => g.genre),\n                    color: '#FFFFFF',\n                    fontSize: 10,\n                  },\n                  colorPalette: ['#1ED760', '#1DB954', '#1AA34A'],\n                },\n              ]}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

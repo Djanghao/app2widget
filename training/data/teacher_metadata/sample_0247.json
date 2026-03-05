@@ -1,0 +1,37 @@
+{
+  "description": "An A/B test results widget showing variant performance, confidence level, and lift percentage",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "ab_test_results_001",
+      "app": "AB Test Analyzer",
+      "version": "1.0"
+    },
+    "data": {
+      "testName": "Homepage CTA Test",
+      "variants": [
+        {
+          "name": "Variant A",
+          "conversionRate": 5.2,
+          "lift": 0,
+          "confidence": 95
+        },
+        {
+          "name": "Variant B",
+          "conversionRate": 6.1,
+          "lift": 17.3,
+          "confidence": 98
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#FF5722",
+      "accentColor": "#795548",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface Variant {\n  name: string;\n  conversionRate: number;\n  lift: number;\n  confidence: number;\n}\n\ninterface ABTestData {\n  testName: string;\n  variants: Variant[];\n}\n\nexport default function Widget() {\n  const abTestData = response.data as ABTestData;\n  const { testName, variants } = abTestData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#212121', color: '#FFFFFF' }} elevation={3}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#FF5722' }}>\n              {testName}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ mb: 1 }}>\n              Test Variants\n            </Typography>\n            <Stack spacing={1}>\n              {variants.map((variant) => (\n                <Box key={variant.name} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>\n                  <Typography variant=\"body2\" sx={{ fontWeight: 600 }}>\n                    {variant.name}\n                  </Typography>\n                  <Stack direction=\"row\" spacing={0.5} alignItems=\"center\">\n                    {variant.lift >= 0 ? (\n                      <TrendingUp sx={{ fontSize: 16, color: '#4CAF50' }} />\n                    ) : (\n                      <TrendingDown sx={{ fontSize: 16, color: '#F44336' }} />\n                    )}\n                    <Typography variant=\"body2\">\n                      {variant.conversionRate}% ({variant.lift}% lift)\n                    </Typography>\n                  </Stack>\n                  <Chip label={`${variant.confidence}% Conf.`} sx={{ bgcolor: '#795548', color: '#FFFFFF', fontSize: '10px' }} />\n                </Box>\n              ))}\n            </Stack>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 120 }}>\n            <BarChart\n              height={120}\n              series={[\n                {\n                  data: variants.map(v => v.conversionRate),\n                  color: '#FF5722',\n                },\n              ]}\n              xAxis={[\n                {\n                  data: variants.map(v => v.name),\n                  scaleType: 'band',\n                  tickLabelStyle: {\n                    fontSize: 11,\n                    fill: '#E0E0E0',\n                  },\n                }\n              ]}\n              margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

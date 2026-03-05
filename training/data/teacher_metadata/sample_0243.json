@@ -1,0 +1,45 @@
+{
+  "description": "A conversion funnel widget showing stage-by-stage conversion rates with comparison",
+  "ui_style": "Elegant and luxurious with serif fonts, gold accents on cream backgrounds, refined spacing.",
+  "mock_data": {
+    "widget": {
+      "id": "conversion_funnel_001",
+      "app": "Funnel Metrics",
+      "version": "1.0"
+    },
+    "data": {
+      "funnelStages": [
+        {
+          "stage": "Visit",
+          "rate": 100,
+          "previousRate": 98
+        },
+        {
+          "stage": "Sign Up",
+          "rate": 40,
+          "previousRate": 45
+        },
+        {
+          "stage": "Purchase",
+          "rate": 15,
+          "previousRate": 20
+        }
+      ],
+      "comparison": {
+        "currentConversion": 15,
+        "previousConversion": 18
+      }
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ArrowUpward, ArrowDownward } from '@mui/icons-material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface FunnelStage {\n  stage: string;\n  rate: number;\n  previousRate: number;\n}\n\ninterface ConversionData {\n  funnelStages: FunnelStage[];\n  comparison: {\n    currentConversion: number;\n    previousConversion: number;\n  };\n}\n\nexport default function Widget() {\n  const { funnelStages, comparison } = response.data as ConversionData;\n  const isConversionImproved = comparison.currentConversion >= comparison.previousConversion;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#2E2E2E' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#FFC107', mb: 0.5 }}>\n              Conversion Funnel\n            </Typography>\n            <Typography variant=\"h4\" sx={{ color: '#FF5722', fontWeight: 600 }}>\n              {comparison.currentConversion}%\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={0.5} sx={{ mt: 0.5 }}>\n              {isConversionImproved ? (\n                <ArrowUpward sx={{ fontSize: 16, color: '#FFC107' }} />\n              ) : (\n                <ArrowDownward sx={{ fontSize: 16, color: '#FFC107' }} />\n              )}\n              <Typography variant=\"body2\" sx={{ color: '#FFC107' }}>\n                {Math.abs(comparison.currentConversion - comparison.previousConversion)}% from last period\n              </Typography>\n            </Stack>\n          </Box>\n\n          <BarChart\n            height={140}\n            series={[\n              {\n                data: funnelStages.map(stage => stage.rate),\n                color: '#FFC107',\n              },\n            ]}\n            xAxis={[\n              {\n                data: funnelStages.map(stage => stage.stage),\n                scaleType: 'band',\n                tickLabelStyle: {\n                  fontSize: 11,\n                  fill: '#FFFFFF',\n                },\n              },\n            ]}\n            margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n            sx={{\n              '& .MuiBarElement-root': {\n                rx: 4,\n              },\n            }}\n          />\n          \n          <Stack direction=\"row\" spacing={1} justifyContent=\"space-between\">\n            {funnelStages.map((stage, index) => (\n              <Box key={index}>\n                <Typography variant=\"caption\" sx={{ color: '#FFC107' }}>\n                  {stage.stage}\n                </Typography>\n                <Typography variant=\"body2\" sx={{ color: '#FFFFFF' }}>\n                  {stage.rate}%\n                </Typography>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

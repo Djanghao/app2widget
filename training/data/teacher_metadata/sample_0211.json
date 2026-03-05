@@ -1,0 +1,45 @@
+{
+  "description": "A task manager widget showing today's tasks with completion progress and priority indicators",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "task_manager_001",
+      "app": "Task Master",
+      "version": "1.0"
+    },
+    "data": {
+      "date": "2023-10-25",
+      "tasks": [
+        {
+          "title": "Finish project report",
+          "priority": "High",
+          "completed": false
+        },
+        {
+          "title": "Email updates to team",
+          "priority": "Medium",
+          "completed": true
+        },
+        {
+          "title": "Prepare for client meeting",
+          "priority": "High",
+          "completed": false
+        }
+      ],
+      "completionProgress": {
+        "totalTasks": 3,
+        "completedTasks": 1,
+        "percentage": 33
+      }
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#34A853",
+      "accentColor": "#FBBC05",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, CircularProgress } from '@mui/material';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface Task {\n  title: string;\n  priority: string;\n  completed: boolean;\n}\n\ninterface TaskData {\n  date: string;\n  tasks: Task[];\n  completionProgress: {\n    totalTasks: number;\n    completedTasks: number;\n    percentage: number;\n  };\n}\n\nexport default function Widget() {\n  const taskData = response.data as TaskData;\n  const { tasks, completionProgress } = taskData;\n  const theme = response.meta.theme;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: theme === 'light' ? '#FFFFFF' : '#1E293B' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#34A853' }}>\n              Task Manager\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {taskData.date}\n            </Typography>\n          </Box>\n\n          <Stack direction=\"row\" spacing={0.5}>\n            {tasks.slice(0, 3).map((task, index) => (\n              <Chip\n                key={index}\n                label={task.title}\n                sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: task.completed ? '#34A853' : '#FBBC05', color: '#FFFFFF' }}\n              />\n            ))}\n          </Stack>\n\n          <Box>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              Progress\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={1} sx={{ mt: 0.5 }}>\n              <CircularProgress variant=\"determinate\" value={completionProgress.percentage} size={24} sx={{ color: '#34A853' }} />\n              <Typography variant=\"body2\" fontWeight={500}>\n                {completionProgress.completedTasks}/{completionProgress.totalTasks} tasks completed\n              </Typography>\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

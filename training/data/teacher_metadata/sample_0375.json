@@ -1,0 +1,69 @@
+{
+  "description": "A study timer widget showing daily study hours, subject breakdown, and weekly comparison",
+  "ui_style": "Windows Fluent with acrylic backgrounds, reveal highlights, and clean segmented layouts.",
+  "mock_data": {
+    "widget": {
+      "id": "study_timer_001",
+      "app": "Study Buddy",
+      "version": "1.0"
+    },
+    "data": {
+      "todayStudyHours": 3.5,
+      "subjectBreakdown": [
+        {
+          "subject": "Mathematics",
+          "time": 1.5
+        },
+        {
+          "subject": "Science",
+          "time": 1.0
+        },
+        {
+          "subject": "History",
+          "time": 1.0
+        }
+      ],
+      "weeklyComparison": [
+        {
+          "day": "Mon",
+          "hours": 2.0
+        },
+        {
+          "day": "Tue",
+          "hours": 3.0
+        },
+        {
+          "day": "Wed",
+          "hours": 3.5
+        },
+        {
+          "day": "Thu",
+          "hours": 4.0
+        },
+        {
+          "day": "Fri",
+          "hours": 3.0
+        },
+        {
+          "day": "Sat",
+          "hours": 5.0
+        },
+        {
+          "day": "Sun",
+          "hours": 2.5
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4A90E2",
+      "accentColor": "#F5A623",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface SubjectBreakdown {\n  subject: string;\n  time: number;\n}\n\ninterface WeeklyComparison {\n  day: string;\n  hours: number;\n}\n\ninterface StudyData {\n  todayStudyHours: number;\n  subjectBreakdown: SubjectBreakdown[];\n  weeklyComparison: WeeklyComparison[];\n}\n\nexport default function Widget() {\n  const studyData = response.data as StudyData;\n  const { todayStudyHours, subjectBreakdown, weeklyComparison } = studyData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#4A90E2' }}>\n              Study Summary\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Today\u2019s Study Hours\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#F5A623' }}>\n              {todayStudyHours} hrs\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Weekly Study Hours\n            </Typography>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: weeklyComparison.map(d => d.hours),\n                  color: '#4A90E2',\n                  label: 'Hours',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: weeklyComparison.map(d => d.day),\n                  id: 'days',\n                },\n              ]}\n              yAxis={[{ id: 'hours' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <BarPlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"days\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"hours\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Subject Breakdown\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {subjectBreakdown.map((subject, index) => (\n                <Typography\n                  key={index}\n                  variant=\"body2\"\n                  sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: '#E0E7FF', borderRadius: 1 }}\n                >\n                  {subject.subject}: {subject.time} hrs\n                </Typography>\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

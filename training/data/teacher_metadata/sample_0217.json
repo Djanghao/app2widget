@@ -1,0 +1,48 @@
+{
+  "description": "A code review widget showing pending reviews, average review time, and weekly stats",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "code_review_001",
+      "app": "CodeReview Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "pendingReviews": 5,
+      "averageReviewTime": "2h 30m",
+      "weeklyStats": [
+        {
+          "day": "Mon",
+          "reviews": 8
+        },
+        {
+          "day": "Tue",
+          "reviews": 7
+        },
+        {
+          "day": "Wed",
+          "reviews": 5
+        },
+        {
+          "day": "Thu",
+          "reviews": 10
+        },
+        {
+          "day": "Fri",
+          "reviews": 6
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4A5568",
+      "accentColor": "#48BB78",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface WeeklyStats {\n  day: string;\n  reviews: number;\n}\n\ninterface WidgetData {\n  pendingReviews: number;\n  averageReviewTime: string;\n  weeklyStats: WeeklyStats[];\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n  chartTypes: string[];\n}\n\nexport default function Widget() {\n  const widgetData = response.data as WidgetData;\n  const metaData = response.meta as MetaData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: metaData.theme === 'dark' ? '#1A202C' : '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: metaData.primaryColor }}>\n              CodeReview Tracker\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 0.5 }}>\n              Pending Reviews: {widgetData.pendingReviews}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Avg. Review Time: {widgetData.averageReviewTime}\n            </Typography>\n          </Box>\n\n          <BarChart\n            height={140}\n            series={[\n              {\n                data: widgetData.weeklyStats.map(stat => stat.reviews),\n                color: metaData.accentColor,\n              },\n            ]}\n            xAxis={[\n              {\n                data: widgetData.weeklyStats.map(stat => stat.day),\n                scaleType: 'band',\n                tickLabelStyle: {\n                  fontSize: 11,\n                  fill: '#A0AEC0',\n                },\n              }\n            ]}\n            margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n            sx={{\n              '& .MuiBarElement-root': {\n                rx: 4,\n              },\n            }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

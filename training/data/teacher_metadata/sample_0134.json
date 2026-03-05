@@ -1,0 +1,39 @@
+{
+  "description": "A vaccination tracker widget showing doses received, next due date, and coverage percentage",
+  "ui_style": "Midnight blue dark theme with electric blue accents, subtle gradients, and sharp modern typography.",
+  "mock_data": {
+    "widget": {
+      "id": "vaccination_tracker_001",
+      "app": "Health Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "vaccinationSummary": {
+        "totalDosesReceived": 2,
+        "nextDoseDueDate": "2024-03-15",
+        "coveragePercentage": 67
+      },
+      "doseHistory": [
+        {
+          "doseNumber": 1,
+          "dateReceived": "2023-01-10",
+          "vaccineType": "COVID-19"
+        },
+        {
+          "doseNumber": 2,
+          "dateReceived": "2023-07-15",
+          "vaccineType": "COVID-19"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "minimal",
+      "primaryColor": "#FF5733",
+      "accentColor": "#33FF57",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface VaccinationSummary {\n  totalDosesReceived: number;\n  nextDoseDueDate: string;\n  coveragePercentage: number;\n}\n\ninterface DoseHistory {\n  doseNumber: number;\n  dateReceived: string;\n  vaccineType: string;\n}\n\ninterface VaccinationData {\n  vaccinationSummary: VaccinationSummary;\n  doseHistory: DoseHistory[];\n}\n\nexport default function Widget() {\n  const vaccinationData = response.data as VaccinationData;\n  const { vaccinationSummary, doseHistory } = vaccinationData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#1E293B' }} elevation={3}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#F8FAFC' }}>\n              Vaccination Tracker\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8' }}>\n              Total Doses Received: {vaccinationSummary.totalDosesReceived}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8' }}>\n              Next Dose Due: {vaccinationSummary.nextDoseDueDate}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8' }}>\n              Coverage: {vaccinationSummary.coveragePercentage}%\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"subtitle1\" sx={{ color: '#F8FAFC', mb: 1 }}>\n              Dose History\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {doseHistory.map((dose) => (\n                <Chip\n                  key={dose.doseNumber}\n                  label={`Dose ${dose.doseNumber}: ${dose.dateReceived} (${dose.vaccineType})`}\n                  sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: '#334155', color: '#F8FAFC' }}\n                />\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,92 @@
+{
+  "description": "A scatter plot widget showing correlation between 2 metrics with trend line and clusters",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "scatter_plot_metrics_001",
+      "app": "Metrics Analyzer",
+      "version": "1.0"
+    },
+    "data": {
+      "metrics": {
+        "xLabel": "Advertising Spend (USD)",
+        "yLabel": "Sales Revenue (USD)",
+        "dataPoints": [
+          {
+            "x": 1500,
+            "y": 3000
+          },
+          {
+            "x": 2000,
+            "y": 3500
+          },
+          {
+            "x": 2500,
+            "y": 4500
+          },
+          {
+            "x": 3000,
+            "y": 5000
+          },
+          {
+            "x": 3500,
+            "y": 6000
+          },
+          {
+            "x": 4000,
+            "y": 6800
+          }
+        ],
+        "trendLine": [
+          {
+            "x": 1500,
+            "y": 2800
+          },
+          {
+            "x": 4000,
+            "y": 7000
+          }
+        ],
+        "clusters": [
+          {
+            "name": "Low Spend, High Revenue",
+            "points": [
+              {
+                "x": 1500,
+                "y": 3000
+              },
+              {
+                "x": 2000,
+                "y": 3500
+              }
+            ]
+          },
+          {
+            "name": "High Spend, High Revenue",
+            "points": [
+              {
+                "x": 3500,
+                "y": 6000
+              },
+              {
+                "x": 4000,
+                "y": 6800
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "scatter"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface DataPoint {\n  x: number;\n  y: number;\n}\n\ninterface Cluster {\n  name: string;\n  points: DataPoint[];\n}\n\ninterface MetricsData {\n  metrics: {\n    xLabel: string;\n    yLabel: string;\n    dataPoints: DataPoint[];\n    trendLine: DataPoint[];\n    clusters: Cluster[];\n  };\n}\n\nexport default function Widget() {\n  const data = response.data as MetricsData;\n  const { metrics } = data;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#303030' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" color=\"text.primary\" sx={{ mb: 1 }}>\n              {response.data.widget.app} - v{response.data.widget.version}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {metrics.xLabel} vs {metrics.yLabel}\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'scatter',\n                  data: metrics.dataPoints,\n                  color: '#FFC107',\n                  label: 'Data Points',\n                },\n                {\n                  type: 'line',\n                  data: metrics.trendLine,\n                  color: '#FF5722',\n                  label: 'Trend Line',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  data: metrics.dataPoints.map(point => point.x),\n                  label: metrics.xLabel,\n                },\n              ]}\n              yAxis={[\n                {\n                  data: metrics.dataPoints.map(point => point.y),\n                  label: metrics.yLabel,\n                },\n              ]}\n            >\n              <ChartsClipPath id={clipPathId} />\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                tickLabelStyle={{ fontSize: 12, fill: '#FFF' }}\n              />\n              <ChartsYAxis\n                tickLabelStyle={{ fontSize: 12, fill: '#FFF' }}\n              />\n            </ResponsiveChartContainer>\n          </Box>\n\n          <Stack direction=\"row\" spacing={0.5}>\n            {metrics.clusters.map((cluster, index) => (\n              <Chip\n                key={index}\n                label={cluster.name}\n                sx={{ fontSize: '10px', px: 1, py: 0.5, bgcolor: '#FF5722', color: '#FFF' }}\n              />\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

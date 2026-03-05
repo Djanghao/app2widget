@@ -1,0 +1,53 @@
+{
+  "description": "A running stats widget showing pace, distance, elevation, and route segment splits",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "running_stats_001",
+      "app": "Run Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "currentRun": {
+        "pace": "5:30 min/km",
+        "distance": "12.4 km",
+        "elevationGain": "150 m"
+      },
+      "routeSegments": [
+        {
+          "segment": "0-2 km",
+          "pace": "5:45 min/km"
+        },
+        {
+          "segment": "2-4 km",
+          "pace": "5:30 min/km"
+        },
+        {
+          "segment": "4-6 km",
+          "pace": "5:25 min/km"
+        },
+        {
+          "segment": "6-8 km",
+          "pace": "5:40 min/km"
+        },
+        {
+          "segment": "8-10 km",
+          "pace": "5:35 min/km"
+        },
+        {
+          "segment": "10-12 km",
+          "pace": "5:20 min/km"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FF5722",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, Grid } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\nexport default function Widget() {\n  const { currentRun, routeSegments } = response.data.data;\n  const clipPathId = React.useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#121212', color: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} color=\"primary\">\n              Current Run\n            </Typography>\n            <Typography variant=\"body1\" sx={{ mt: 0.5 }}>\n              Pace: {currentRun.pace}\n            </Typography>\n            <Typography variant=\"body1\">\n              Distance: {currentRun.distance}\n            </Typography>\n            <Typography variant=\"body1\">\n              Elevation Gain: {currentRun.elevationGain}\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: routeSegments.map(segment => parseFloat(segment.pace.split(' ')[0].replace(':', '.'))),\n                  color: '#FF5722',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: routeSegments.map(segment => segment.segment),\n                  id: 'segments',\n                },\n              ]}\n              yAxis={[{ id: 'pace', label: 'Pace (min/km)' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"segments\"\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsYAxis\n                axisId=\"pace\"\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n\n          <Grid container spacing={1}>\n            {routeSegments.map((segment, index) => (\n              <Grid item xs={6} key={index}>\n                <Chip\n                  label={`${segment.segment}: ${segment.pace}`}\n                  sx={{ width: '100%', fontSize: '10px', bgcolor: '#4CAF50', color: '#FFFFFF' }}\n                />\n              </Grid>\n            ))}\n          </Grid>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

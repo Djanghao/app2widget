@@ -1,0 +1,42 @@
+{
+  "description": "A parking spot widget showing available spots, nearest location, and hourly rate",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "parking_spot_001",
+      "app": "ParkEasy",
+      "version": "1.0"
+    },
+    "data": {
+      "nearestLocation": {
+        "name": "Downtown Garage",
+        "distance": "0.5 miles",
+        "availableSpots": 12,
+        "hourlyRate": 3.5
+      },
+      "additionalLocations": [
+        {
+          "name": "City Center Lot",
+          "distance": "1.2 miles",
+          "availableSpots": 25,
+          "hourlyRate": 4.0
+        },
+        {
+          "name": "Riverside Plaza",
+          "distance": "2.1 miles",
+          "availableSpots": 8,
+          "hourlyRate": 3.0
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#283593",
+      "accentColor": "#FF6F00",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface Location {\n  name: string;\n  distance: string;\n  availableSpots: number;\n  hourlyRate: number;\n}\n\ninterface ParkingData {\n  nearestLocation: Location;\n  additionalLocations: Location[];\n}\n\nexport default function Widget() {\n  const data = response.data as ParkingData;\n  const meta = response.meta;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: meta.theme === 'dark' ? '#333' : '#fff' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: meta.primaryColor }}>\n              Nearest Parking\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {data.nearestLocation.name}\n            </Typography>\n            <Typography variant=\"body2\" fontWeight={500} sx={{ mt: 1 }}>\n              {data.nearestLocation.availableSpots} spots available\n            </Typography>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              {data.nearestLocation.distance} - ${data.nearestLocation.hourlyRate}/hr\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ mb: 1, color: meta.accentColor }}>\n              Additional Locations\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {data.additionalLocations.map((location, index) => (\n                <Chip\n                  key={index}\n                  label={`${location.name} (${location.availableSpots})`}\n                  sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: '#f0f0f0' }}\n                />\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

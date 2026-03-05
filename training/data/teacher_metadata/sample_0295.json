@@ -1,0 +1,73 @@
+{
+  "description": "A goal tracker widget showing 3 active goals with progress bars, milestones, and deadlines",
+  "ui_style": "Scandinavian-inspired with muted earth tones, natural textures, clean geometric shapes.",
+  "mock_data": {
+    "widget": {
+      "id": "goal_tracker_001",
+      "app": "Goal Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "activeGoals": [
+        {
+          "name": "Read 20 Books",
+          "progress": 75,
+          "milestones": [
+            {
+              "milestone": "5 Books",
+              "completed": true
+            },
+            {
+              "milestone": "10 Books",
+              "completed": true
+            },
+            {
+              "milestone": "15 Books",
+              "completed": false
+            }
+          ],
+          "deadline": "2023-12-31"
+        },
+        {
+          "name": "Run 500 Miles",
+          "progress": 45,
+          "milestones": [
+            {
+              "milestone": "100 Miles",
+              "completed": true
+            },
+            {
+              "milestone": "250 Miles",
+              "completed": false
+            }
+          ],
+          "deadline": "2024-06-30"
+        },
+        {
+          "name": "Learn Spanish",
+          "progress": 60,
+          "milestones": [
+            {
+              "milestone": "Basic Phrases",
+              "completed": true
+            },
+            {
+              "milestone": "Conversations",
+              "completed": false
+            }
+          ],
+          "deadline": "2024-03-15"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, LinearProgress, Chip, Grid } from '@mui/material';\nimport response from './response.json';\n\ninterface Milestone {\n  milestone: string;\n  completed: boolean;\n}\n\ninterface Goal {\n  name: string;\n  progress: number;\n  milestones: Milestone[];\n  deadline: string;\n}\n\ninterface GoalTrackerData {\n  activeGoals: Goal[];\n}\n\nexport default function Widget() {\n  const goalData = response.data as GoalTrackerData;\n  const { activeGoals } = goalData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#4CAF50' }}>\n            Goal Tracker\n          </Typography>\n          \n          {activeGoals.slice(0, 3).map((goal) => (\n            <Box key={goal.name} sx={{ mb: 2 }}>\n              <Typography variant=\"body1\" fontWeight={500} sx={{ color: '#1976D2' }}>\n                {goal.name}\n              </Typography>\n\n              <Typography variant=\"caption\" color=\"text.secondary\">\n                Deadline: {new Date(goal.deadline).toLocaleDateString()}\n              </Typography>\n\n              <Box sx={{ my: 1 }}>\n                <LinearProgress\n                  variant=\"determinate\"\n                  value={goal.progress}\n                  sx={{\n                    height: 8,\n                    borderRadius: 4,\n                    bgcolor: '#E0E0E0',\n                    '& .MuiLinearProgress-bar': {\n                      bgcolor: '#4CAF50',\n                      borderRadius: 4,\n                    },\n                  }}\n                />\n                <Typography variant=\"caption\" sx={{ color: '#4CAF50', mt: 0.5 }}>\n                  {goal.progress}% completed\n                </Typography>\n              </Box>\n\n              <Grid container spacing={1}>\n                {goal.milestones.map((milestone, index) => (\n                  <Grid item xs={6} key={index}>\n                    <Chip\n                      label={milestone.milestone}\n                      variant={milestone.completed ? 'filled' : 'outlined'}\n                      sx={{\n                        fontSize: 11,\n                        width: '100%',\n                        bgcolor: milestone.completed ? '#C8E6C9' : 'transparent',\n                      }}\n                    />\n                  </Grid>\n                ))}\n              </Grid>\n            </Box>\n          ))}\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

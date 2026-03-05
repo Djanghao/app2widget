@@ -1,0 +1,44 @@
+{
+  "description": "A shopping cart widget showing item count, total price, and savings amount",
+  "ui_style": "Neomorphic / soft UI with light gray backgrounds, inset and raised soft shadows, subtle depth.",
+  "mock_data": {
+    "widget": {
+      "id": "shopping_cart_001",
+      "app": "Shopping Cart",
+      "version": "1.0"
+    },
+    "data": {
+      "cartSummary": {
+        "itemCount": 5,
+        "totalPrice": 325.5,
+        "savings": 45.0
+      },
+      "items": [
+        {
+          "name": "Wireless Headphones",
+          "price": 85.0,
+          "savings": 10.0
+        },
+        {
+          "name": "Smartphone Case",
+          "price": 25.0,
+          "savings": 5.0
+        },
+        {
+          "name": "Laptop Stand",
+          "price": 50.0,
+          "savings": 5.0
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#CDDC39",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface CartSummary {\n  itemCount: number;\n  totalPrice: number;\n  savings: number;\n}\n\ninterface Item {\n  name: string;\n  price: number;\n  savings: number;\n}\n\ninterface ShoppingCartData {\n  cartSummary: CartSummary;\n  items: Item[];\n}\n\nexport default function Widget() {\n  const shoppingCartData = response.data as ShoppingCartData;\n  const { cartSummary, items } = shoppingCartData;\n\n  return (\n    <Card\n      sx={{\n        width: 'fit-content',\n        minWidth: 320,\n        maxWidth: 450,\n        bgcolor: '#F5F5F5',\n        borderRadius: 3,\n        boxShadow: 'inset 0px 0px 5px rgba(0,0,0,0.1), 4px 4px 10px rgba(0,0,0,0.1)',\n      }}\n      elevation={2}\n    >\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#FF5722' }}>\n              Shopping Cart\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={1}>\n              <Typography variant=\"body2\" color=\"text.secondary\">\n                Total Items:\n              </Typography>\n              <Chip label={cartSummary.itemCount} size=\"small\" sx={{ fontSize: '12px', bgcolor: '#CDDC39', color: '#FFFFFF' }} />\n            </Stack>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={1} sx={{ mt: 1 }}>\n              <Typography variant=\"body2\" color=\"text.secondary\">\n                Total Price:\n              </Typography>\n              <Typography variant=\"h6\" sx={{ color: '#FF5722', fontWeight: 600 }}>\n                ${cartSummary.totalPrice.toFixed(2)}\n              </Typography>\n            </Stack>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={1}>\n              <Typography variant=\"body2\" color=\"text.secondary\">\n                Savings:\n              </Typography>\n              <Typography\n                variant=\"body2\"\n                sx={{ color: cartSummary.savings > 0 ? '#10B981' : '#EF4444', fontWeight: 500 }}\n              >\n                {cartSummary.savings > 0 ? <TrendingUp fontSize=\"small\" /> : <TrendingDown fontSize=\"small\" />}\n                ${cartSummary.savings.toFixed(2)}\n              </Typography>\n            </Stack>\n          </Box>\n\n          <Stack spacing={1}>\n            {items.map((item, index) => (\n              <Box key={index}>\n                <Stack direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\" sx={{ mb: 0.5 }}>\n                  <Typography variant=\"body2\" sx={{ color: '#333333', fontWeight: 600 }}>\n                    {item.name}\n                  </Typography>\n                  <Stack direction=\"row\" alignItems=\"center\" spacing={0.5}>\n                    <Typography variant=\"body2\" sx={{ color: '#666666' }}>\n                      ${item.price.toFixed(2)}\n                    </Typography>\n                    <Chip\n                      label={`Save $${item.savings.toFixed(2)}`}\n                      size=\"small\"\n                      sx={{ fontSize: '10px', bgcolor: '#CDDC39', color: '#FFFFFF' }}\n                    />\n                  </Stack>\n                </Stack>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,61 @@
+{
+  "description": "A donation tracker widget showing total raised, goal progress, and donor count",
+  "ui_style": "Warm and friendly with rounded shapes, pastel colors, and playful typography. Approachable design.",
+  "mock_data": {
+    "widget": {
+      "id": "donation_tracker_001",
+      "app": "Charity Fund",
+      "version": "1.0"
+    },
+    "data": {
+      "campaign": {
+        "title": "Save the Rainforest",
+        "totalRaised": 45000,
+        "goal": 50000,
+        "donorCount": 350
+      },
+      "goalProgress": [
+        {
+          "day": "Mon",
+          "amount": 5000
+        },
+        {
+          "day": "Tue",
+          "amount": 7000
+        },
+        {
+          "day": "Wed",
+          "amount": 6000
+        },
+        {
+          "day": "Thu",
+          "amount": 6500
+        },
+        {
+          "day": "Fri",
+          "amount": 7500
+        },
+        {
+          "day": "Sat",
+          "amount": 8000
+        },
+        {
+          "day": "Sun",
+          "amount": 9000
+        }
+      ],
+      "progressPercent": 90
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, LinearProgress } from '@mui/material';\nimport { ResponsiveChartContainer, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface GoalProgress {\n  day: string;\n  amount: number;\n}\n\ninterface CampaignData {\n  campaign: {\n    title: string;\n    totalRaised: number;\n    goal: number;\n    donorCount: number;\n  };\n  goalProgress: GoalProgress[];\n  progressPercent: number;\n}\n\nexport default function Widget() {\n  const data = response.data as CampaignData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#303030' }} elevation={3}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#FFC107', mb: 1 }}>\n              {data.campaign.title}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#FF5722' }}>\n              ${data.campaign.totalRaised.toLocaleString()} raised of ${data.campaign.goal.toLocaleString()} goal\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#FFC107', mt: 0.5 }}>\n              {data.campaign.donorCount} donors\n            </Typography>\n          </Box>\n\n          <Box>\n            <Stack direction=\"row\" justifyContent=\"space-between\" sx={{ mb: 0.5 }}>\n              <Typography variant=\"caption\" color=\"text.secondary\">\n                Progress\n              </Typography>\n              <Typography variant=\"caption\" fontWeight={600} sx={{ color: '#FF5722' }}>\n                {data.progressPercent}%\n              </Typography>\n            </Stack>\n            <LinearProgress\n              variant=\"determinate\"\n              value={data.progressPercent}\n              sx={{\n                height: 8,\n                borderRadius: 4,\n                bgcolor: '#424242',\n                '& .MuiLinearProgress-bar': {\n                  bgcolor: '#FF5722',\n                  borderRadius: 4,\n                },\n              }}\n            />\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: data.goalProgress.map(gp => gp.amount),\n                  color: '#FFC107',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: data.goalProgress.map(gp => gp.day),\n                  id: 'days',\n                },\n              ]}\n              yAxis={[{ id: 'amount' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <BarPlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"days\"\n                tickLabelStyle={{ fontSize: 10, fill: '#BDBDBD' }}\n              />\n              <ChartsYAxis\n                axisId=\"amount\"\n                tickLabelStyle={{ fontSize: 10, fill: '#BDBDBD' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

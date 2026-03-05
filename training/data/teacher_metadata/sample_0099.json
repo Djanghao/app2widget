@@ -1,0 +1,76 @@
+{
+  "description": "A stock portfolio widget showing total value, daily change, and top 3 holdings with sparklines",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "stocks_portfolio_002",
+      "app": "Smart Investing",
+      "version": "1.0"
+    },
+    "data": {
+      "portfolio": {
+        "totalValue": 52345.67,
+        "todayChange": -215.43,
+        "todayChangePercent": -0.41
+      },
+      "topStocks": [
+        {
+          "symbol": "TSLA",
+          "name": "Tesla Inc.",
+          "price": 725.3,
+          "change": -5.2,
+          "changePercent": -0.71,
+          "sparkline": [
+            730.5,
+            728.0,
+            726.5,
+            725.0,
+            725.5,
+            725.3
+          ]
+        },
+        {
+          "symbol": "AMZN",
+          "name": "Amazon.com Inc.",
+          "price": 3304.56,
+          "change": 10.3,
+          "changePercent": 0.31,
+          "sparkline": [
+            3290.0,
+            3295.5,
+            3300.0,
+            3302.0,
+            3304.0,
+            3304.56
+          ]
+        },
+        {
+          "symbol": "NFLX",
+          "name": "Netflix Inc.",
+          "price": 515.32,
+          "change": 3.6,
+          "changePercent": 0.7,
+          "sparkline": [
+            512.0,
+            513.5,
+            514.0,
+            514.5,
+            515.0,
+            515.32
+          ]
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#0D7377",
+      "accentColor": "#14FFEC",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface Stock {\n  symbol: string;\n  name: string;\n  price: number;\n  change: number;\n  changePercent: number;\n  sparkline: number[];\n}\n\ninterface StocksData {\n  portfolio: {\n    totalValue: number;\n    todayChange: number;\n    todayChangePercent: number;\n  };\n  topStocks: Stock[];\n}\n\nexport default function Widget() {\n  const stocksData = response.data as StocksData;\n  const { portfolio, topStocks } = stocksData;\n  const isPositive = portfolio.todayChange >= 0;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#1F1F1F' }} elevation={3}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#B0B0B0', mb: 0.5 }}>\n              Portfolio Value\n            </Typography>\n            <Typography variant=\"h4\" sx={{ color: '#FFFFFF', fontWeight: 600 }}>\n              ${portfolio.totalValue.toLocaleString()}\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={0.5} sx={{ mt: 0.5 }}>\n              {isPositive ? <TrendingUp sx={{ fontSize: 16, color: '#00E676' }} /> : <TrendingDown sx={{ fontSize: 16, color: '#FF1744' }} />}\n              <Typography variant=\"body2\" sx={{ color: isPositive ? '#00E676' : '#FF1744' }}>\n                ${Math.abs(portfolio.todayChange).toFixed(2)} ({portfolio.todayChangePercent.toFixed(2)}%)\n              </Typography>\n            </Stack>\n          </Box>\n\n          <Stack spacing={1.5}>\n            {topStocks.map((stock) => {\n              const positive = stock.change >= 0;\n              return (\n                <Box key={stock.symbol}>\n                  <Stack direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\" sx={{ mb: 0.5 }}>\n                    <Box>\n                      <Typography variant=\"body2\" sx={{ color: '#FFFFFF', fontWeight: 600 }}>\n                        {stock.symbol}\n                      </Typography>\n                      <Typography variant=\"caption\" sx={{ color: '#B0B0B0' }}>\n                        {stock.name}\n                      </Typography>\n                    </Box>\n                    <Box textAlign=\"right\">\n                      <Typography variant=\"body2\" sx={{ color: '#FFFFFF', fontWeight: 500 }}>\n                        ${stock.price}\n                      </Typography>\n                      <Typography variant=\"caption\" sx={{ color: positive ? '#00E676' : '#FF1744' }}>\n                        {positive ? '+' : ''}{stock.change} ({stock.changePercent}%)\n                      </Typography>\n                    </Box>\n                  </Stack>\n                  <LineChart\n                    height={40}\n                    series={[\n                      {\n                        data: stock.sparkline,\n                        color: positive ? '#00E676' : '#FF1744',\n                        curve: 'natural',\n                        showMark: false,\n                      },\n                    ]}\n                    xAxis={[{ data: stock.sparkline.map((_, i) => i), hide: true }]}\n                    margin={{ top: 5, bottom: 5, left: 0, right: 0 }}\n                    sx={{\n                      '& .MuiLineElement-root': {\n                        strokeWidth: 1.5,\n                      },\n                    }}\n                  />\n                </Box>\n              );\n            })}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

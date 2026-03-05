@@ -1,0 +1,42 @@
+{
+  "description": "A flashcard review widget showing cards due, accuracy rate, and mastery level per deck",
+  "ui_style": "Retro/vintage with warm sepia tones, rounded retro fonts, subtle paper textures, nostalgic feel.",
+  "mock_data": {
+    "widget": {
+      "id": "flashcard_review_001",
+      "app": "Flashcard Master",
+      "version": "1.0"
+    },
+    "data": {
+      "decks": [
+        {
+          "name": "Biology Basics",
+          "cardsDue": 12,
+          "accuracyRate": 85,
+          "masteryLevel": "Intermediate"
+        },
+        {
+          "name": "World History",
+          "cardsDue": 8,
+          "accuracyRate": 90,
+          "masteryLevel": "Advanced"
+        },
+        {
+          "name": "Spanish Vocabulary",
+          "cardsDue": 15,
+          "accuracyRate": 78,
+          "masteryLevel": "Beginner"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#3F51B5",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, Divider } from '@mui/material';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface Deck {\n  name: string;\n  cardsDue: number;\n  accuracyRate: number;\n  masteryLevel: string;\n}\n\ninterface WidgetData {\n  decks: Deck[];\n}\n\nexport default function Widget() {\n  const widgetData = response.data as WidgetData;\n  const { decks } = widgetData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFF8E1' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" color=\"primary\" sx={{ fontWeight: 600 }}>\n            Flashcard Review\n          </Typography>\n          {decks.map((deck, index) => (\n            <Box key={index}>\n              <Typography variant=\"body1\" sx={{ fontWeight: 500 }}>\n                {deck.name}\n              </Typography>\n              <Stack direction=\"row\" spacing={1} alignItems=\"center\" sx={{ my: 0.5 }}>\n                <Typography variant=\"body2\" color=\"text.secondary\">\n                  Cards Due: {deck.cardsDue}\n                </Typography>\n                <Divider orientation=\"vertical\" flexItem />\n                <Typography variant=\"body2\" color=\"text.secondary\">\n                  Accuracy: {deck.accuracyRate}%\n                </Typography>\n                <Divider orientation=\"vertical\" flexItem />\n                <Chip\n                  label={deck.masteryLevel}\n                  sx={{ backgroundColor: '#ECEFF1', fontSize: '11px' }}\n                />\n              </Stack>\n              <Divider sx={{ my: 1 }} />\n            </Box>\n          ))}\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

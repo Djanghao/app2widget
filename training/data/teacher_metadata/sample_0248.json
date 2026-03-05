@@ -1,0 +1,55 @@
+{
+  "description": "A feature adoption widget showing rollout %, active users, and error rate for new feature",
+  "ui_style": "Android Material You with pill-shaped elements, tonal colors, large touch targets, and rounded corners.",
+  "mock_data": {
+    "widget": {
+      "id": "feature_adoption_001",
+      "app": "Adoption Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "featureName": "New Dashboard",
+      "rollout": {
+        "percentage": 75,
+        "activeUsers": 4520,
+        "errorRate": 1.5
+      },
+      "adoptionTrend": [
+        {
+          "week": "Week 1",
+          "percentage": 50
+        },
+        {
+          "week": "Week 2",
+          "percentage": 65
+        },
+        {
+          "week": "Week 3",
+          "percentage": 70
+        },
+        {
+          "week": "Week 4",
+          "percentage": 75
+        }
+      ],
+      "errorTrend": [
+        2.0,
+        1.8,
+        1.6,
+        1.5
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#4CAF50",
+      "chartTypes": [
+        "bar",
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface RolloutData {\n  featureName: string;\n  rollout: {\n    percentage: number;\n    activeUsers: number;\n    errorRate: number;\n  };\n  adoptionTrend: {\n    week: string;\n    percentage: number;\n  }[];\n  errorTrend: number[];\n}\n\nexport default function Widget() {\n  const data = response.data as RolloutData;\n  const { featureName, rollout, adoptionTrend, errorTrend } = data;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: response.meta.primaryColor, mb: 1 }}>\n              {featureName} Rollout\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={1}>\n              <Chip\n                icon={rollout.percentage >= 50 ? <TrendingUp /> : <TrendingDown />}\n                label={`${rollout.percentage}%`}\n                sx={{ bgcolor: response.meta.accentColor, color: '#FFFFFF' }}\n              />\n              <Typography variant=\"body2\" color=\"text.secondary\">\n                Active Users: {rollout.activeUsers.toLocaleString()}\n              </Typography>\n            </Stack>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 150 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: adoptionTrend.map((trend) => trend.percentage),\n                  color: response.meta.primaryColor,\n                  label: 'Adoption Trend',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: adoptionTrend.map((trend) => trend.week),\n                  id: 'weeks',\n                },\n              ]}\n              yAxis={[{ id: 'percentage' }]}\n            >\n              <ChartsClipPath id={clipPathId} />\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"weeks\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"percentage\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n            </ResponsiveChartContainer>\n          </Box>\n          \n          <Box>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              Error Rate: {rollout.errorRate}%\n            </Typography>\n            <LinePlot\n              height={50}\n              series={[{ data: errorTrend, color: '#FF5722', curve: 'linear', showMark: false }]}\n              xAxis={[{ data: errorTrend.map((_, i) => i), hide: true }]}\n              margin={{ top: 5, bottom: 5, left: 0, right: 0 }}\n              sx={{ '& .MuiLineElement-root': { strokeWidth: 1.5 } }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,85 @@
+{
+  "description": "A team velocity widget showing sprint burndown chart and story points completed",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "team_velocity_001",
+      "app": "Agile Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "sprint": {
+        "name": "Sprint 21",
+        "startDate": "2023-10-02",
+        "endDate": "2023-10-16"
+      },
+      "burndownChart": [
+        {
+          "day": "Day 1",
+          "remainingPoints": 50
+        },
+        {
+          "day": "Day 3",
+          "remainingPoints": 40
+        },
+        {
+          "day": "Day 5",
+          "remainingPoints": 30
+        },
+        {
+          "day": "Day 7",
+          "remainingPoints": 20
+        },
+        {
+          "day": "Day 9",
+          "remainingPoints": 10
+        },
+        {
+          "day": "Day 11",
+          "remainingPoints": 5
+        },
+        {
+          "day": "Day 13",
+          "remainingPoints": 0
+        }
+      ],
+      "completedStoryPoints": [
+        {
+          "day": "Day 2",
+          "points": 10
+        },
+        {
+          "day": "Day 4",
+          "points": 10
+        },
+        {
+          "day": "Day 6",
+          "points": 10
+        },
+        {
+          "day": "Day 8",
+          "points": 10
+        },
+        {
+          "day": "Day 10",
+          "points": 5
+        },
+        {
+          "day": "Day 12",
+          "points": 5
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface SprintData {\n  sprint: {\n    name: string;\n    startDate: string;\n    endDate: string;\n  };\n  burndownChart: {\n    day: string;\n    remainingPoints: number;\n  }[];\n  completedStoryPoints: {\n    day: string;\n    points: number;\n  }[];\n}\n\nexport default function Widget() {\n  const { sprint, burndownChart } = response.data as SprintData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} color=\"primary\">\n              {sprint.name}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {sprint.startDate} - {sprint.endDate}\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: burndownChart.map((point) => point.remainingPoints),\n                  color: '#FF5722',\n                  label: 'Remaining Points',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: burndownChart.map((point) => point.day),\n                  id: 'days',\n                },\n              ]}\n              yAxis={[{ id: 'points' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"days\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"points\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

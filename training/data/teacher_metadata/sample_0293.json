@@ -1,0 +1,55 @@
+{
+  "description": "A wardrobe organizer widget showing outfit suggestions based on weather and calendar events",
+  "ui_style": "Scandinavian-inspired with muted earth tones, natural textures, clean geometric shapes.",
+  "mock_data": {
+    "widget": {
+      "id": "wardrobe_suggestions_001",
+      "app": "Wardrobe Wizard",
+      "version": "1.0"
+    },
+    "data": {
+      "location": "New York, NY",
+      "weather": {
+        "currentTemp": 75,
+        "condition": "Sunny"
+      },
+      "calendarEvents": [
+        {
+          "event": "Business Meeting",
+          "time": "10:00 AM"
+        },
+        {
+          "event": "Lunch with Friends",
+          "time": "1:00 PM"
+        }
+      ],
+      "outfitSuggestions": [
+        {
+          "occasion": "Business Meeting",
+          "outfit": "Navy Suit with Light Blue Shirt",
+          "accessories": [
+            "Brown Leather Shoes",
+            "Silk Tie"
+          ]
+        },
+        {
+          "occasion": "Lunch with Friends",
+          "outfit": "Casual Polo and Jeans",
+          "accessories": [
+            "Sneakers",
+            "Sunglasses"
+          ]
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FFC107",
+      "accentColor": "#03A9F4",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface CalendarEvent {\n  event: string;\n  time: string;\n}\n\ninterface OutfitSuggestion {\n  occasion: string;\n  outfit: string;\n  accessories: string[];\n}\n\ninterface WardrobeData {\n  location: string;\n  weather: {\n    currentTemp: number;\n    condition: string;\n  };\n  calendarEvents: CalendarEvent[];\n  outfitSuggestions: OutfitSuggestion[];\n}\n\nexport default function Widget() {\n  const data = response.data as WardrobeData;\n  const { location, weather, calendarEvents, outfitSuggestions } = data;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFF8E1' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Location: {location}\n            </Typography>\n            <Typography variant=\"h6\" color=\"primary\">\n              {weather.currentTemp}\u00b0 - {weather.condition}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Events Today\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {calendarEvents.map((event, index) => (\n                <Chip key={index} label={`${event.time} - ${event.event}`} sx={{ fontSize: '11px', px: 1, py: 0.5 }} />\n              ))}\n            </Stack>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Outfit Suggestions\n            </Typography>\n            <Stack spacing={1}>\n              {outfitSuggestions.map((suggestion, index) => (\n                <Box key={index}>\n                  <Typography variant=\"body2\" sx={{ fontWeight: 'bold' }}>\n                    {suggestion.occasion}\n                  </Typography>\n                  <Typography variant=\"body2\" color=\"text.secondary\">\n                    {suggestion.outfit}\n                  </Typography>\n                  <Stack direction=\"row\" spacing={0.5}>\n                    {suggestion.accessories.map((accessory, accIndex) => (\n                      <Chip key={accIndex} label={accessory} sx={{ fontSize: '11px', px: 0.5, py: 0.2 }} />\n                    ))}\n                  </Stack>\n                </Box>\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

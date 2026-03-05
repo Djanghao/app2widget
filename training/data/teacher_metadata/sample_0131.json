@@ -1,0 +1,45 @@
+{
+  "description": "A deal alert widget showing top discounts with percentage off and expiry countdown",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "deal_alert_001",
+      "app": "Deal Finder",
+      "version": "1.0"
+    },
+    "data": {
+      "topDeals": [
+        {
+          "productName": "Wireless Earbuds",
+          "originalPrice": 99.99,
+          "discountedPrice": 59.99,
+          "discountPercent": 40,
+          "expiryCountdown": "2 days 14 hours"
+        },
+        {
+          "productName": "Smart Watch",
+          "originalPrice": 199.99,
+          "discountedPrice": 149.99,
+          "discountPercent": 25,
+          "expiryCountdown": "1 day 6 hours"
+        },
+        {
+          "productName": "Bluetooth Speaker",
+          "originalPrice": 49.99,
+          "discountedPrice": 34.99,
+          "discountPercent": 30,
+          "expiryCountdown": "3 days 5 hours"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface Deal {\n  productName: string;\n  originalPrice: number;\n  discountedPrice: number;\n  discountPercent: number;\n  expiryCountdown: string;\n}\n\ninterface DealsData {\n  topDeals: Deal[];\n}\n\nexport default function Widget() {\n  const { topDeals } = response.data as DealsData;\n  const { theme, primaryColor, accentColor } = response.meta;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: theme === 'dark' ? '#2D2D2D' : '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" sx={{ color: primaryColor, fontWeight: 600 }}>\n            Top Deals\n          </Typography>\n          {topDeals.map((deal, index) => (\n            <Box key={index} sx={{ bgcolor: '#333333', borderRadius: 1, p: 1.5 }}>\n              <Stack direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\">\n                <Typography variant=\"body1\" sx={{ color: '#FFFFFF', fontWeight: 500 }}>\n                  {deal.productName}\n                </Typography>\n                <Chip label={`-${deal.discountPercent}%`} sx={{ bgcolor: accentColor, color: '#000', fontWeight: 600 }} />\n              </Stack>\n              <Stack direction=\"row\" justifyContent=\"space-between\" sx={{ mt: 0.5 }}>\n                <Typography variant=\"body2\" sx={{ color: '#B0B0B0' }}>\n                  <s>${deal.originalPrice.toFixed(2)}</s>\n                </Typography>\n                <Typography variant=\"body2\" sx={{ color: '#FFEB3B', fontWeight: 600 }}>\n                  ${deal.discountedPrice.toFixed(2)}\n                </Typography>\n              </Stack>\n              <Typography variant=\"caption\" sx={{ color: '#B0B0B0', mt: 0.5 }}>\n                Ends in {deal.expiryCountdown}\n              </Typography>\n            </Box>\n          ))}\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,41 @@
+{
+  "description": "A cycling stats widget showing distance, average speed, elevation gain, and power zones",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "cycling_stats_001",
+      "app": "Cycling Power",
+      "version": "1.0"
+    },
+    "data": {
+      "rideSummary": {
+        "distance": 25.3,
+        "averageSpeed": 18.5,
+        "elevationGain": 750
+      },
+      "powerZones": [
+        {
+          "zone": "Recovery",
+          "duration": 45
+        },
+        {
+          "zone": "Endurance",
+          "duration": 30
+        },
+        {
+          "zone": "Threshold",
+          "duration": 15
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#1B998B",
+      "accentColor": "#ED217C",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface RideSummary {\n  distance: number;\n  averageSpeed: number;\n  elevationGain: number;\n}\n\ninterface PowerZone {\n  zone: string;\n  duration: number;\n}\n\ninterface CyclingStatsData {\n  rideSummary: RideSummary;\n  powerZones: PowerZone[];\n}\n\nexport default function Widget() {\n  const cyclingData = response.data as CyclingStatsData;\n  const { rideSummary, powerZones } = cyclingData;\n  const clipPathId = `clip-path-${response.widget.id}`;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#2B2B2B' }} elevation={3}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#1B998B' }}>\n              Ride Summary\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#FFFFFF' }}>\n              Distance: {rideSummary.distance} km\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#FFFFFF' }}>\n              Average Speed: {rideSummary.averageSpeed} km/h\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#FFFFFF' }}>\n              Elevation Gain: {rideSummary.elevationGain} m\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: powerZones.map((zone) => zone.duration),\n                  color: '#ED217C',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: powerZones.map((zone) => zone.zone),\n                  id: 'zones',\n                },\n              ]}\n              yAxis={[{ id: 'duration' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <BarPlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"zones\"\n                tickLabelStyle={{ fontSize: 11, fill: '#FFFFFF' }}\n              />\n              <ChartsYAxis\n                axisId=\"duration\"\n                tickLabelStyle={{ fontSize: 11, fill: '#FFFFFF' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

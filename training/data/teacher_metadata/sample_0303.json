@@ -1,0 +1,141 @@
+{
+  "description": "A candlestick chart widget showing 30 days of stock price with volume bars below",
+  "ui_style": "Scandinavian-inspired with muted earth tones, natural textures, clean geometric shapes.",
+  "mock_data": {
+    "widget": {
+      "id": "stocks_candlestick_001",
+      "app": "Stock Viewer",
+      "version": "1.0"
+    },
+    "data": {
+      "symbol": "TSLA",
+      "companyName": "Tesla Inc.",
+      "candlestickData": [
+        {
+          "date": "2023-09-01",
+          "open": 250.0,
+          "high": 260.0,
+          "low": 245.0,
+          "close": 255.0
+        },
+        {
+          "date": "2023-09-02",
+          "open": 255.0,
+          "high": 265.0,
+          "low": 250.0,
+          "close": 260.0
+        },
+        {
+          "date": "2023-09-03",
+          "open": 260.0,
+          "high": 270.0,
+          "low": 255.0,
+          "close": 265.0
+        },
+        {
+          "date": "2023-09-04",
+          "open": 265.0,
+          "high": 275.0,
+          "low": 260.0,
+          "close": 270.0
+        },
+        {
+          "date": "2023-09-05",
+          "open": 270.0,
+          "high": 280.0,
+          "low": 265.0,
+          "close": 275.0
+        },
+        {
+          "date": "2023-09-06",
+          "open": 275.0,
+          "high": 285.0,
+          "low": 270.0,
+          "close": 280.0
+        },
+        {
+          "date": "2023-09-07",
+          "open": 280.0,
+          "high": 290.0,
+          "low": 275.0,
+          "close": 285.0
+        },
+        {
+          "date": "2023-09-08",
+          "open": 285.0,
+          "high": 295.0,
+          "low": 280.0,
+          "close": 290.0
+        },
+        {
+          "date": "2023-09-09",
+          "open": 290.0,
+          "high": 300.0,
+          "low": 285.0,
+          "close": 295.0
+        },
+        {
+          "date": "2023-09-10",
+          "open": 295.0,
+          "high": 305.0,
+          "low": 290.0,
+          "close": 300.0
+        }
+      ],
+      "volumeData": [
+        {
+          "date": "2023-09-01",
+          "volume": 1500000
+        },
+        {
+          "date": "2023-09-02",
+          "volume": 1800000
+        },
+        {
+          "date": "2023-09-03",
+          "volume": 1700000
+        },
+        {
+          "date": "2023-09-04",
+          "volume": 1600000
+        },
+        {
+          "date": "2023-09-05",
+          "volume": 1550000
+        },
+        {
+          "date": "2023-09-06",
+          "volume": 1650000
+        },
+        {
+          "date": "2023-09-07",
+          "volume": 1750000
+        },
+        {
+          "date": "2023-09-08",
+          "volume": 1850000
+        },
+        {
+          "date": "2023-09-09",
+          "volume": 1950000
+        },
+        {
+          "date": "2023-09-10",
+          "volume": 2000000
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#0D47A1",
+      "accentColor": "#FF5252",
+      "chartTypes": [
+        "candlestick",
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface CandlestickData {\n  date: string;\n  open: number;\n  high: number;\n  low: number;\n  close: number;\n}\n\ninterface VolumeData {\n  date: string;\n  volume: number;\n}\n\ninterface StockData {\n  symbol: string;\n  companyName: string;\n  candlestickData: CandlestickData[];\n  volumeData: VolumeData[];\n}\n\nexport default function Widget() {\n  const stockData = response.data as StockData;\n  const { symbol, companyName, candlestickData, volumeData } = stockData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#1F2937' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8' }}>\n              {companyName} ({symbol})\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: volumeData.map(v => v.volume),\n                  color: '#FF5252',\n                  label: 'Volume',\n                },\n                {\n                  type: 'line',\n                  data: candlestickData.map(c => c.close),\n                  color: '#0D47A1',\n                  label: 'Close Price',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: candlestickData.map(c => c.date),\n                  id: 'dates',\n                },\n              ]}\n              yAxis={[{ id: 'price' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <BarPlot />\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"dates\"\n                tickLabelStyle={{ fontSize: 10, fill: '#9CA3AF' }}\n              />\n              <ChartsYAxis\n                axisId=\"price\"\n                tickLabelStyle={{ fontSize: 10, fill: '#9CA3AF' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n\n          <Typography variant=\"caption\" sx={{ color: '#9CA3AF', textAlign: 'center' }}>\n            Data for the past 10 days\n          </Typography>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

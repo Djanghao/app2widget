@@ -1,0 +1,72 @@
+{
+  "description": "A conversion funnel widget showing stage-by-stage conversion rates with comparison",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "conversion_funnel_001",
+      "app": "Conversion Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "funnel": [
+        {
+          "stage": "Visitors",
+          "current": 15000,
+          "previous": 14200,
+          "conversionRate": 100.0
+        },
+        {
+          "stage": "Leads",
+          "current": 3200,
+          "previous": 3100,
+          "conversionRate": 21.33
+        },
+        {
+          "stage": "Opportunities",
+          "current": 800,
+          "previous": 780,
+          "conversionRate": 25.0
+        },
+        {
+          "stage": "Customers",
+          "current": 200,
+          "previous": 190,
+          "conversionRate": 25.0
+        }
+      ],
+      "conversionComparison": [
+        {
+          "stage": "Visitors",
+          "current": 15000,
+          "previous": 14200
+        },
+        {
+          "stage": "Leads",
+          "current": 3200,
+          "previous": 3100
+        },
+        {
+          "stage": "Opportunities",
+          "current": 800,
+          "previous": 780
+        },
+        {
+          "stage": "Customers",
+          "current": 200,
+          "previous": 190
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface FunnelStage {\n  stage: string;\n  current: number;\n  previous: number;\n  conversionRate: number;\n}\n\ninterface ConversionFunnelData {\n  funnel: FunnelStage[];\n}\n\nexport default function Widget() {\n  const data = response.data as ConversionFunnelData;\n  const clipPathId = useId();\n\n  const stages = data.funnel.map((f) => f.stage);\n  const currentValues = data.funnel.map((f) => f.current);\n  const conversionRates = data.funnel.map((f) => f.conversionRate);\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#1E1E1E', color: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#FF5722' }}>\n              Conversion Funnel\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 250 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: currentValues,\n                  color: '#FFC107',\n                  label: 'Current',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: stages,\n                  id: 'stages',\n                },\n              ]}\n              yAxis={[{ id: 'values' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <BarPlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"stages\"\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsYAxis\n                axisId=\"values\"\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n\n          <Stack direction=\"row\" spacing={0.5} justifyContent=\"space-between\">\n            {data.funnel.map((funnelStage) => (\n              <Box key={funnelStage.stage} textAlign=\"center\">\n                <Typography variant=\"caption\" color=\"text.secondary\">\n                  {funnelStage.stage}\n                </Typography>\n                <Typography variant=\"body2\" fontWeight={500} sx={{ color: '#FFC107' }}>\n                  {funnelStage.conversionRate}%\n                </Typography>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

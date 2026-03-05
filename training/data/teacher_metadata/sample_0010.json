@@ -1,0 +1,29 @@
+{
+  "description": "A savings goal widget with progress bar, target amount, and projected completion date",
+  "ui_style": "Warm and friendly with rounded shapes, pastel colors, and playful typography. Approachable design.",
+  "mock_data": {
+    "widget": {
+      "id": "savings_goal_001",
+      "app": "Finance Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "goal": {
+        "name": "Vacation Fund",
+        "targetAmount": 5000,
+        "currentAmount": 3500,
+        "percentageComplete": 70,
+        "projectedCompletionDate": "2024-06-15"
+      }
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FFD700",
+      "accentColor": "#FF4500",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, LinearProgress } from '@mui/material';\nimport response from './response.json';\n\ninterface GoalData {\n  goal: {\n    name: string;\n    targetAmount: number;\n    currentAmount: number;\n    percentageComplete: number;\n    projectedCompletionDate: string;\n  };\n}\n\nexport default function Widget() {\n  const goalData = response.data as GoalData;\n  const { goal } = goalData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#FF4500' }}>\n              {goal.name}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Target: ${goal.targetAmount.toLocaleString()}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Current: ${goal.currentAmount.toLocaleString()}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Projected Completion: {new Date(goal.projectedCompletionDate).toLocaleDateString()}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Stack direction=\"row\" justifyContent=\"space-between\" sx={{ mb: 0.5 }}>\n              <Typography variant=\"caption\" color=\"text.secondary\">\n                Progress\n              </Typography>\n              <Typography variant=\"caption\" fontWeight={600} sx={{ color: '#FFD700' }}>\n                {goal.percentageComplete}%\n              </Typography>\n            </Stack>\n            <LinearProgress\n              variant=\"determinate\"\n              value={goal.percentageComplete}\n              sx={{\n                height: 8,\n                borderRadius: 4,\n                bgcolor: '#FFEFD5',\n                '& .MuiLinearProgress-bar': {\n                  bgcolor: '#FFD700',\n                  borderRadius: 4,\n                }\n              }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

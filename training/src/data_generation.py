@@ -1,9 +1,14 @@
-"""Teacher data pipeline: generate widget screenshots using GPT-4o."""
+"""Teacher data pipeline: generate widget screenshots using GPT-4o.
+
+Supports parallel API calls for fast generation.
+"""
 
 import json
 import logging
 import random
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+from threading import Lock
 
 from openai import OpenAI
 
@@ -83,6 +88,43 @@ def generate_widget_code(
         return None
 
 
+def _generate_api_data(
+    client: OpenAI,
+    description: str,
+    ui_style: str,
+    sample_id: str,
+    config: GenerationConfig,
+) -> dict | None:
+    """Generate mock data + widget code via API (no rendering). Thread-safe."""
+    teacher_cfg = config.teacher
+
+    mock_data = generate_mock_data(
+        client, description,
+        model=teacher_cfg.model,
+        temperature=teacher_cfg.temperature,
+        max_tokens=teacher_cfg.max_tokens,
+    )
+    if not mock_data:
+        return None
+
+    code = generate_widget_code(
+        client, mock_data, ui_style,
+        model=teacher_cfg.model,
+        temperature=teacher_cfg.temperature,
+        max_tokens=teacher_cfg.max_tokens,
+    )
+    if not code:
+        return None
+
+    return {
+        "sample_id": sample_id,
+        "description": description,
+        "ui_style": ui_style,
+        "mock_data": mock_data,
+        "code": code,
+    }
+
+
 def generate_teacher_sample(
     client: OpenAI,
     renderer: WidgetRenderer,
@@ -155,12 +197,16 @@ def generate_teacher_dataset(
     num_samples: int | None = None,
     config: GenerationConfig | None = None,
     renderer_config: RendererConfig | None = None,
+    parallel_api_workers: int = 2,
 ) -> list[dict]:
-    """Generate the full teacher dataset.
+    """Generate the full teacher dataset with rate-limit-aware sequential API calls.
 
-    For each sample, picks a random description + UI style,
-    generates mock data -> widget code -> screenshot.
+    Phase 1: Sequential API calls with delays to respect TPM limits.
+    Phase 2: Sequential rendering of screenshots (Playwright is single-threaded).
+    Skips samples that already have metadata from previous runs.
     """
+    import time as _time
+
     config = config or load_generation_config()
     num_samples = num_samples or config.teacher.num_samples
     client = _get_client()
@@ -173,27 +219,133 @@ def generate_teacher_dataset(
     if not ui_styles:
         raise ValueError("No UI styles in config")
 
+    data_cfg = config.data
+    metadata_dir = TRAINING_DIR / data_cfg.teacher_metadata_dir
+    metadata_dir.mkdir(parents=True, exist_ok=True)
+
+    # Check which samples already exist
+    existing = set()
+    for f in metadata_dir.glob("sample_*.json"):
+        existing.add(f.stem)
+    if existing:
+        logger.info("Found %d existing samples, will skip them", len(existing))
+
+    # Phase 1: Sequential API calls with rate limiting
+    logger.info("Phase 1: Generating mock data + code for %d samples (sequential with rate limiting)...",
+                num_samples)
+
+    api_results = []
+    succeeded = 0
+    skipped = 0
+    failed = 0
+    max_retries = 5
+
+    for i in range(num_samples):
+        sample_id = f"sample_{i:04d}"
+
+        # Skip if already generated
+        if sample_id in existing:
+            skipped += 1
+            continue
+
+        description = descriptions[i % len(descriptions)]
+        ui_style = random.choice(ui_styles)
+
+        # Retry loop with exponential backoff
+        result = None
+        for attempt in range(max_retries):
+            result = _generate_api_data(client, description, ui_style, sample_id, config)
+            if result is not None:
+                break
+            # Exponential backoff: 20s, 40s, 80s, 120s, 120s
+            wait = min(20 * (2 ** attempt), 120)
+            logger.info("Sample %s attempt %d failed, retrying in %ds...", sample_id, attempt + 1, wait)
+            _time.sleep(wait)
+
+        if result:
+            api_results.append(result)
+            succeeded += 1
+        else:
+            failed += 1
+
+        # Rate limit: ~10s between samples to stay under 30K TPM
+        # Each sample uses ~10K tokens (2 calls × ~5K each), 30K TPM = 3 samples/min
+        # The retry backoff handles bursts; 10s keeps us near the limit
+        if i < num_samples - 1:
+            _time.sleep(10)
+
+        total_processed = succeeded + failed + skipped
+        if total_processed % 10 == 0 or total_processed == num_samples:
+            logger.info("API progress: %d/%d (succeeded=%d, skipped=%d, failed=%d)",
+                        total_processed, num_samples, succeeded, skipped, failed)
+
+    logger.info("Phase 1 complete: %d new + %d existing = %d total, %d failed",
+                succeeded, skipped, succeeded + skipped, failed)
+
+    # Sort by sample_id to maintain order
+    api_results.sort(key=lambda x: x["sample_id"])
+
+    # Phase 2: Sequential screenshot rendering (only new samples)
+    logger.info("Phase 2: Rendering %d new screenshots...", len(api_results))
     renderer = WidgetRenderer(renderer_config)
     renderer.start()
 
-    dataset = []
+    new_dataset_entries = []
     try:
-        for i in range(num_samples):
-            sample_id = f"sample_{i:04d}"
-            description = descriptions[i % len(descriptions)]
-            ui_style = random.choice(ui_styles)
+        for i, item in enumerate(api_results):
+            sample_id = item["sample_id"]
 
-            logger.info("Generating sample %d/%d: %s", i + 1, num_samples, sample_id)
+            screenshot_path = TRAINING_DIR / data_cfg.teacher_screenshots_dir / f"{sample_id}.png"
+            success = renderer.render(item["code"], item["mock_data"], screenshot_path)
+            if not success:
+                logger.warning("Skipping %s: rendering failed", sample_id)
+                continue
 
-            result = generate_teacher_sample(
-                client, renderer, description, ui_style, sample_id, config,
-            )
-            if result:
-                dataset.append(result)
-            else:
-                logger.warning("Sample %s failed, continuing", sample_id)
+            # Save teacher metadata
+            metadata_path = metadata_dir / f"{sample_id}.json"
+            metadata_path.write_text(json.dumps({
+                "description": item["description"],
+                "ui_style": item["ui_style"],
+                "mock_data": item["mock_data"],
+                "teacher_code": item["code"],
+            }, indent=2))
+
+            training_prompt = build_widget_prompt(item["mock_data"], item["ui_style"])
+
+            new_dataset_entries.append({
+                "prompt": training_prompt,
+                "mock_data": item["mock_data"],
+                "target_screenshot": str(screenshot_path),
+                "description": item["description"],
+                "ui_style": item["ui_style"],
+                "sample_id": sample_id,
+            })
+
+            if (i + 1) % 25 == 0 or (i + 1) == len(api_results):
+                logger.info("Render progress: %d/%d screenshots", i + 1, len(api_results))
+
     finally:
         renderer.stop()
+
+    # Rebuild full dataset from all metadata files + screenshots
+    logger.info("Rebuilding full dataset from all metadata files...")
+    dataset = []
+    screenshots_dir = TRAINING_DIR / data_cfg.teacher_screenshots_dir
+    for meta_file in sorted(metadata_dir.glob("sample_*.json")):
+        sample_id = meta_file.stem
+        screenshot_path = screenshots_dir / f"{sample_id}.png"
+        if not screenshot_path.exists():
+            continue
+        meta = json.loads(meta_file.read_text())
+        training_prompt = build_widget_prompt(meta["mock_data"], meta.get("ui_style", ""))
+        dataset.append({
+            "prompt": training_prompt,
+            "mock_data": meta["mock_data"],
+            "target_screenshot": str(screenshot_path),
+            "description": meta["description"],
+            "ui_style": meta.get("ui_style", ""),
+            "sample_id": sample_id,
+        })
 
     # Write dataset to JSONL
     dataset_path = TRAINING_DIR / config.data.dataset_file
@@ -202,5 +354,5 @@ def generate_teacher_dataset(
         for entry in dataset:
             f.write(json.dumps(entry) + "\n")
 
-    logger.info("Generated %d/%d teacher samples -> %s", len(dataset), num_samples, dataset_path)
+    logger.info("Total dataset: %d samples (%d new) -> %s", len(dataset), len(new_dataset_entries), dataset_path)
     return dataset

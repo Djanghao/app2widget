@@ -1,0 +1,49 @@
+{
+  "description": "A running stats widget showing pace, distance, elevation, and route segment splits",
+  "ui_style": "Scandinavian-inspired with muted earth tones, natural textures, clean geometric shapes.",
+  "mock_data": {
+    "widget": {
+      "id": "running_stats_001",
+      "app": "Run Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "currentRun": {
+        "pace": "5:30/km",
+        "distance": 12.7,
+        "elevationGain": 150
+      },
+      "routeSegmentSplits": [
+        {
+          "segment": 1,
+          "distance": 2.0,
+          "pace": "5:20/km"
+        },
+        {
+          "segment": 2,
+          "distance": 3.0,
+          "pace": "5:35/km"
+        },
+        {
+          "segment": 3,
+          "distance": 4.0,
+          "pace": "5:25/km"
+        },
+        {
+          "segment": 4,
+          "distance": 3.7,
+          "pace": "5:40/km"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, Grid } from '@mui/material';\nimport response from './response.json';\n\ninterface RouteSegment {\n  segment: number;\n  distance: number;\n  pace: string;\n}\n\ninterface RunningStatsData {\n  currentRun: {\n    pace: string;\n    distance: number;\n    elevationGain: number;\n  };\n  routeSegmentSplits: RouteSegment[];\n}\n\nexport default function Widget() {\n  const { currentRun, routeSegmentSplits } = response.data as RunningStatsData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#2E3B4E' }} elevation={2}>\n      <CardContent sx={{ p: 3 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#FF5722' }}>\n              Current Run\n            </Typography>\n            <Typography variant=\"body1\" sx={{ color: '#FFFFFF' }}>\n              Pace: {currentRun.pace}\n            </Typography>\n            <Typography variant=\"body1\" sx={{ color: '#FFFFFF' }}>\n              Distance: {currentRun.distance.toFixed(1)} km\n            </Typography>\n            <Typography variant=\"body1\" sx={{ color: '#FFFFFF' }}>\n              Elevation Gain: {currentRun.elevationGain} m\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#FFC107', mb: 1 }}>\n              Route Segments\n            </Typography>\n            <Grid container spacing={1}>\n              {routeSegmentSplits.map((segment) => (\n                <Grid item xs={6} key={segment.segment}>\n                  <Chip\n                    label={`Segment ${segment.segment}: ${segment.distance} km @ ${segment.pace}`}\n                    sx={{\n                      width: '100%',\n                      fontSize: '10px',\n                      bgcolor: '#455A64',\n                      color: '#FFFFFF',\n                    }}\n                  />\n                </Grid>\n              ))}\n            </Grid>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

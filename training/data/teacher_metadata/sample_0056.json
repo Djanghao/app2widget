@@ -1,0 +1,61 @@
+{
+  "description": "A gaming stats widget showing playtime, achievements unlocked, and level progress",
+  "ui_style": "Warm and friendly with rounded shapes, pastel colors, and playful typography. Approachable design.",
+  "mock_data": {
+    "widget": {
+      "id": "gaming_stats_001",
+      "app": "Game Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "player": {
+        "username": "Gamer123",
+        "currentLevel": 15,
+        "totalPlaytimeHours": 120.5
+      },
+      "achievements": [
+        {
+          "name": "First Blood",
+          "unlocked": true
+        },
+        {
+          "name": "Sharp Shooter",
+          "unlocked": true
+        },
+        {
+          "name": "Marathon Runner",
+          "unlocked": false
+        }
+      ],
+      "levelProgress": [
+        {
+          "level": 12,
+          "completion": 100
+        },
+        {
+          "level": 13,
+          "completion": 100
+        },
+        {
+          "level": 14,
+          "completion": 100
+        },
+        {
+          "level": 15,
+          "completion": 70
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#1F2937",
+      "accentColor": "#F59E0B",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, LinearProgress } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface PlayerData {\n  player: {\n    username: string;\n    currentLevel: number;\n    totalPlaytimeHours: number;\n  };\n  achievements: {\n    name: string;\n    unlocked: boolean;\n  }[];\n  levelProgress: {\n    level: number;\n    completion: number;\n  }[];\n}\n\nexport default function Widget() {\n  const data = response.data as PlayerData;\n  const { player, achievements, levelProgress } = data;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#1F2937' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"#F59E0B\">\n              {player.username}\n            </Typography>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#F8FAFC' }}>\n              Level {player.currentLevel}\n            </Typography>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              Total Playtime: {player.totalPlaytimeHours} hours\n            </Typography>\n          </Box>\n\n          <Stack direction=\"row\" spacing={0.5}>\n            {achievements.slice(0, 3).map((achievement, index) => (\n              <Chip\n                key={index}\n                label={achievement.name}\n                sx={{\n                  fontSize: '11px',\n                  px: 1,\n                  py: 0.5,\n                  bgcolor: achievement.unlocked ? '#F59E0B' : '#374151',\n                  color: '#F8FAFC',\n                }}\n              />\n            ))}\n          </Stack>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"#F59E0B\" sx={{ mb: 0.5 }}>\n              Level Progress\n            </Typography>\n            <BarChart\n              height={100}\n              series={[\n                {\n                  data: levelProgress.map(progress => progress.completion),\n                  color: '#F59E0B',\n                },\n              ]}\n              xAxis={[\n                {\n                  data: levelProgress.map(progress => `Lvl ${progress.level}`),\n                  scaleType: 'band',\n                  tickLabelStyle: {\n                    fontSize: 10,\n                    fill: '#F8FAFC',\n                  },\n                }\n              ]}\n              margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n              sx={{\n                '& .MuiBarElement-root': {\n                  rx: 4,\n                },\n              }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

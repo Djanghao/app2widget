@@ -1,0 +1,51 @@
+{
+  "description": "A storage usage widget showing used vs total space with file type breakdown pie chart",
+  "ui_style": "Warm and friendly with rounded shapes, pastel colors, and playful typography. Approachable design.",
+  "mock_data": {
+    "widget": {
+      "id": "storage_usage_001",
+      "app": "Storage Manager",
+      "version": "1.0"
+    },
+    "data": {
+      "storage": {
+        "totalSpace": "500GB",
+        "usedSpace": "350GB",
+        "freeSpace": "150GB"
+      },
+      "fileTypeBreakdown": [
+        {
+          "type": "Documents",
+          "value": 120
+        },
+        {
+          "type": "Images",
+          "value": 80
+        },
+        {
+          "type": "Videos",
+          "value": 100
+        },
+        {
+          "type": "Music",
+          "value": 30
+        },
+        {
+          "type": "Others",
+          "value": 20
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4A5568",
+      "accentColor": "#63B3ED",
+      "chartTypes": [
+        "pie"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { PieChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface StorageData {\n  widget: {\n    id: string;\n    app: string;\n    version: string;\n  };\n  data: {\n    storage: {\n      totalSpace: string;\n      usedSpace: string;\n      freeSpace: string;\n    };\n    fileTypeBreakdown: {\n      type: string;\n      value: number;\n    }[];\n  };\n  meta: {\n    theme: string;\n    dataMode: string;\n    layout: string;\n    primaryColor: string;\n    accentColor: string;\n    chartTypes: string[];\n  };\n}\n\nexport default function Widget() {\n  const storageData = response.data as StorageData;\n  const { storage, fileTypeBreakdown } = storageData.data;\n  const { primaryColor, accentColor } = storageData.meta;\n\n  return (\n    <Card\n      sx={{\n        width: 'fit-content',\n        minWidth: 350,\n        maxWidth: 450,\n        bgcolor: '#1A202C',\n        color: '#E2E8F0',\n      }}\n      elevation={3}\n    >\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600}>\n              Storage Usage\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Total: {storage.totalSpace}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Used: {storage.usedSpace}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Free: {storage.freeSpace}\n            </Typography>\n          </Box>\n\n          <PieChart\n            height={200}\n            series={[\n              {\n                data: fileTypeBreakdown.map(({ type, value }) => ({\n                  label: type,\n                  value,\n                })),\n                color: [primaryColor, accentColor, '#4299E1', '#9F7AEA', '#F6E05E'],\n              },\n            ]}\n            sx={{\n              '& .MuiPieArcLabel-root': {\n                fontSize: 12,\n                fill: '#F7FAFC',\n              },\n            }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

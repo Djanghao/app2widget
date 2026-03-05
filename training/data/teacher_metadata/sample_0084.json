@@ -1,0 +1,48 @@
+{
+  "description": "A donation tracker widget showing total raised, goal progress, and donor count",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "donation_tracker_001",
+      "app": "Charity Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "campaign": {
+        "name": "Save the Rainforest",
+        "totalRaised": 15000,
+        "goal": 20000,
+        "donorCount": 350
+      },
+      "progress": [
+        {
+          "milestone": "Launch",
+          "amount": 2000
+        },
+        {
+          "milestone": "First Week",
+          "amount": 5000
+        },
+        {
+          "milestone": "Mid Campaign",
+          "amount": 10000
+        },
+        {
+          "milestone": "Last Push",
+          "amount": 15000
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface CampaignData {\n  campaign: {\n    name: string;\n    totalRaised: number;\n    goal: number;\n    donorCount: number;\n  };\n  progress: {\n    milestone: string;\n    amount: number;\n  }[];\n}\n\nexport default function Widget() {\n  const data = response.data as CampaignData;\n  const { campaign, progress } = data;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1 }}>\n              {campaign.name}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Raised: ${campaign.totalRaised.toLocaleString()} of ${campaign.goal.toLocaleString()}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Donors: {campaign.donorCount}\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 140 }}>\n            <BarChart\n              height={140}\n              series={[\n                {\n                  data: progress.map(p => p.amount),\n                  color: '#4CAF50',\n                },\n              ]}\n              xAxis={[\n                {\n                  data: progress.map(p => p.milestone),\n                  scaleType: 'band',\n                  tickLabelStyle: {\n                    fontSize: 11,\n                    fill: '#6B7280',\n                  },\n                }\n              ]}\n              margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n              sx={{\n                '& .MuiBarElement-root': {\n                  rx: 4,\n                },\n              }}\n            />\n          </Box>\n\n          <Stack direction=\"row\" spacing={0.5}>\n            {progress.map((p, index) => (\n              <Chip\n                key={index}\n                label={p.milestone}\n                sx={{ fontSize: '11px', px: 1, py: 0.5 }}\n              />\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

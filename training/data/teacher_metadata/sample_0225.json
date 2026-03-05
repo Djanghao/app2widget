@@ -1,0 +1,39 @@
+{
+  "description": "A deal alert widget showing top discounts with percentage off and expiry countdown",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "deal_alert_001",
+      "app": "Deal Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "topDeals": [
+        {
+          "product": "Wireless Earbuds",
+          "discount": 35,
+          "expiry": "2023-11-05T23:59:59"
+        },
+        {
+          "product": "Smartphone Case",
+          "discount": 20,
+          "expiry": "2023-11-03T23:59:59"
+        },
+        {
+          "product": "Bluetooth Speaker",
+          "discount": 50,
+          "expiry": "2023-11-10T23:59:59"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#4CAF50",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface Deal {\n  product: string;\n  discount: number;\n  expiry: string;\n}\n\ninterface WidgetData {\n  topDeals: Deal[];\n}\n\nexport default function Widget() {\n  const data = response.data as WidgetData;\n  const { topDeals } = data;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#1E1E1E' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" sx={{ color: '#FF5722', fontWeight: 600 }}>\n            Top Deals\n          </Typography>\n\n          <Stack spacing={1.5}>\n            {topDeals.map((deal, index) => (\n              <Box key={index} sx={{ bgcolor: '#2C2C2C', p: 1.5, borderRadius: 1 }}>\n                <Typography variant=\"body1\" sx={{ color: '#FFFFFF', fontWeight: 500 }}>\n                  {deal.product}\n                </Typography>\n                <Stack direction=\"row\" alignItems=\"center\" spacing={1} sx={{ mt: 0.5 }}>\n                  <Chip label={`${deal.discount}% Off`} sx={{ bgcolor: '#FF5722', color: '#FFFFFF', fontSize: '12px' }} />\n                  <Typography variant=\"caption\" sx={{ color: '#B0B0B0' }}>\n                    Expires: {new Date(deal.expiry).toLocaleDateString()}\n                  </Typography>\n                </Stack>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

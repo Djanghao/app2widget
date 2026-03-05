@@ -1,0 +1,44 @@
+{
+  "description": "A shopping cart widget showing item count, total price, and savings amount",
+  "ui_style": "Windows Fluent with acrylic backgrounds, reveal highlights, and clean segmented layouts.",
+  "mock_data": {
+    "widget": {
+      "id": "shopping_cart_001",
+      "app": "Cart Manager",
+      "version": "1.0"
+    },
+    "data": {
+      "cartSummary": {
+        "itemCount": 5,
+        "totalPrice": 152.75,
+        "totalSavings": 20.0
+      },
+      "items": [
+        {
+          "name": "Bluetooth Headphones",
+          "price": 59.99,
+          "savings": 10.0
+        },
+        {
+          "name": "Travel Backpack",
+          "price": 40.0,
+          "savings": 5.0
+        },
+        {
+          "name": "Insulated Water Bottle",
+          "price": 22.76,
+          "savings": 2.0
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Divider } from '@mui/material';\nimport response from './response.json';\n\ninterface CartSummary {\n  itemCount: number;\n  totalPrice: number;\n  totalSavings: number;\n}\n\ninterface Item {\n  name: string;\n  price: number;\n  savings: number;\n}\n\ninterface CartData {\n  cartSummary: CartSummary;\n  items: Item[];\n}\n\nexport default function Widget() {\n  const cartData = response.data as CartData;\n  const { cartSummary, items } = cartData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 300, maxWidth: 400, bgcolor: '#FFFFFF', borderRadius: 2 }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#FF5722' }}>\n              Cart Summary\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Items: {cartSummary.itemCount}\n            </Typography>\n            <Typography variant=\"h5\" sx={{ color: '#FF5722', mt: 0.5 }}>\n              Total: ${cartSummary.totalPrice.toFixed(2)}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Savings: ${cartSummary.totalSavings.toFixed(2)}\n            </Typography>\n          </Box>\n\n          <Divider />\n\n          <Stack spacing={1}>\n            {items.map((item, index) => (\n              <Box key={index}>\n                <Typography variant=\"body2\" fontWeight={600} color=\"text.primary\">\n                  {item.name}\n                </Typography>\n                <Typography variant=\"body2\" color=\"text.secondary\">\n                  Price: ${item.price.toFixed(2)} | Savings: ${item.savings.toFixed(2)}\n                </Typography>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

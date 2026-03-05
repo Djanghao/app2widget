@@ -1,0 +1,39 @@
+{
+  "description": "A time zone widget showing clocks for 3 cities with local time and date difference",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "timezone_clocks_001",
+      "app": "World Clock",
+      "version": "1.0"
+    },
+    "data": {
+      "cities": [
+        {
+          "name": "New York",
+          "localTime": "14:30",
+          "dateDifference": "+0"
+        },
+        {
+          "name": "London",
+          "localTime": "19:30",
+          "dateDifference": "+0"
+        },
+        {
+          "name": "Tokyo",
+          "localTime": "03:30",
+          "dateDifference": "+1"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#FF5722",
+      "accentColor": "#03A9F4",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport response from './response.json';\n\ninterface City {\n  name: string;\n  localTime: string;\n  dateDifference: string;\n}\n\ninterface TimezoneClocksData {\n  cities: City[];\n}\n\nexport default function Widget() {\n  const timezoneClocksData = response.data.data as TimezoneClocksData;\n  const { theme, primaryColor, accentColor } = response.data.meta;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 300, maxWidth: 400, bgcolor: theme === 'light' ? '#FFFFFF' : '#2C2C2C' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" fontWeight={600} sx={{ color: primaryColor }}>\n            World Clock\n          </Typography>\n          {timezoneClocksData.cities.map((city) => (\n            <Box key={city.name} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>\n              <Typography variant=\"body1\" sx={{ color: theme === 'light' ? '#333' : '#EEE' }}>\n                {city.name}\n              </Typography>\n              <Typography variant=\"body2\" sx={{ color: accentColor }}>\n                {city.localTime} {city.dateDifference !== '+0' && `(Day ${city.dateDifference})`}\n              </Typography>\n            </Box>\n          ))}\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

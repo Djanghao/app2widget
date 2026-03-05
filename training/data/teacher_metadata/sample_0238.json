@@ -1,0 +1,45 @@
+{
+  "description": "A streaming watchlist widget showing next to watch, episodes left, and time to finish",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "watchlist_streaming_001",
+      "app": "Stream Watchlist",
+      "version": "1.0"
+    },
+    "data": {
+      "currentShow": {
+        "title": "The Great Heist",
+        "nextEpisode": "S02E05",
+        "episodesLeft": 3,
+        "timeToFinish": "2 hours 30 minutes"
+      },
+      "watchlist": [
+        {
+          "title": "Mystery Island",
+          "episodesLeft": 5,
+          "timeToFinish": "3 hours 45 minutes"
+        },
+        {
+          "title": "Space Explorers",
+          "episodesLeft": 2,
+          "timeToFinish": "1 hour 20 minutes"
+        },
+        {
+          "title": "Cooking Adventures",
+          "episodesLeft": 4,
+          "timeToFinish": "2 hours"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip, Divider } from '@mui/material';\nimport { Info } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface CurrentShow {\n  title: string;\n  nextEpisode: string;\n  episodesLeft: number;\n  timeToFinish: string;\n}\n\ninterface WatchlistItem {\n  title: string;\n  episodesLeft: number;\n  timeToFinish: string;\n}\n\ninterface WatchlistData {\n  currentShow: CurrentShow;\n  watchlist: WatchlistItem[];\n}\n\nexport default function Widget() {\n  const watchlistData = response.data as WatchlistData;\n  const { currentShow, watchlist } = watchlistData;\n\n  return (\n    <Card\n      sx={{\n        width: 'fit-content',\n        minWidth: 320,\n        maxWidth: 450,\n        bgcolor: response.meta.theme === 'dark' ? '#1C1C1E' : '#FFFFFF',\n        color: '#FFFFFF',\n        p: 2,\n      }}\n      elevation={2}\n    >\n      <CardContent>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: response.meta.primaryColor, mb: 1 }}>\n              {currentShow.title}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 0.5 }}>\n              Next Episode: {currentShow.nextEpisode}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Episodes Left: {currentShow.episodesLeft}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Time to Finish: {currentShow.timeToFinish}\n            </Typography>\n          </Box>\n\n          <Divider sx={{ bgcolor: response.meta.accentColor }} />\n\n          <Box>\n            <Typography variant=\"body2\" fontWeight={600} sx={{ mb: 1 }}>\n              Watchlist\n            </Typography>\n            <Grid container spacing={1}>\n              {watchlist.map((item, index) => (\n                <Grid item xs={6} key={index}>\n                  <Typography variant=\"body2\" color=\"text.secondary\" sx={{ fontWeight: 500 }}>\n                    {item.title}\n                  </Typography>\n                  <Typography variant=\"caption\" color=\"text.secondary\">\n                    {item.episodesLeft} episodes left\n                  </Typography>\n                  <Typography variant=\"caption\" color=\"text.secondary\">\n                    {item.timeToFinish}\n                  </Typography>\n                </Grid>\n              ))}\n            </Grid>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,51 @@
+{
+  "description": "A hydration tracker widget with daily water intake progress and hourly consumption chart",
+  "ui_style": "Retro/vintage with warm sepia tones, rounded retro fonts, subtle paper textures, nostalgic feel.",
+  "mock_data": {
+    "widget": {
+      "id": "hydration_tracker_001",
+      "app": "Hydration Pro",
+      "version": "1.0"
+    },
+    "data": {
+      "dailyGoal": {
+        "target": 3000,
+        "current": 1850,
+        "percentage": 62
+      },
+      "hourlyIntake": [
+        {
+          "hour": "8AM",
+          "water": 250
+        },
+        {
+          "hour": "10AM",
+          "water": 300
+        },
+        {
+          "hour": "12PM",
+          "water": 400
+        },
+        {
+          "hour": "2PM",
+          "water": 350
+        },
+        {
+          "hour": "4PM",
+          "water": 250
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#00BCD4",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, LinearProgress } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface HourlyIntake {\n  hour: string;\n  water: number;\n}\n\ninterface HydrationData {\n  dailyGoal: {\n    target: number;\n    current: number;\n    percentage: number;\n  };\n  hourlyIntake: HourlyIntake[];\n}\n\nexport default function Widget() {\n  const hydrationData = response.data as HydrationData;\n  const { dailyGoal, hourlyIntake } = hydrationData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FAF3E0' }} elevation={2}>\n      <CardContent sx={{ p: 3 }}>\n        <Stack spacing={2.5}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#8B5CF6' }}>\n              Daily Hydration\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#1F2937' }}>\n              {dailyGoal.current} ml\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 0.5 }}>\n              of {dailyGoal.target} ml goal\n            </Typography>\n          </Box>\n\n          <Box>\n            <Stack direction=\"row\" justifyContent=\"space-between\" sx={{ mb: 0.5 }}>\n              <Typography variant=\"caption\" color=\"text.secondary\">\n                Progress\n              </Typography>\n              <Typography variant=\"caption\" fontWeight={600} sx={{ color: '#8B5CF6' }}>\n                {dailyGoal.percentage}%\n              </Typography>\n            </Stack>\n            <LinearProgress\n              variant=\"determinate\"\n              value={dailyGoal.percentage}\n              sx={{\n                height: 8,\n                borderRadius: 4,\n                bgcolor: '#F3E8FF',\n                '& .MuiLinearProgress-bar': {\n                  bgcolor: '#8B5CF6',\n                  borderRadius: 4,\n                }\n              }}\n            />\n          </Box>\n\n          <BarChart\n            height={120}\n            series={[\n              {\n                data: hourlyIntake.map(d => d.water),\n                color: '#8B5CF6',\n              },\n            ]}\n            xAxis={[\n              {\n                data: hourlyIntake.map(d => d.hour),\n                scaleType: 'band',\n                tickLabelStyle: {\n                  fontSize: 11,\n                  fill: '#6B7280',\n                },\n              }\n            ]}\n            margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n            sx={{\n              '& .MuiBarElement-root': {\n                rx: 4,\n              },\n            }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -153,10 +153,28 @@ class WidgetRenderer:
                 # Extra settle time for MUI animations/charts
                 time.sleep(0.5)
 
-                # Screenshot the root element (widget container)
-                root = self._page.query_selector("#root")
-                if root:
-                    root.screenshot(path=str(output_path))
+                # Screenshot the full widget content, avoiding white space
+                # First try to find the actual widget content inside #root
+                widget = self._page.query_selector("#root > *")
+                if widget:
+                    # Get the full scrollable content size
+                    bbox = widget.bounding_box()
+                    if bbox and bbox["height"] > 10:
+                        # Use full_page screenshot with clip to capture entire widget
+                        scroll_height = self._page.evaluate(
+                            "document.querySelector('#root').scrollHeight"
+                        )
+                        clip_height = max(bbox["height"], scroll_height)
+                        self._page.set_viewport_size({
+                            "width": 800,
+                            "height": int(clip_height) + 20,
+                        })
+                        time.sleep(0.3)
+                        widget.screenshot(path=str(output_path))
+                        # Reset viewport
+                        self._page.set_viewport_size({"width": 800, "height": 600})
+                    else:
+                        self._page.screenshot(path=str(output_path))
                 else:
                     self._page.screenshot(path=str(output_path))
 

@@ -1,0 +1,30 @@
+{
+  "description": "A sunrise/sunset widget with golden hour indicator and day length",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "sunrise_sunset_001",
+      "app": "SunTracker",
+      "version": "1.0"
+    },
+    "data": {
+      "location": "New York, NY",
+      "sunrise": "06:32 AM",
+      "sunset": "07:45 PM",
+      "goldenHour": {
+        "start": "06:00 PM",
+        "end": "07:00 PM"
+      },
+      "dayLength": "13h 13m"
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF9800",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Divider, Chip } from '@mui/material';\nimport response from './response.json';\n\nexport default function Widget() {\n  const data = response.data;\n\n  return (\n    <Card\n      sx={{\n        width: 'fit-content',\n        minWidth: 280,\n        maxWidth: 380,\n        bgcolor: '#FFFFFF',\n        border: `1px solid ${response.meta.primaryColor}`,\n        borderRadius: 2,\n      }}\n      elevation={2}\n    >\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: response.meta.primaryColor }}>\n              {data.location}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Sunrise & Sunset Times\n            </Typography>\n          </Box>\n\n          <Divider sx={{ my: 1 }} />\n\n          <Stack direction=\"row\" spacing={1} justifyContent=\"space-between\">\n            <Box>\n              <Typography variant=\"caption\" color=\"text.secondary\">\n                Sunrise\n              </Typography>\n              <Typography variant=\"body2\" fontWeight={500}>\n                {data.sunrise}\n              </Typography>\n            </Box>\n            <Box>\n              <Typography variant=\"caption\" color=\"text.secondary\">\n                Sunset\n              </Typography>\n              <Typography variant=\"body2\" fontWeight={500}>\n                {data.sunset}\n              </Typography>\n            </Box>\n          </Stack>\n\n          <Divider sx={{ my: 1 }} />\n\n          <Stack direction=\"row\" spacing={1} justifyContent=\"space-between\">\n            <Box>\n              <Typography variant=\"caption\" color=\"text.secondary\">\n                Golden Hour\n              </Typography>\n              <Typography variant=\"body2\" fontWeight={500}>\n                {data.goldenHour.start} - {data.goldenHour.end}\n              </Typography>\n            </Box>\n            <Box>\n              <Typography variant=\"caption\" color=\"text.secondary\">\n                Day Length\n              </Typography>\n              <Typography variant=\"body2\" fontWeight={500}>\n                {data.dayLength}\n              </Typography>\n            </Box>\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

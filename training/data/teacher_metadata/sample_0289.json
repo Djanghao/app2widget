@@ -1,0 +1,63 @@
+{
+  "description": "A commute widget showing estimated travel time, traffic level, and alternative routes comparison",
+  "ui_style": "Dashboard/analytics style with dense data, small fonts, grid layouts, and chart-heavy composition.",
+  "mock_data": {
+    "widget": {
+      "id": "commute_estimate_001",
+      "app": "Commute Companion",
+      "version": "1.0"
+    },
+    "data": {
+      "currentRoute": {
+        "routeName": "Home to Work",
+        "estimatedTime": 35,
+        "trafficLevel": "Moderate"
+      },
+      "alternativeRoutes": [
+        {
+          "routeName": "Route A1",
+          "estimatedTime": 40,
+          "trafficLevel": "Heavy"
+        },
+        {
+          "routeName": "Route B2",
+          "estimatedTime": 30,
+          "trafficLevel": "Light"
+        }
+      ],
+      "trafficTrend": [
+        {
+          "time": "8AM",
+          "level": "Light"
+        },
+        {
+          "time": "9AM",
+          "level": "Moderate"
+        },
+        {
+          "time": "10AM",
+          "level": "Heavy"
+        },
+        {
+          "time": "11AM",
+          "level": "Moderate"
+        },
+        {
+          "time": "12PM",
+          "level": "Light"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { BarChart, ResponsiveChartContainer, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface Route {\n  routeName: string;\n  estimatedTime: number;\n  trafficLevel: string;\n}\n\ninterface TrafficLevel {\n  time: string;\n  level: string;\n}\n\ninterface CommuteData {\n  currentRoute: Route;\n  alternativeRoutes: Route[];\n  trafficTrend: TrafficLevel[];\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n  chartTypes: string[];\n}\n\nexport default function Widget() {\n  const commuteData = response.data as CommuteData;\n  const metaData = response.meta as MetaData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#121212', color: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Current Route\n            </Typography>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: metaData.primaryColor }}>\n              {commuteData.currentRoute.routeName}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Estimated Time: {commuteData.currentRoute.estimatedTime} mins\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Traffic Level: {commuteData.currentRoute.trafficLevel}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 0.5 }}>\n              Alternative Routes\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {commuteData.alternativeRoutes.map((route, index) => (\n                <Chip\n                  key={index}\n                  label={`${route.routeName} (${route.estimatedTime} mins, ${route.trafficLevel})`}\n                  sx={{ fontSize: '11px', bgcolor: metaData.accentColor, color: '#000' }}\n                />\n              ))}\n            </Stack>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: commuteData.trafficTrend.map(trend => trend.level === 'Light' ? 1 : trend.level === 'Moderate' ? 2 : 3),\n                  color: metaData.primaryColor,\n                  label: 'Traffic Level',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: commuteData.trafficTrend.map(trend => trend.time),\n                  id: 'times',\n                },\n              ]}\n              yAxis={[{ id: 'levels', scaleType: 'linear', tickFormat: (value) => ['Light', 'Moderate', 'Heavy'][value - 1] }]}\n            >\n              <ChartsClipPath id={clipPathId} />\n              <g clipPath={`url(#${clipPathId})`}>\n                <BarPlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"times\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"levels\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

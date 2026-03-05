@@ -1,0 +1,30 @@
+{
+  "description": "A parking spot widget showing available spots, nearest location, and hourly rate",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "parking_availability_001",
+      "app": "ParkEasy",
+      "version": "1.0"
+    },
+    "data": {
+      "location": "Downtown Garage",
+      "availableSpots": 23,
+      "nearestLocation": {
+        "name": "Main St. Parking",
+        "distance": "0.3 miles",
+        "availableSpots": 12
+      },
+      "hourlyRate": 2.5
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#4A90E2",
+      "accentColor": "#D0021B",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Divider } from '@mui/material';\nimport { Info } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface ParkingData {\n  location: string;\n  availableSpots: number;\n  nearestLocation: {\n    name: string;\n    distance: string;\n    availableSpots: number;\n  };\n  hourlyRate: number;\n}\n\nexport default function Widget() {\n  const parkingData = response.data as ParkingData;\n  const { theme, primaryColor, accentColor } = response.meta;\n\n  return (\n    <Card\n      sx={{\n        width: 'fit-content',\n        minWidth: 300,\n        maxWidth: 400,\n        bgcolor: theme === 'dark' ? '#1E1E1E' : '#FFFFFF',\n        color: theme === 'dark' ? '#F5F5F5' : '#1E1E1E',\n      }}\n      elevation={2}\n    >\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {parkingData.location}\n            </Typography>\n            <Typography variant=\"h4\" sx={{ my: 0.5 }}>\n              {parkingData.availableSpots} Spots Available\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Hourly Rate: ${parkingData.hourlyRate.toFixed(2)}\n            </Typography>\n          </Box>\n          <Divider sx={{ bgcolor: primaryColor }} />\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Nearest Location\n            </Typography>\n            <Typography variant=\"h6\" sx={{ my: 0.5, color: primaryColor }}>\n              {parkingData.nearestLocation.name}\n            </Typography>\n            <Stack direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\">\n              <Typography variant=\"body2\" color=\"text.secondary\">\n                {parkingData.nearestLocation.distance}\n              </Typography>\n              <Typography variant=\"body2\" sx={{ color: accentColor }}>\n                {parkingData.nearestLocation.availableSpots} Spots\n              </Typography>\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

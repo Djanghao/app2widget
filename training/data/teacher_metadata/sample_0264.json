@@ -1,0 +1,39 @@
+{
+  "description": "A news headline widget showing top 3 stories with source and time ago",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "news_headlines_001",
+      "app": "Top News",
+      "version": "1.0"
+    },
+    "data": {
+      "headlines": [
+        {
+          "title": "Global Markets Rally as Inflation Fears Ease",
+          "source": "Reuters",
+          "timeAgo": "2 hours ago"
+        },
+        {
+          "title": "Breakthrough in Renewable Energy Achieved by Scientists",
+          "source": "BBC News",
+          "timeAgo": "3 hours ago"
+        },
+        {
+          "title": "Tech Giants Announce New Collaboration for AI Development",
+          "source": "The Verge",
+          "timeAgo": "5 hours ago"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#4A90E2",
+      "accentColor": "#F5A623",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Typography, Stack, Box } from '@mui/material';\nimport response from './response.json';\n\ninterface Headline {\n  title: string;\n  source: string;\n  timeAgo: string;\n}\n\ninterface NewsData {\n  headlines: Headline[];\n}\n\nexport default function Widget() {\n  const newsData = response.data as NewsData;\n  const { headlines } = newsData;\n  const { theme, primaryColor } = response.meta;\n\n  return (\n    <Card\n      sx={{\n        width: 'fit-content',\n        minWidth: 280,\n        maxWidth: 380,\n        bgcolor: theme === 'light' ? '#FFFFFF' : '#1E1E1E',\n      }}\n      elevation={2}\n    >\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" fontWeight={600} sx={{ color: primaryColor }}>\n            Top News\n          </Typography>\n          <Stack spacing={1}>\n            {headlines.map((headline, index) => (\n              <Box key={index}>\n                <Typography variant=\"body1\" fontWeight={500} sx={{ color: '#4A4A4A' }}>\n                  {headline.title}\n                </Typography>\n                <Typography variant=\"caption\" color=\"text.secondary\">\n                  {headline.source} - {headline.timeAgo}\n                </Typography>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

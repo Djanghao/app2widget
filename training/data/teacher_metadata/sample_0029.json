@@ -1,0 +1,48 @@
+{
+  "description": "A code review widget showing pending reviews, average review time, and weekly stats",
+  "ui_style": "Warm and friendly with rounded shapes, pastel colors, and playful typography. Approachable design.",
+  "mock_data": {
+    "widget": {
+      "id": "code_review_001",
+      "app": "Code Review Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "pendingReviews": 5,
+      "averageReviewTime": 3.5,
+      "weeklyReviewStats": [
+        {
+          "day": "Mon",
+          "reviews": 4
+        },
+        {
+          "day": "Tue",
+          "reviews": 6
+        },
+        {
+          "day": "Wed",
+          "reviews": 5
+        },
+        {
+          "day": "Thu",
+          "reviews": 7
+        },
+        {
+          "day": "Fri",
+          "reviews": 3
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#374151",
+      "accentColor": "#F59E0B",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface ReviewStats {\n  day: string;\n  reviews: number;\n}\n\ninterface WidgetData {\n  pendingReviews: number;\n  averageReviewTime: number;\n  weeklyReviewStats: ReviewStats[];\n}\n\nexport default function Widget() {\n  const data = response.data as WidgetData;\n  const { pendingReviews, averageReviewTime, weeklyReviewStats } = data;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#1F2937', color: '#F8FAFC' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#F59E0B' }}>\n              Code Review Tracker\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8', mb: 0.5 }}>\n              Pending Reviews\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700}>\n              {pendingReviews}\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8', mt: 0.5 }}>\n              Avg. Review Time: {averageReviewTime} hrs\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: weeklyReviewStats.map(stat => stat.reviews),\n                  color: '#F59E0B',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: weeklyReviewStats.map(stat => stat.day),\n                  id: 'days',\n                },\n              ]}\n              yAxis={[{ id: 'reviews' }]}\n            >\n              <ChartsClipPath id={clipPathId} />\n              <g clipPath={`url(#${clipPathId})`}>\n                <BarPlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"days\"\n                tickLabelStyle={{ fontSize: 10, fill: '#94A3B8' }}\n              />\n              <ChartsYAxis\n                axisId=\"reviews\"\n                tickLabelStyle={{ fontSize: 10, fill: '#94A3B8' }}\n              />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

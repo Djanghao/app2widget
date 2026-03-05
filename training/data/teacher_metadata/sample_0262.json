@@ -1,0 +1,66 @@
+{
+  "description": "A wine tracker widget showing collection count, recent additions, and ratings by region",
+  "ui_style": "Android Material You with pill-shaped elements, tonal colors, large touch targets, and rounded corners.",
+  "mock_data": {
+    "widget": {
+      "id": "wine_tracker_001",
+      "app": "Wine Collection",
+      "version": "1.0"
+    },
+    "data": {
+      "collection": {
+        "totalBottles": 215,
+        "recentAdditions": [
+          {
+            "name": "Ch\u00e2teau Margaux 2015",
+            "region": "Bordeaux",
+            "rating": 4.8
+          },
+          {
+            "name": "Penfolds Grange 2014",
+            "region": "Australia",
+            "rating": 4.7
+          },
+          {
+            "name": "Barolo Riserva 2013",
+            "region": "Piedmont",
+            "rating": 4.6
+          }
+        ]
+      },
+      "ratingsByRegion": [
+        {
+          "region": "Bordeaux",
+          "rating": 4.8
+        },
+        {
+          "region": "Tuscany",
+          "rating": 4.5
+        },
+        {
+          "region": "Napa Valley",
+          "rating": 4.6
+        },
+        {
+          "region": "Piedmont",
+          "rating": 4.7
+        },
+        {
+          "region": "Rioja",
+          "rating": 4.4
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#B22222",
+      "accentColor": "#FFD700",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface RecentAddition {\n  name: string;\n  region: string;\n  rating: number;\n}\n\ninterface RatingsByRegion {\n  region: string;\n  rating: number;\n}\n\ninterface WineData {\n  collection: {\n    totalBottles: number;\n    recentAdditions: RecentAddition[];\n  };\n  ratingsByRegion: RatingsByRegion[];\n}\n\nexport default function Widget() {\n  const wineData = response.data as WineData;\n  const { collection, ratingsByRegion } = wineData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#1E1E1E' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#FFD700', mb: 1 }}>\n              Wine Collection\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#C0C0C0' }}>\n              Total Bottles: {collection.totalBottles}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#FFD700', mb: 1 }}>\n              Recent Additions\n            </Typography>\n            <Stack direction=\"column\" spacing={1}>\n              {collection.recentAdditions.map((wine, index) => (\n                <Box key={index}>\n                  <Typography variant=\"body2\" sx={{ color: '#FFFFFF', fontWeight: 600 }}>\n                    {wine.name}\n                  </Typography>\n                  <Typography variant=\"caption\" sx={{ color: '#C0C0C0' }}>\n                    {wine.region} - Rating: {wine.rating}\n                  </Typography>\n                </Box>\n              ))}\n            </Stack>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#FFD700', mb: 1 }}>\n              Ratings by Region\n            </Typography>\n            <BarChart\n              height={120}\n              series={[\n                {\n                  data: ratingsByRegion.map(r => r.rating),\n                  color: '#B22222',\n                },\n              ]}\n              xAxis={[\n                {\n                  data: ratingsByRegion.map(r => r.region),\n                  scaleType: 'band',\n                  tickLabelStyle: {\n                    fontSize: 10,\n                    fill: '#C0C0C0',\n                  },\n                }\n              ]}\n              margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n              sx={{\n                '& .MuiBarElement-root': {\n                  rx: 4,\n                },\n              }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

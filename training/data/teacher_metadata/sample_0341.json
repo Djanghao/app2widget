@@ -1,0 +1,39 @@
+{
+  "description": "A meeting agenda widget showing next 3 upcoming meetings with time and location",
+  "ui_style": "Retro/vintage with warm sepia tones, rounded retro fonts, subtle paper textures, nostalgic feel.",
+  "mock_data": {
+    "widget": {
+      "id": "meeting_agenda_001",
+      "app": "Agenda Planner",
+      "version": "1.0"
+    },
+    "data": {
+      "upcomingMeetings": [
+        {
+          "title": "Project Kickoff",
+          "time": "10:00 AM",
+          "location": "Room 301"
+        },
+        {
+          "title": "Status Update",
+          "time": "1:00 PM",
+          "location": "Conference Hall B"
+        },
+        {
+          "title": "Client Call",
+          "time": "3:30 PM",
+          "location": "Zoom"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#00796B",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface Meeting {\n  title: string;\n  time: string;\n  location: string;\n}\n\ninterface AgendaData {\n  upcomingMeetings: Meeting[];\n}\n\nexport default function Widget() {\n  const agendaData = response.data.data as AgendaData;\n  const { upcomingMeetings } = agendaData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#F5F5DC' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#795548' }}>\n            Upcoming Meetings\n          </Typography>\n          <Stack spacing={1.5}>\n            {upcomingMeetings.map((meeting, index) => (\n              <Box key={index}>\n                <Typography variant=\"body2\" fontWeight={500} sx={{ color: '#3E2723' }}>\n                  {meeting.title}\n                </Typography>\n                <Stack direction=\"row\" spacing={0.5}>\n                  <Chip label={meeting.time} sx={{ fontSize: '10px', bgcolor: '#FFC107', color: '#000' }} />\n                  <Chip label={meeting.location} sx={{ fontSize: '10px', bgcolor: '#00796B', color: '#FFF' }} />\n                </Stack>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

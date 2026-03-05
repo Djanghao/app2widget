@@ -1,0 +1,43 @@
+{
+  "description": "A meal planner widget showing today's meals with calorie totals and prep time",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "meal_planner_001",
+      "app": "Daily Meal Planner",
+      "version": "1.0"
+    },
+    "data": {
+      "todayMeals": [
+        {
+          "meal": "Breakfast",
+          "name": "Oatmeal with Berries",
+          "calories": 350,
+          "prepTime": "10 mins"
+        },
+        {
+          "meal": "Lunch",
+          "name": "Grilled Chicken Salad",
+          "calories": 450,
+          "prepTime": "15 mins"
+        },
+        {
+          "meal": "Dinner",
+          "name": "Spaghetti Bolognese",
+          "calories": 600,
+          "prepTime": "30 mins"
+        }
+      ],
+      "calorieTotal": 1400
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface Meal {\n  meal: string;\n  name: string;\n  calories: number;\n  prepTime: string;\n}\n\ninterface MealPlannerData {\n  todayMeals: Meal[];\n  calorieTotal: number;\n}\n\nexport default function Widget() {\n  const mealPlannerData = response.data as MealPlannerData;\n  const { todayMeals, calorieTotal } = mealPlannerData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#FF5722' }}>\n            Daily Meal Planner\n          </Typography>\n          \n          {todayMeals.map((meal, index) => (\n            <Box key={index} sx={{ mb: 1 }}>\n              <Typography variant=\"body1\" fontWeight={500} color=\"text.primary\">\n                {meal.meal}: {meal.name}\n              </Typography>\n              <Stack direction=\"row\" spacing={1}>\n                <Chip label={`${meal.calories} kcal`} sx={{ fontSize: '11px', bgcolor: '#FFC107', color: '#FFFFFF' }} />\n                <Chip label={meal.prepTime} sx={{ fontSize: '11px', bgcolor: '#FF5722', color: '#FFFFFF' }} />\n              </Stack>\n            </Box>\n          ))}\n\n          <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mt: 2 }}>\n            Total Calories: {calorieTotal} kcal\n          </Typography>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

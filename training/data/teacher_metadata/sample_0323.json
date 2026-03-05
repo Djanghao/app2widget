@@ -1,0 +1,48 @@
+{
+  "description": "A subscription revenue widget showing MRR, churn rate, and growth trend",
+  "ui_style": "Playful and colorful with bright primary colors, thick rounded borders, and large friendly fonts.",
+  "mock_data": {
+    "widget": {
+      "id": "subscription_revenue_001",
+      "app": "Revenue Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "monthlyRecurringRevenue": 12000.0,
+      "churnRate": 2.5,
+      "growthTrend": [
+        {
+          "month": "January",
+          "revenue": 11000
+        },
+        {
+          "month": "February",
+          "revenue": 11200
+        },
+        {
+          "month": "March",
+          "revenue": 11500
+        },
+        {
+          "month": "April",
+          "revenue": 11800
+        },
+        {
+          "month": "May",
+          "revenue": 12000
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface MonthlyRevenue {\n  month: string;\n  revenue: number;\n}\n\ninterface RevenueData {\n  monthlyRecurringRevenue: number;\n  churnRate: number;\n  growthTrend: MonthlyRevenue[];\n}\n\nexport default function Widget() {\n  const data = response.data as RevenueData;\n  const isGrowthPositive = data.growthTrend[data.growthTrend.length - 1].revenue >= data.growthTrend[0].revenue;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#303030' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#FFC107', mb: 0.5 }}>\n              Monthly Recurring Revenue\n            </Typography>\n            <Typography variant=\"h4\" sx={{ color: '#FF5722', fontWeight: 600 }}>\n              ${data.monthlyRecurringRevenue.toLocaleString()}\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={0.5} sx={{ mt: 0.5 }}>\n              {isGrowthPositive ? <TrendingUp sx={{ fontSize: 16, color: '#10B981' }} /> : <TrendingDown sx={{ fontSize: 16, color: '#EF4444' }} />}\n              <Typography variant=\"body2\" sx={{ color: isGrowthPositive ? '#10B981' : '#EF4444' }}>\n                {isGrowthPositive ? '+' : '-'}{data.churnRate.toFixed(2)}% Churn Rate\n              </Typography>\n            </Stack>\n          </Box>\n\n          <LineChart\n            height={120}\n            series={[\n              {\n                data: data.growthTrend.map(g => g.revenue),\n                color: '#FFC107',\n                curve: 'linear',\n                showMark: false,\n              },\n            ]}\n            xAxis={[{ data: data.growthTrend.map(g => g.month), hide: true }]}\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n            sx={{\n              '& .MuiLineElement-root': {\n                strokeWidth: 2,\n              },\n            }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

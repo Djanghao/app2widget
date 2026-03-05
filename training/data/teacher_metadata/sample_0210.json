@@ -1,0 +1,37 @@
+{
+  "description": "A flight status widget showing departure/arrival times, gate, and delay info",
+  "ui_style": "Scandinavian-inspired with muted earth tones, natural textures, clean geometric shapes.",
+  "mock_data": {
+    "widget": {
+      "id": "flight_status_001",
+      "app": "Flight Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "flightNumber": "UA101",
+      "departure": {
+        "airport": "JFK",
+        "time": "14:30",
+        "gate": "B12"
+      },
+      "arrival": {
+        "airport": "LAX",
+        "time": "17:45",
+        "gate": "C34"
+      },
+      "status": "On Time",
+      "delay": {
+        "minutes": 0
+      }
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#007BFF",
+      "accentColor": "#FF5733",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { Info } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface Departure {\n  airport: string;\n  time: string;\n  gate: string;\n}\n\ninterface Arrival {\n  airport: string;\n  time: string;\n  gate: string;\n}\n\ninterface FlightData {\n  flightNumber: string;\n  departure: Departure;\n  arrival: Arrival;\n  status: string;\n  delay: {\n    minutes: number;\n  };\n}\n\nexport default function Widget() {\n  const flightData = response.data as FlightData;\n  const isOnTime = flightData.status === \"On Time\";\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 400, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Flight Number\n            </Typography>\n            <Typography variant=\"h5\" fontWeight={600} sx={{ color: '#007BFF', mb: 1 }}>\n              {flightData.flightNumber}\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={1}>\n              <Typography variant=\"body2\" sx={{ color: isOnTime ? '#10B981' : '#EF4444', fontWeight: 500 }}>\n                {flightData.status}\n              </Typography>\n              {!isOnTime && (\n                <Chip\n                  icon={<Info sx={{ fontSize: 16 }} />}\n                  label={`${flightData.delay.minutes} mins delay`}\n                  sx={{ fontSize: '11px', bgcolor: '#FFEBEE', color: '#EF4444' }}\n                />\n              )}\n            </Stack>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ mb: 0.5, color: '#1976D2' }}>\n              Departure\n            </Typography>\n            <Typography variant=\"body2\" fontWeight={500}>\n              {flightData.departure.airport} Airport\n            </Typography>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              {flightData.departure.time} | Gate {flightData.departure.gate}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ mb: 0.5, color: '#FF5733' }}>\n              Arrival\n            </Typography>\n            <Typography variant=\"body2\" fontWeight={500}>\n              {flightData.arrival.airport} Airport\n            </Typography>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              {flightData.arrival.time} | Gate {flightData.arrival.gate}\n            </Typography>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,56 @@
+{
+  "description": "A smart home widget showing connected devices count, energy usage, and room temperatures",
+  "ui_style": "Midnight blue dark theme with electric blue accents, subtle gradients, and sharp modern typography.",
+  "mock_data": {
+    "widget": {
+      "id": "smart_home_001",
+      "app": "Smart Home Dashboard",
+      "version": "1.0"
+    },
+    "data": {
+      "devices": {
+        "totalConnected": 12,
+        "inactive": 2,
+        "active": 10
+      },
+      "energyUsage": {
+        "currentUsage": 3500,
+        "unit": "kWh",
+        "trend": [
+          3400,
+          3450,
+          3500,
+          3550,
+          3500,
+          3600,
+          3550
+        ]
+      },
+      "roomTemperatures": [
+        {
+          "room": "Living Room",
+          "temperature": 72
+        },
+        {
+          "room": "Kitchen",
+          "temperature": 70
+        },
+        {
+          "room": "Bedroom",
+          "temperature": 68
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FF5722",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface DeviceData {\n  totalConnected: number;\n  inactive: number;\n  active: number;\n}\n\ninterface EnergyUsage {\n  currentUsage: number;\n  unit: string;\n  trend: number[];\n}\n\ninterface RoomTemperature {\n  room: string;\n  temperature: number;\n}\n\ninterface WidgetData {\n  devices: DeviceData;\n  energyUsage: EnergyUsage;\n  roomTemperatures: RoomTemperature[];\n}\n\nexport default function Widget() {\n  const data = response.data as WidgetData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#1E293B' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ color: '#94A3B8' }}>\n              Energy Usage\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={600} sx={{ color: '#F8FAFC', mb: 1 }}>\n              {data.energyUsage.currentUsage} {data.energyUsage.unit}\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: data.energyUsage.trend,\n                  color: '#3B82F6',\n                  label: 'Trend',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'linear',\n                  data: data.energyUsage.trend.map((_, index) => index),\n                  id: 'time',\n                },\n              ]}\n              yAxis={[{ id: 'usage' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"time\"\n                tickLabelStyle={{ fontSize: 10, fill: '#94A3B8' }}\n              />\n              <ChartsYAxis\n                axisId=\"usage\"\n                tickLabelStyle={{ fontSize: 10, fill: '#94A3B8' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n\n          <Stack direction=\"row\" spacing={1.5}>\n            {data.roomTemperatures.map((roomTemp) => (\n              <Box key={roomTemp.room}>\n                <Typography variant=\"caption\" color=\"text.secondary\">\n                  {roomTemp.room}\n                </Typography>\n                <Typography variant=\"body2\" fontWeight={500} sx={{ color: '#F8FAFC' }}>\n                  {roomTemp.temperature}\u00b0F\n                </Typography>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

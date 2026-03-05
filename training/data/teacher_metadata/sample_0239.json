@@ -1,0 +1,45 @@
+{
+  "description": "A concert/event widget showing upcoming shows, venue, and ticket availability status",
+  "ui_style": "Scandinavian-inspired with muted earth tones, natural textures, clean geometric shapes.",
+  "mock_data": {
+    "widget": {
+      "id": "concert_event_001",
+      "app": "Live Events",
+      "version": "1.0"
+    },
+    "data": {
+      "upcomingEvents": [
+        {
+          "event": "Rockin' Fest",
+          "date": "2023-11-15",
+          "venue": "Madison Square Garden",
+          "availability": "Available",
+          "ticketPrice": 120
+        },
+        {
+          "event": "Jazz Night",
+          "date": "2023-11-17",
+          "venue": "Blue Note Jazz Club",
+          "availability": "Limited",
+          "ticketPrice": 85
+        },
+        {
+          "event": "Pop Extravaganza",
+          "date": "2023-11-20",
+          "venue": "The Forum",
+          "availability": "Sold Out",
+          "ticketPrice": 95
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#673AB7",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface EventData {\n  event: string;\n  date: string;\n  venue: string;\n  availability: string;\n  ticketPrice: number;\n}\n\ninterface EventWidgetData {\n  upcomingEvents: EventData[];\n}\n\nexport default function Widget() {\n  const eventWidgetData = response.data as EventWidgetData;\n  const events = eventWidgetData.upcomingEvents.slice(0, 3); // Only displaying up to 3 events\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#333', color: '#FFF' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" sx={{ color: '#FFC107' }}>\n            Upcoming Events\n          </Typography>\n          {events.map((event, index) => (\n            <Box key={index} sx={{ bgcolor: '#444', p: 1, borderRadius: 1 }}>\n              <Typography variant=\"body1\" fontWeight={500}>\n                {event.event}\n              </Typography>\n              <Typography variant=\"body2\" color=\"text.secondary\">\n                Date: {new Date(event.date).toLocaleDateString()}\n              </Typography>\n              <Typography variant=\"body2\" color=\"text.secondary\">\n                Venue: {event.venue}\n              </Typography>\n              <Typography variant=\"body2\" color=\"text.secondary\">\n                Price: ${event.ticketPrice}\n              </Typography>\n              <Chip\n                label={event.availability}\n                sx={{ mt: 1, bgcolor: event.availability === 'Available' ? '#4CAF50' : event.availability === 'Limited' ? '#FF9800' : '#F44336', color: '#FFF' }}\n              />\n            </Box>\n          ))}\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

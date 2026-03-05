@@ -1,0 +1,51 @@
+{
+  "description": "A customer satisfaction widget showing NPS score, trend, and recent feedback sentiment",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "customer_satisfaction_001",
+      "app": "Customer Insights",
+      "version": "1.0"
+    },
+    "data": {
+      "npsScore": 42,
+      "trend": [
+        38,
+        40,
+        42,
+        43,
+        41,
+        42,
+        42
+      ],
+      "recentFeedback": [
+        {
+          "customer": "John Doe",
+          "sentiment": "positive",
+          "feedback": "Great service and support."
+        },
+        {
+          "customer": "Jane Smith",
+          "sentiment": "neutral",
+          "feedback": "Average experience, room for improvement."
+        },
+        {
+          "customer": "Sam Wilson",
+          "sentiment": "negative",
+          "feedback": "Not satisfied with the product quality."
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface Feedback {\n  customer: string;\n  sentiment: string;\n  feedback: string;\n}\n\ninterface CustomerSatisfactionData {\n  npsScore: number;\n  trend: number[];\n  recentFeedback: Feedback[];\n}\n\nexport default function Widget() {\n  const customerData = response.data as CustomerSatisfactionData;\n  const { npsScore, trend, recentFeedback } = customerData;\n  const isPositive = npsScore >= 0;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#1E293B' }} elevation={3}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#94A3B8', mb: 0.5 }}>\n              NPS Score\n            </Typography>\n            <Typography variant=\"h4\" sx={{ color: '#F8FAFC', fontWeight: 600 }}>\n              {npsScore}\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={0.5} sx={{ mt: 0.5 }}>\n              {isPositive ? <TrendingUp sx={{ fontSize: 16, color: '#10B981' }} /> : <TrendingDown sx={{ fontSize: 16, color: '#EF4444' }} />}\n              <Typography variant=\"body2\" sx={{ color: isPositive ? '#10B981' : '#EF4444' }}>\n                {isPositive ? 'Positive' : 'Negative'}\n              </Typography>\n            </Stack>\n          </Box>\n\n          <LineChart\n            height={100}\n            series={[\n              {\n                data: trend,\n                color: '#2196F3',\n                curve: 'natural',\n                showMark: false,\n              },\n            ]}\n            xAxis={[{ data: trend.map((_, i) => i), hide: true }]}\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n            sx={{\n              '& .MuiLineElement-root': {\n                strokeWidth: 2,\n              },\n            }}\n          />\n\n          <Stack spacing={1.5}>\n            {recentFeedback.map((feedback, index) => (\n              <Box key={index}>\n                <Typography variant=\"body2\" sx={{ color: '#F8FAFC', fontWeight: 600 }}>\n                  {feedback.customer}\n                </Typography>\n                <Typography variant=\"caption\" sx={{ color: feedback.sentiment === 'positive' ? '#10B981' : feedback.sentiment === 'neutral' ? '#F59E0B' : '#EF4444' }}>\n                  {feedback.feedback}\n                </Typography>\n              </Box>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

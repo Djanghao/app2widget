@@ -1,0 +1,69 @@
+{
+  "description": "A pollen count widget showing allergen levels with color-coded severity",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "pollen_count_001",
+      "app": "Allergy Alert",
+      "version": "1.0"
+    },
+    "data": {
+      "location": "Austin, TX",
+      "currentPollenLevel": {
+        "tree": {
+          "count": 120,
+          "severity": "High"
+        },
+        "grass": {
+          "count": 50,
+          "severity": "Moderate"
+        },
+        "weed": {
+          "count": 30,
+          "severity": "Low"
+        }
+      },
+      "pollenTrend": [
+        {
+          "day": "Mon",
+          "count": 110
+        },
+        {
+          "day": "Tue",
+          "count": 130
+        },
+        {
+          "day": "Wed",
+          "count": 125
+        },
+        {
+          "day": "Thu",
+          "count": 140
+        },
+        {
+          "day": "Fri",
+          "count": 115
+        },
+        {
+          "day": "Sat",
+          "count": 120
+        },
+        {
+          "day": "Sun",
+          "count": 105
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface PollenLevel {\n  count: number;\n  severity: string;\n}\n\ninterface PollenTrend {\n  day: string;\n  count: number;\n}\n\ninterface PollenData {\n  location: string;\n  currentPollenLevel: {\n    tree: PollenLevel;\n    grass: PollenLevel;\n    weed: PollenLevel;\n  };\n  pollenTrend: PollenTrend[];\n}\n\nexport default function Widget() {\n  const { location, currentPollenLevel, pollenTrend } = response.data as PollenData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#FF5722' }}>\n              Allergy Alert\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Location: {location}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Current Pollen Levels:\n            </Typography>\n            <Stack direction=\"row\" spacing={1}>\n              <Chip label={`Tree: ${currentPollenLevel.tree.severity}`} sx={{ bgcolor: '#FFCDD2', color: '#B71C1C' }} />\n              <Chip label={`Grass: ${currentPollenLevel.grass.severity}`} sx={{ bgcolor: '#FFF9C4', color: '#F57F17' }} />\n              <Chip label={`Weed: ${currentPollenLevel.weed.severity}`} sx={{ bgcolor: '#C8E6C9', color: '#388E3C' }} />\n            </Stack>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: pollenTrend.map(t => t.count),\n                  color: '#FF5722',\n                  label: 'Pollen Count',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: pollenTrend.map(t => t.day),\n                  id: 'days',\n                },\n              ]}\n              yAxis={[{ id: 'counts' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <BarPlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"days\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"counts\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

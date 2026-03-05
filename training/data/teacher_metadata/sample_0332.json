@@ -1,0 +1,41 @@
+{
+  "description": "A nutrition summary widget with calories consumed, macros breakdown, and meal count",
+  "ui_style": "Brutalist with raw black and white, oversized bold type, sharp edges, no rounded corners.",
+  "mock_data": {
+    "widget": {
+      "id": "nutrition_summary_001",
+      "app": "Nutrition Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "caloriesConsumed": {
+        "total": 1850,
+        "goal": 2000
+      },
+      "macrosBreakdown": [
+        {
+          "macro": "Carbohydrates",
+          "percentage": 50
+        },
+        {
+          "macro": "Proteins",
+          "percentage": 30
+        },
+        {
+          "macro": "Fats",
+          "percentage": 20
+        }
+      ],
+      "mealCount": 5
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { PieChart, ResponsiveChartContainer, ChartsClipPath, LinePlot, ChartsXAxis } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface MacroBreakdown {\n  macro: string;\n  percentage: number;\n}\n\ninterface NutritionData {\n  caloriesConsumed: {\n    total: number;\n    goal: number;\n  };\n  macrosBreakdown: MacroBreakdown[];\n  mealCount: number;\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n}\n\nexport default function Widget() {\n  const nutritionData = response.data as NutritionData;\n  const metaData = response.meta as MetaData;\n  const clipPathId = useId();\n  \n  const macrosData = nutritionData.macrosBreakdown.map((macro) => ({\n    id: macro.macro,\n    value: macro.percentage,\n    label: `${macro.macro} (${macro.percentage}%)`,\n  }));\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 420, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={700} sx={{ mb: 1, color: metaData.primaryColor }}>\n              Nutrition Summary\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 0.5 }}>\n              Calories Consumed\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#FF5722' }}>\n              {nutritionData.caloriesConsumed.total}/{nutritionData.caloriesConsumed.goal}\n            </Typography>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              Meals: {nutritionData.mealCount}\n            </Typography>\n          </Box>\n          \n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer series={[{ type: 'pie', data: macrosData, colorScheme: ['#FF5722', '#FFC107', '#FF9800'] }]}>\n              <g clipPath={`url(#${clipPathId})`}>\n                <PieChart />\n              </g>\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

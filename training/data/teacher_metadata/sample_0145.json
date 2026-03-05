@@ -1,0 +1,41 @@
+{
+  "description": "A security camera widget showing active cameras count, recent motion alerts, and status",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "security_camera_001",
+      "app": "Home Security",
+      "version": "1.0"
+    },
+    "data": {
+      "activeCameras": 4,
+      "recentMotionAlerts": [
+        {
+          "time": "08:23 AM",
+          "camera": "Front Door",
+          "alert": "Motion Detected"
+        },
+        {
+          "time": "07:45 AM",
+          "camera": "Backyard",
+          "alert": "Motion Detected"
+        },
+        {
+          "time": "06:30 AM",
+          "camera": "Garage",
+          "alert": "Motion Detected"
+        }
+      ],
+      "status": "All cameras operational"
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#FF5722",
+      "accentColor": "#4CAF50",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { Info } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface MotionAlert {\n  time: string;\n  camera: string;\n  alert: string;\n}\n\ninterface SecurityData {\n  activeCameras: number;\n  recentMotionAlerts: MotionAlert[];\n  status: string;\n}\n\nexport default function Widget() {\n  const securityData = response.data as SecurityData;\n  const { activeCameras, recentMotionAlerts, status } = securityData;\n  const meta = response.meta;\n\n  return (\n    <Card\n      sx={{\n        width: 'fit-content',\n        minWidth: 320,\n        maxWidth: 450,\n        bgcolor: meta.theme === 'dark' ? '#1E1E1E' : '#FFFFFF',\n        color: meta.theme === 'dark' ? '#FFFFFF' : '#000000',\n      }}\n      elevation={2}\n    >\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: meta.primaryColor }}>\n              Home Security\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Active Cameras: {activeCameras}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Status: {status}\n            </Typography>\n          </Box>\n\n          <Stack spacing={1}>\n            <Typography variant=\"body2\" fontWeight={500} sx={{ mt: 1, color: meta.accentColor }}>\n              Recent Motion Alerts\n            </Typography>\n            {recentMotionAlerts.map((alert, index) => (\n              <Stack direction=\"row\" alignItems=\"center\" spacing={1} key={index}>\n                <Info sx={{ fontSize: 16, color: meta.accentColor }} />\n                <Typography variant=\"body2\" sx={{ color: '#B0BEC5' }}>\n                  {alert.time} - {alert.camera}: {alert.alert}\n                </Typography>\n              </Stack>\n            ))}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

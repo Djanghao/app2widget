@@ -1,0 +1,66 @@
+{
+  "description": "A blood pressure tracker widget with latest reading, category, and 7-day trend",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "bp_tracker_001",
+      "app": "Blood Pressure Monitor",
+      "version": "1.0"
+    },
+    "data": {
+      "latestReading": {
+        "systolic": 120,
+        "diastolic": 80,
+        "category": "Normal"
+      },
+      "weeklyTrend": [
+        {
+          "day": "Mon",
+          "systolic": 122,
+          "diastolic": 82
+        },
+        {
+          "day": "Tue",
+          "systolic": 125,
+          "diastolic": 85
+        },
+        {
+          "day": "Wed",
+          "systolic": 118,
+          "diastolic": 79
+        },
+        {
+          "day": "Thu",
+          "systolic": 120,
+          "diastolic": 80
+        },
+        {
+          "day": "Fri",
+          "systolic": 123,
+          "diastolic": 81
+        },
+        {
+          "day": "Sat",
+          "systolic": 119,
+          "diastolic": 78
+        },
+        {
+          "day": "Sun",
+          "systolic": 121,
+          "diastolic": 80
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#4CAF50",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface WeeklyTrend {\n  day: string;\n  systolic: number;\n  diastolic: number;\n}\n\ninterface BloodPressureData {\n  latestReading: {\n    systolic: number;\n    diastolic: number;\n    category: string;\n  };\n  weeklyTrend: WeeklyTrend[];\n}\n\nexport default function Widget() {\n  const bloodPressureData = response.data.data as BloodPressureData;\n  const { latestReading, weeklyTrend } = bloodPressureData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ fontWeight: 600, color: '#FF5722' }}>\n              Blood Pressure\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#4CAF50' }}>\n              {latestReading.systolic}/{latestReading.diastolic} mmHg\n            </Typography>\n            <Chip label={latestReading.category} sx={{ mt: 1, bgcolor: '#E0F7FA', color: '#00796B' }} />\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: weeklyTrend.map(t => t.systolic),\n                  color: '#FF5722',\n                  label: 'Systolic',\n                  curve: 'linear',\n                },\n                {\n                  type: 'line',\n                  data: weeklyTrend.map(t => t.diastolic),\n                  color: '#4CAF50',\n                  label: 'Diastolic',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: weeklyTrend.map(t => t.day),\n                  id: 'days',\n                },\n              ]}\n              yAxis={[{ id: 'pressure' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"days\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"pressure\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

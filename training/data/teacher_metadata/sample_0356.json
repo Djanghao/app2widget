@@ -1,0 +1,51 @@
+{
+  "description": "A product rating widget showing average rating, review count, and rating distribution bar chart",
+  "ui_style": "iOS-inspired with SF Pro-style fonts, vibrancy effects, system-like cards, and Apple HIG spacing.",
+  "mock_data": {
+    "widget": {
+      "id": "product_rating_001",
+      "app": "Rating Insight",
+      "version": "1.0"
+    },
+    "data": {
+      "product": {
+        "name": "Wireless Earbuds",
+        "averageRating": 4.5,
+        "reviewCount": 1538
+      },
+      "ratingDistribution": [
+        {
+          "rating": 5,
+          "count": 1024
+        },
+        {
+          "rating": 4,
+          "count": 345
+        },
+        {
+          "rating": 3,
+          "count": 98
+        },
+        {
+          "rating": 2,
+          "count": 45
+        },
+        {
+          "rating": 1,
+          "count": 26
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FFB300",
+      "accentColor": "#EF5350",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Grid } from '@mui/material';\nimport { ResponsiveChartContainer, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface RatingDistribution {\n  rating: number;\n  count: number;\n}\n\ninterface ProductData {\n  product: {\n    name: string;\n    averageRating: number;\n    reviewCount: number;\n  };\n  ratingDistribution: RatingDistribution[];\n}\n\nexport default function Widget() {\n  const productData = response.data as ProductData;\n  const clipPathId = React.useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 3 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600}>\n              {productData.product.name}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Average Rating: {productData.product.averageRating} ({productData.product.reviewCount} reviews)\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: productData.ratingDistribution.map(r => r.count),\n                  color: response.meta.primaryColor,\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: productData.ratingDistribution.map(r => r.rating.toString()),\n                  id: 'ratings',\n                },\n              ]}\n              yAxis={[{ id: 'counts' }]}\n            >\n              <ChartsClipPath id={clipPathId} />\n              <g clipPath={`url(#${clipPathId})`}>\n                <BarPlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"ratings\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"counts\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n            </ResponsiveChartContainer>\n          </Box>\n\n          <Grid container spacing={1}>\n            {productData.ratingDistribution.map((ratingDist) => (\n              <Grid item xs={6} key={ratingDist.rating}>\n                <Stack direction=\"row\" spacing={1} alignItems=\"center\">\n                  <Typography variant=\"body2\" sx={{ fontWeight: 600 }}>\n                    {ratingDist.rating} Star\n                  </Typography>\n                  <Typography variant=\"body2\" color=\"text.secondary\">\n                    {ratingDist.count} reviews\n                  </Typography>\n                </Stack>\n              </Grid>\n            ))}\n          </Grid>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

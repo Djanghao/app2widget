@@ -1,0 +1,53 @@
+{
+  "description": "A live sports score widget showing teams, current score, period, and key stats",
+  "ui_style": "Cyberpunk dark theme with neon green and magenta accents on near-black backgrounds, monospace fonts.",
+  "mock_data": {
+    "widget": {
+      "id": "sports_score_001",
+      "app": "Live Sports Scores",
+      "version": "1.0"
+    },
+    "data": {
+      "match": {
+        "teams": [
+          {
+            "name": "Team A",
+            "score": 88
+          },
+          {
+            "name": "Team B",
+            "score": 92
+          }
+        ],
+        "currentPeriod": "4th Quarter",
+        "timeRemaining": "3:45",
+        "keyStats": [
+          {
+            "stat": "Field Goals",
+            "teamA": "30/65",
+            "teamB": "32/68"
+          },
+          {
+            "stat": "3-Pointers",
+            "teamA": "10/25",
+            "teamB": "12/30"
+          },
+          {
+            "stat": "Free Throws",
+            "teamA": "18/22",
+            "teamB": "16/20"
+          }
+        ]
+      }
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4A90E2",
+      "accentColor": "#D0021B",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface Team {\n  name: string;\n  score: number;\n}\n\ninterface KeyStat {\n  stat: string;\n  teamA: string;\n  teamB: string;\n}\n\ninterface MatchData {\n  match: {\n    teams: Team[];\n    currentPeriod: string;\n    timeRemaining: string;\n    keyStats: KeyStat[];\n  };\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n}\n\nexport default function Widget() {\n  const data = response.data as MatchData;\n  const meta = response.meta as MetaData;\n  const { teams, currentPeriod, timeRemaining, keyStats } = data.match;\n  const [teamA, teamB] = teams;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#1C1E26', color: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#4A90E2' }}>\n              Live Sports Scores\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#B0B3B8', mt: 0.5 }}>\n              {currentPeriod} - {timeRemaining} remaining\n            </Typography>\n          </Box>\n\n          <Stack direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\">\n            <Box>\n              <Typography variant=\"body1\" sx={{ color: '#D0021B', fontWeight: 'bold' }}>\n                {teamA.name}\n              </Typography>\n              <Typography variant=\"h4\" sx={{ color: '#F5A623', fontWeight: 'bold' }}>\n                {teamA.score}\n              </Typography>\n            </Box>\n            <Typography variant=\"h4\" sx={{ color: '#4A90E2', fontWeight: 'bold' }}>\n              VS\n            </Typography>\n            <Box textAlign=\"right\">\n              <Typography variant=\"body1\" sx={{ color: '#D0021B', fontWeight: 'bold' }}>\n                {teamB.name}\n              </Typography>\n              <Typography variant=\"h4\" sx={{ color: '#50E3C2', fontWeight: 'bold' }}>\n                {teamB.score}\n              </Typography>\n            </Box>\n          </Stack>\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#B0B3B8', mb: 1 }}>\n              Key Stats\n            </Typography>\n            <Stack spacing={0.5}>\n              {keyStats.map((stat, index) => (\n                <Stack key={index} direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\">\n                  <Typography variant=\"body2\" sx={{ color: '#FFFFFF' }}>{stat.stat}</Typography>\n                  <Stack direction=\"row\" spacing={1}>\n                    <Chip label={stat.teamA} sx={{ bgcolor: '#4A90E2', color: '#FFFFFF', fontSize: '10px', px: 1 }} />\n                    <Chip label={stat.teamB} sx={{ bgcolor: '#D0021B', color: '#FFFFFF', fontSize: '10px', px: 1 }} />\n                  </Stack>\n                </Stack>\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,40 @@
+{
+  "description": "A heart rate monitor widget with current BPM, resting rate, and 24h trend line",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "heart_rate_001",
+      "app": "Heart Monitor Pro",
+      "version": "1.0"
+    },
+    "data": {
+      "current": {
+        "bpm": 75,
+        "restingRate": 65
+      },
+      "trend24h": [
+        65,
+        70,
+        72,
+        75,
+        78,
+        76,
+        74,
+        72,
+        68,
+        66
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF0000",
+      "accentColor": "#FFAA00",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface HeartRateData {\n  current: {\n    bpm: number;\n    restingRate: number;\n  };\n  trend24h: number[];\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n  chartTypes: string[];\n}\n\nexport default function Widget() {\n  const heartRateData = response.data as HeartRateData;\n  const metaData = response.meta as MetaData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Current BPM\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: metaData.primaryColor }}>\n              {heartRateData.current.bpm}\n            </Typography>\n            <Typography variant=\"caption\" color=\"text.secondary\">\n              Resting Rate: {heartRateData.current.restingRate} BPM\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 150 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: heartRateData.trend24h,\n                  color: metaData.primaryColor,\n                  label: '24h Trend',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'linear',\n                  data: heartRateData.trend24h.map((_, i) => i),\n                  id: 'time',\n                },\n              ]}\n              yAxis={[{ id: 'bpm' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"time\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"bpm\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,53 @@
+{
+  "description": "A conversion funnel widget showing stage-by-stage conversion rates with comparison",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "conversion_funnel_001",
+      "app": "Conversion Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "funnelStages": [
+        {
+          "stage": "Visitors",
+          "conversionRate": 100,
+          "previousRate": 95
+        },
+        {
+          "stage": "Sign-ups",
+          "conversionRate": 50,
+          "previousRate": 45
+        },
+        {
+          "stage": "Purchases",
+          "conversionRate": 20,
+          "previousRate": 18
+        }
+      ],
+      "comparison": {
+        "current": [
+          100,
+          50,
+          20
+        ],
+        "previous": [
+          95,
+          45,
+          18
+        ]
+      }
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#4CAF50",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, BarPlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface FunnelStage {\n  stage: string;\n  conversionRate: number;\n  previousRate: number;\n}\n\ninterface FunnelData {\n  funnelStages: FunnelStage[];\n  comparison: {\n    current: number[];\n    previous: number[];\n  };\n}\n\nexport default function Widget() {\n  const funnelData = response.data as FunnelData;\n  const { funnelStages, comparison } = funnelData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#303030' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#FF5722' }}>\n              Conversion Funnel\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'bar',\n                  data: comparison.current,\n                  color: '#FF5722',\n                  label: 'Current',\n                },\n                {\n                  type: 'bar',\n                  data: comparison.previous,\n                  color: '#4CAF50',\n                  label: 'Previous',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: funnelStages.map(stage => stage.stage),\n                  id: 'stages',\n                },\n              ]}\n              yAxis={[{ id: 'conversionRate' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <BarPlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"stages\"\n                tickLabelStyle={{ fontSize: 10, fill: '#FFFFFF' }}\n              />\n              <ChartsYAxis\n                axisId=\"conversionRate\"\n                tickLabelStyle={{ fontSize: 10, fill: '#FFFFFF' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

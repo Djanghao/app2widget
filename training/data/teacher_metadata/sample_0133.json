@@ -1,0 +1,43 @@
+{
+  "description": "A transit tracker widget showing next 3 arrivals with real-time delay indicators",
+  "ui_style": "Bold and vibrant with strong contrast, vivid accent colors, and prominent typography. Modern and eye-catching.",
+  "mock_data": {
+    "widget": {
+      "id": "transit_tracker_001",
+      "app": "Transit Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "station": "Downtown Central",
+      "upcomingArrivals": [
+        {
+          "line": "Blue Line",
+          "destination": "North Station",
+          "scheduledTime": "14:05",
+          "realTimeDelay": "+3 mins"
+        },
+        {
+          "line": "Red Line",
+          "destination": "South Station",
+          "scheduledTime": "14:10",
+          "realTimeDelay": "+1 min"
+        },
+        {
+          "line": "Green Line",
+          "destination": "West Station",
+          "scheduledTime": "14:15",
+          "realTimeDelay": "On time"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface Arrival {\n  line: string;\n  destination: string;\n  scheduledTime: string;\n  realTimeDelay: string;\n}\n\nexport default function Widget() {\n  const widgetData = response.data;\n  const { station, upcomingArrivals } = widgetData.data;\n  const meta = widgetData.meta;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#303030', color: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ mb: 1 }}>\n              {widgetData.widget.app}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Station: {station}\n            </Typography>\n          </Box>\n          <Box>\n            <Typography variant=\"body2\" sx={{ mb: 1, color: meta.accentColor }}>\n              Upcoming Arrivals\n            </Typography>\n            <Stack spacing={1}>\n              {upcomingArrivals.map((arrival: Arrival, index: number) => (\n                <Box key={index} sx={{ p: 1, bgcolor: '#424242', borderRadius: 1 }}>\n                  <Stack direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\">\n                    <Box>\n                      <Typography variant=\"body2\" sx={{ fontWeight: 500 }}>\n                        {arrival.line}\n                      </Typography>\n                      <Typography variant=\"caption\" color=\"text.secondary\">\n                        To {arrival.destination}\n                      </Typography>\n                    </Box>\n                    <Box textAlign=\"right\">\n                      <Typography variant=\"body2\" sx={{ fontWeight: 500 }}>\n                        {arrival.scheduledTime}\n                      </Typography>\n                      <Typography variant=\"caption\" sx={{ color: meta.primaryColor }}>\n                        {arrival.realTimeDelay}\n                      </Typography>\n                    </Box>\n                  </Stack>\n                </Box>\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

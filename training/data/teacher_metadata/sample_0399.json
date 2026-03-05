@@ -1,0 +1,58 @@
+{
+  "description": "A user engagement widget showing DAU/MAU ratio, session duration, and retention curve",
+  "ui_style": "Brutalist with raw black and white, oversized bold type, sharp edges, no rounded corners.",
+  "mock_data": {
+    "widget": {
+      "id": "user_engagement_001",
+      "app": "EngageMetrics",
+      "version": "1.0"
+    },
+    "data": {
+      "metrics": {
+        "DAU_MAU_ratio": 0.25,
+        "averageSessionDuration": "5m 23s",
+        "retentionRates": [
+          {
+            "day": "Day 1",
+            "percentage": 55
+          },
+          {
+            "day": "Day 2",
+            "percentage": 45
+          },
+          {
+            "day": "Day 3",
+            "percentage": 37
+          },
+          {
+            "day": "Day 4",
+            "percentage": 30
+          },
+          {
+            "day": "Day 5",
+            "percentage": 25
+          },
+          {
+            "day": "Day 6",
+            "percentage": 20
+          },
+          {
+            "day": "Day 7",
+            "percentage": 18
+          }
+        ]
+      }
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#0D47A1",
+      "accentColor": "#FF5722",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface RetentionRate {\n  day: string;\n  percentage: number;\n}\n\ninterface UserEngagementData {\n  metrics: {\n    DAU_MAU_ratio: number;\n    averageSessionDuration: string;\n    retentionRates: RetentionRate[];\n  };\n}\n\nexport default function Widget() {\n  const data = response.data as UserEngagementData;\n  const { DAU_MAU_ratio, averageSessionDuration, retentionRates } = data.metrics;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#0D47A1' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#FF5722', mb: 0.5 }}>\n              DAU/MAU Ratio\n            </Typography>\n            <Typography variant=\"h4\" sx={{ color: '#FFFFFF', fontWeight: 700 }}>\n              {(DAU_MAU_ratio * 100).toFixed(0)}%\n            </Typography>\n            <Typography variant=\"caption\" sx={{ color: '#B0BEC5' }}>\n              Avg. Session Duration: {averageSessionDuration}\n            </Typography>\n          </Box>\n\n          <LineChart\n            height={120}\n            series={[\n              {\n                data: retentionRates.map(r => r.percentage),\n                color: '#FF5722',\n                curve: 'natural',\n                showMark: false,\n              },\n            ]}\n            xAxis={[\n              {\n                data: retentionRates.map(r => r.day),\n                scaleType: 'band',\n                tickLabelStyle: {\n                  fontSize: 10,\n                  fill: '#B0BEC5',\n                },\n              }\n            ]}\n            yAxis={null}\n            margin={{ top: 10, bottom: 30, left: 10, right: 10 }}\n            sx={{\n              '& .MuiLineElement-root': {\n                strokeWidth: 2,\n              },\n            }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

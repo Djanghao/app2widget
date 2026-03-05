@@ -1,0 +1,54 @@
+{
+  "description": "A solar panel widget showing current generation, daily yield, and savings this month",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "solar_panel_001",
+      "app": "SolarMonitor",
+      "version": "1.0"
+    },
+    "data": {
+      "currentGeneration": {
+        "power": 5.6,
+        "unit": "kW"
+      },
+      "dailyYield": [
+        {
+          "hour": "6AM",
+          "yield": 0.4
+        },
+        {
+          "hour": "9AM",
+          "yield": 1.8
+        },
+        {
+          "hour": "12PM",
+          "yield": 3.2
+        },
+        {
+          "hour": "3PM",
+          "yield": 4.5
+        },
+        {
+          "hour": "6PM",
+          "yield": 5.6
+        }
+      ],
+      "monthlySavings": {
+        "amount": 85.2,
+        "currency": "USD"
+      }
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FFD700",
+      "accentColor": "#FF8C00",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface CurrentGeneration {\n  power: number;\n  unit: string;\n}\n\ninterface DailyYield {\n  hour: string;\n  yield: number;\n}\n\ninterface MonthlySavings {\n  amount: number;\n  currency: string;\n}\n\ninterface SolarData {\n  currentGeneration: CurrentGeneration;\n  dailyYield: DailyYield[];\n  monthlySavings: MonthlySavings;\n}\n\nexport default function Widget() {\n  const solarData = response.data as SolarData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#FFD700' }}>\n              Current Generation\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: '#FF8C00' }}>\n              {solarData.currentGeneration.power} {solarData.currentGeneration.unit}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Power Output\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: solarData.dailyYield.map(d => d.yield),\n                  color: '#FFD700',\n                  label: 'Yield',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: solarData.dailyYield.map(d => d.hour),\n                  id: 'hours',\n                },\n              ]}\n              yAxis={[{ id: 'yield' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"hours\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"yield\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#FF8C00', fontWeight: 600 }}>\n              Monthly Savings\n            </Typography>\n            <Typography variant=\"h5\" fontWeight={700} sx={{ color: '#FFD700' }}>\n              {solarData.monthlySavings.currency}{solarData.monthlySavings.amount.toFixed(2)}\n            </Typography>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,71 @@
+{
+  "description": "A running stats widget showing pace, distance, elevation, and route segment splits",
+  "ui_style": "Dark theme with muted backgrounds, glowing accent colors, and sleek typography. Premium feel.",
+  "mock_data": {
+    "widget": {
+      "id": "running_stats_001",
+      "app": "Run Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "currentRun": {
+        "pace": "5:30 min/km",
+        "distance": "10.2 km",
+        "elevationGain": "150 m"
+      },
+      "segmentSplits": [
+        {
+          "segment": "1 km",
+          "time": "5:35"
+        },
+        {
+          "segment": "2 km",
+          "time": "5:25"
+        },
+        {
+          "segment": "3 km",
+          "time": "5:28"
+        },
+        {
+          "segment": "4 km",
+          "time": "5:32"
+        },
+        {
+          "segment": "5 km",
+          "time": "5:29"
+        },
+        {
+          "segment": "6 km",
+          "time": "5:31"
+        },
+        {
+          "segment": "7 km",
+          "time": "5:27"
+        },
+        {
+          "segment": "8 km",
+          "time": "5:33"
+        },
+        {
+          "segment": "9 km",
+          "time": "5:30"
+        },
+        {
+          "segment": "10 km",
+          "time": "5:28"
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#4CAF50",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface SegmentSplit {\n  segment: string;\n  time: string;\n}\n\ninterface RunningStatsData {\n  currentRun: {\n    pace: string;\n    distance: string;\n    elevationGain: string;\n  };\n  segmentSplits: SegmentSplit[];\n}\n\nexport default function Widget() {\n  const runningData = response.data as RunningStatsData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#1E1E1E' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#FF5722' }}>\n              Current Run\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Pace: {runningData.currentRun.pace}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Distance: {runningData.currentRun.distance}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Elevation Gain: {runningData.currentRun.elevationGain}\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: runningData.segmentSplits.map(split => parseFloat(split.time.replace(':', '.'))),\n                  color: '#4CAF50',\n                  label: 'Segment Time',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: runningData.segmentSplits.map(split => split.segment),\n                  id: 'segments',\n                },\n              ]}\n              yAxis={[{ id: 'time' }]}\n              sx={{\n                '& .MuiLineElement-root': {\n                  strokeWidth: 2,\n                },\n              }}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"segments\"\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsYAxis\n                axisId=\"time\"\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

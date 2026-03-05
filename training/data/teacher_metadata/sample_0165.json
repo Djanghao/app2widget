@@ -1,0 +1,51 @@
+{
+  "description": "A food delivery widget showing order status, estimated delivery time, and driver location",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "food_delivery_status_001",
+      "app": "QuickEats",
+      "version": "1.0"
+    },
+    "data": {
+      "order": {
+        "status": "On the way",
+        "estimatedDelivery": "15 mins",
+        "driver": {
+          "name": "John Doe",
+          "location": {
+            "latitude": 37.7749,
+            "longitude": -122.4194
+          }
+        }
+      },
+      "orderProgress": [
+        {
+          "stage": "Order Placed",
+          "completed": true
+        },
+        {
+          "stage": "Preparing",
+          "completed": true
+        },
+        {
+          "stage": "Out for Delivery",
+          "completed": true
+        },
+        {
+          "stage": "Delivered",
+          "completed": false
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Typography, Stack, Chip, Box } from '@mui/material';\nimport { ArrowUpward } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface OrderProgress {\n  stage: string;\n  completed: boolean;\n}\n\ninterface DriverLocation {\n  latitude: number;\n  longitude: number;\n}\n\ninterface Driver {\n  name: string;\n  location: DriverLocation;\n}\n\ninterface Order {\n  status: string;\n  estimatedDelivery: string;\n  driver: Driver;\n  orderProgress: OrderProgress[];\n}\n\ninterface ResponseData {\n  widget: {\n    id: string;\n    app: string;\n    version: string;\n  };\n  data: {\n    order: Order;\n  };\n  meta: {\n    theme: string;\n    dataMode: string;\n    layout: string;\n    primaryColor: string;\n    accentColor: string;\n    chartTypes: string[];\n  };\n}\n\nexport default function Widget() {\n  const responseData = response.data as ResponseData;\n  const { order } = responseData.data;\n  const { primaryColor, accentColor } = responseData.meta;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" color=\"text.primary\" sx={{ mb: 1 }}>\n              Order Status\n            </Typography>\n            <Typography variant=\"body1\" color=\"text.secondary\">\n              Status: {order.status}\n            </Typography>\n            <Typography variant=\"body1\" color=\"text.secondary\">\n              Estimated Delivery: {order.estimatedDelivery}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 0.5 }}>\n              Driver: {order.driver.name}\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {order.orderProgress.map((progress, index) => (\n                <Chip\n                  key={index}\n                  label={progress.stage}\n                  icon={progress.completed ? <ArrowUpward sx={{ fontSize: 16, color: primaryColor }} /> : null}\n                  sx={{\n                    fontSize: '11px',\n                    color: progress.completed ? primaryColor : undefined,\n                    bgcolor: progress.completed ? accentColor : undefined,\n                  }}\n                />\n              ))}\n            </Stack>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

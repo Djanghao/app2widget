@@ -1,0 +1,57 @@
+{
+  "description": "A cryptocurrency price tracker widget with 24h change and mini price chart",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "crypto_price_001",
+      "app": "Crypto Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "cryptocurrency": {
+        "name": "Bitcoin",
+        "symbol": "BTC",
+        "currentPrice": 47250.75,
+        "24hChange": -325.5,
+        "24hChangePercent": -0.68
+      },
+      "miniPriceChart": [
+        {
+          "time": "12AM",
+          "price": 47500
+        },
+        {
+          "time": "4AM",
+          "price": 47300
+        },
+        {
+          "time": "8AM",
+          "price": 47150
+        },
+        {
+          "time": "12PM",
+          "price": 47200
+        },
+        {
+          "time": "4PM",
+          "price": 47050
+        },
+        {
+          "time": "8PM",
+          "price": 47250
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface CryptocurrencyData {\n  name: string;\n  symbol: string;\n  currentPrice: number;\n  '24hChange': number;\n  '24hChangePercent': number;\n}\n\ninterface MiniPriceChart {\n  time: string;\n  price: number;\n}\n\ninterface CryptoData {\n  cryptocurrency: CryptocurrencyData;\n  miniPriceChart: MiniPriceChart[];\n}\n\nexport default function Widget() {\n  const cryptoData = response.data as CryptoData;\n  const { cryptocurrency, miniPriceChart } = cryptoData;\n  const isPositive = cryptocurrency['24hChange'] >= 0;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#1E1E1E' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#B0BEC5', mb: 0.5 }}>\n              {cryptocurrency.name} ({cryptocurrency.symbol})\n            </Typography>\n            <Typography variant=\"h4\" sx={{ color: '#FFFFFF', fontWeight: 600 }}>\n              ${cryptocurrency.currentPrice.toLocaleString()}\n            </Typography>\n            <Stack direction=\"row\" alignItems=\"center\" spacing={0.5} sx={{ mt: 0.5 }}>\n              {isPositive ? <TrendingUp sx={{ fontSize: 16, color: '#4CAF50' }} /> : <TrendingDown sx={{ fontSize: 16, color: '#F44336' }} />}\n              <Typography variant=\"body2\" sx={{ color: isPositive ? '#4CAF50' : '#F44336' }}>\n                ${Math.abs(cryptocurrency['24hChange']).toFixed(2)} ({cryptocurrency['24hChangePercent'].toFixed(2)}%)\n              </Typography>\n            </Stack>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 150 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: miniPriceChart.map((point) => point.price),\n                  color: isPositive ? '#4CAF50' : '#F44336',\n                  label: 'Price',\n                  curve: 'linear',\n                }\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: miniPriceChart.map((point) => point.time),\n                  id: 'times',\n                }\n              ]}\n              yAxis={[{ id: 'prices' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"times\"\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsYAxis\n                axisId=\"prices\"\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

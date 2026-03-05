@@ -1,0 +1,64 @@
+{
+  "description": "A messaging widget showing unread conversations, recent contacts, and message volume",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "messages_overview_001",
+      "app": "Messenger Hub",
+      "version": "1.0"
+    },
+    "data": {
+      "unreadConversations": 8,
+      "recentContacts": [
+        {
+          "name": "Alice Johnson",
+          "lastMessage": "See you at 5?",
+          "time": "2:30 PM"
+        },
+        {
+          "name": "Bob Smith",
+          "lastMessage": "Thanks for the update.",
+          "time": "1:45 PM"
+        },
+        {
+          "name": "Charlie Brown",
+          "lastMessage": "Let's catch up soon!",
+          "time": "12:15 PM"
+        }
+      ],
+      "messageVolume": [
+        {
+          "hour": "9AM",
+          "messages": 15
+        },
+        {
+          "hour": "12PM",
+          "messages": 30
+        },
+        {
+          "hour": "3PM",
+          "messages": 45
+        },
+        {
+          "hour": "6PM",
+          "messages": 20
+        },
+        {
+          "hour": "9PM",
+          "messages": 10
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#0D47A1",
+      "accentColor": "#FF5722",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface RecentContact {\n  name: string;\n  lastMessage: string;\n  time: string;\n}\n\ninterface MessageVolume {\n  hour: string;\n  messages: number;\n}\n\ninterface WidgetData {\n  unreadConversations: number;\n  recentContacts: RecentContact[];\n  messageVolume: MessageVolume[];\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n  chartTypes: string[];\n}\n\ninterface ResponseData {\n  data: WidgetData;\n  meta: MetaData;\n}\n\nexport default function Widget() {\n  const { data, meta } = response as ResponseData;\n  const { unreadConversations, recentContacts, messageVolume } = data;\n  const { primaryColor, accentColor } = meta;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={700} color={primaryColor}>\n              Messenger Hub\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Unread Conversations: {unreadConversations}\n            </Typography>\n          </Box>\n\n          <Stack direction=\"row\" spacing={0.5}>\n            {recentContacts.map((contact, index) => (\n              <Chip\n                key={index}\n                label={`${contact.name}: ${contact.lastMessage}`}\n                sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: accentColor, color: '#FFFFFF' }}\n              />\n            ))}\n          </Stack>\n\n          <BarChart\n            height={140}\n            series={[\n              {\n                data: messageVolume.map(m => m.messages),\n                color: primaryColor,\n              },\n            ]}\n            xAxis={[\n              {\n                data: messageVolume.map(m => m.hour),\n                scaleType: 'band',\n                tickLabelStyle: {\n                  fontSize: 11,\n                  fill: '#6B7280',\n                },\n              }\n            ]}\n            margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n            sx={{\n              '& .MuiBarElement-root': {\n                rx: 4,\n              },\n            }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

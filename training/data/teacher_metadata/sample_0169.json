@@ -1,0 +1,42 @@
+{
+  "description": "A stock market summary widget showing major indices with change percentages",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "stock_market_summary_001",
+      "app": "Market Overview",
+      "version": "1.0"
+    },
+    "data": {
+      "indices": [
+        {
+          "name": "S&P 500",
+          "currentValue": 4532.15,
+          "change": 24.58,
+          "changePercent": 0.54
+        },
+        {
+          "name": "Dow Jones",
+          "currentValue": 34876.98,
+          "change": -12.34,
+          "changePercent": -0.04
+        },
+        {
+          "name": "NASDAQ",
+          "currentValue": 14123.45,
+          "change": 87.56,
+          "changePercent": 0.62
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#0D47A1",
+      "accentColor": "#FF5722",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { TrendingUp, TrendingDown } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface IndexData {\n  name: string;\n  currentValue: number;\n  change: number;\n  changePercent: number;\n}\n\ninterface StockMarketData {\n  indices: IndexData[];\n}\n\nexport default function Widget() {\n  const stockMarketData = response.data as StockMarketData;\n  const { indices } = stockMarketData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 420, bgcolor: '#424242' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Typography variant=\"h6\" sx={{ color: '#FFFFFF', mb: 1 }}>\n            Market Overview\n          </Typography>\n          <Stack spacing={1.5}>\n            {indices.map((index) => {\n              const positiveChange = index.change >= 0;\n              return (\n                <Box key={index.name}>\n                  <Stack direction=\"row\" justifyContent=\"space-between\" alignItems=\"center\">\n                    <Typography variant=\"body2\" sx={{ color: '#BDBDBD', fontWeight: 600 }}>\n                      {index.name}\n                    </Typography>\n                    <Stack direction=\"row\" alignItems=\"center\" spacing={0.5}>\n                      {positiveChange ? (\n                        <TrendingUp sx={{ fontSize: 16, color: '#4CAF50' }} />\n                      ) : (\n                        <TrendingDown sx={{ fontSize: 16, color: '#F44336' }} />\n                      )}\n                      <Typography variant=\"body2\" sx={{ color: positiveChange ? '#4CAF50' : '#F44336' }}>\n                        {positiveChange ? '+' : ''}\n                        {index.change.toFixed(2)} ({index.changePercent.toFixed(2)}%)\n                      </Typography>\n                    </Stack>\n                  </Stack>\n                  <Typography variant=\"body2\" sx={{ color: '#FFFFFF' }}>\n                    {index.currentValue.toLocaleString()}\n                  </Typography>\n                </Box>\n              );\n            })}\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,51 @@
+{
+  "description": "A body composition widget showing weight, body fat %, muscle mass, and 3-month trend",
+  "ui_style": "Scandinavian-inspired with muted earth tones, natural textures, clean geometric shapes.",
+  "mock_data": {
+    "widget": {
+      "id": "body_composition_001",
+      "app": "Body Tracker",
+      "version": "1.0"
+    },
+    "data": {
+      "current": {
+        "weight": 180.5,
+        "bodyFatPercentage": 22.3,
+        "muscleMass": 65.4
+      },
+      "threeMonthTrend": {
+        "dates": [
+          "Jul",
+          "Aug",
+          "Sep"
+        ],
+        "weightTrend": [
+          182.0,
+          181.2,
+          180.5
+        ],
+        "bodyFatTrend": [
+          23.0,
+          22.6,
+          22.3
+        ],
+        "muscleMassTrend": [
+          64.8,
+          65.0,
+          65.4
+        ]
+      }
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#303F9F",
+      "accentColor": "#FF5252",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface BodyCompositionData {\n  current: {\n    weight: number;\n    bodyFatPercentage: number;\n    muscleMass: number;\n  };\n  threeMonthTrend: {\n    dates: string[];\n    weightTrend: number[];\n    bodyFatTrend: number[];\n    muscleMassTrend: number[];\n  };\n}\n\nexport default function Widget() {\n  const data = response.data as BodyCompositionData;\n  const { current, threeMonthTrend } = data;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#1C1C1E' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ color: '#B0BEC5' }}>\n              Current Stats\n            </Typography>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ color: '#FFFFFF', mb: 0.5 }}>\n              Weight: {current.weight} lbs\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#B0BEC5' }}>\n              Body Fat: {current.bodyFatPercentage}%\n            </Typography>\n            <Typography variant=\"body2\" sx={{ color: '#B0BEC5' }}>\n              Muscle Mass: {current.muscleMass} lbs\n            </Typography>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: threeMonthTrend.weightTrend,\n                  color: '#FF5252',\n                  label: 'Weight',\n                  curve: 'linear',\n                },\n                {\n                  type: 'line',\n                  data: threeMonthTrend.bodyFatTrend,\n                  color: '#FFCA28',\n                  label: 'Body Fat',\n                  curve: 'linear',\n                },\n                {\n                  type: 'line',\n                  data: threeMonthTrend.muscleMassTrend,\n                  color: '#4CAF50',\n                  label: 'Muscle Mass',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'band',\n                  data: threeMonthTrend.dates,\n                  id: 'months',\n                },\n              ]}\n              yAxis={[{ id: 'metrics' }]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                axisId=\"months\"\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsYAxis\n                axisId=\"metrics\"\n                tickLabelStyle={{ fontSize: 10, fill: '#B0BEC5' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

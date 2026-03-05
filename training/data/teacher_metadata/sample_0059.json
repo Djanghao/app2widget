@@ -1,0 +1,32 @@
+{
+  "description": "A trip planner widget showing upcoming trip details with countdown and packing progress",
+  "ui_style": "Material Design 3 inspired with dynamic color, rounded containers, prominent FABs, and elevation.",
+  "mock_data": {
+    "widget": {
+      "id": "trip_planner_001",
+      "app": "Travel Buddy",
+      "version": "1.0"
+    },
+    "data": {
+      "upcomingTrip": {
+        "destination": "Paris, France",
+        "departureDate": "2023-12-15",
+        "daysUntilDeparture": 30,
+        "packingProgress": {
+          "itemsPacked": 7,
+          "totalItems": 10,
+          "percentage": 70
+        }
+      }
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "compact",
+      "primaryColor": "#FF5722",
+      "accentColor": "#3F51B5",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, LinearProgress } from '@mui/material';\nimport response from './response.json';\n\ninterface PackingProgress {\n  itemsPacked: number;\n  totalItems: number;\n  percentage: number;\n}\n\ninterface UpcomingTrip {\n  destination: string;\n  departureDate: string;\n  daysUntilDeparture: number;\n  packingProgress: PackingProgress;\n}\n\ninterface TravelData {\n  upcomingTrip: UpcomingTrip;\n}\n\nexport default function Widget() {\n  const travelData = response.data as TravelData;\n  const { upcomingTrip } = travelData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 380, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#FF5722', fontWeight: 600 }}>\n              Upcoming Trip\n            </Typography>\n            <Typography variant=\"body1\" sx={{ color: '#3F51B5', mt: 1 }}>\n              Destination: {upcomingTrip.destination}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Departure: {upcomingTrip.departureDate}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Days Until Departure: {upcomingTrip.daysUntilDeparture}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 0.5 }}>\n              Packing Progress\n            </Typography>\n            <LinearProgress\n              variant=\"determinate\"\n              value={upcomingTrip.packingProgress.percentage}\n              sx={{\n                height: 8,\n                borderRadius: 4,\n                bgcolor: '#E3F2FD',\n                '& .MuiLinearProgress-bar': {\n                  bgcolor: '#3F51B5',\n                  borderRadius: 4,\n                },\n              }}\n            />\n            <Typography variant=\"caption\" sx={{ mt: 0.5, display: 'block', color: '#3F51B5', fontWeight: 600 }}>\n              {upcomingTrip.packingProgress.itemsPacked}/{upcomingTrip.packingProgress.totalItems} items packed\n            </Typography>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

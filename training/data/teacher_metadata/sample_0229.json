@@ -1,0 +1,41 @@
+{
+  "description": "A security camera widget showing active cameras count, recent motion alerts, and status",
+  "ui_style": "iOS-inspired with SF Pro-style fonts, vibrancy effects, system-like cards, and Apple HIG spacing.",
+  "mock_data": {
+    "widget": {
+      "id": "security_camera_001",
+      "app": "Home Secure",
+      "version": "1.0"
+    },
+    "data": {
+      "activeCameras": 4,
+      "recentAlerts": [
+        {
+          "time": "2023-10-01T14:30:00Z",
+          "camera": "Front Door",
+          "motionDetected": true
+        },
+        {
+          "time": "2023-10-01T13:45:00Z",
+          "camera": "Backyard",
+          "motionDetected": true
+        },
+        {
+          "time": "2023-10-01T12:10:00Z",
+          "camera": "Garage",
+          "motionDetected": false
+        }
+      ],
+      "status": "All cameras operational"
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#374151",
+      "accentColor": "#DC2626",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { Info } from '@mui/icons-material';\nimport response from './response.json';\n\ninterface RecentAlert {\n  time: string;\n  camera: string;\n  motionDetected: boolean;\n}\n\ninterface SecurityCameraData {\n  activeCameras: number;\n  recentAlerts: RecentAlert[];\n  status: string;\n}\n\nexport default function Widget() {\n  const { activeCameras, recentAlerts, status } = response.data as SecurityCameraData;\n  const { theme, primaryColor, accentColor } = response.meta;\n\n  return (\n    <Card\n      sx={{\n        width: 'fit-content',\n        minWidth: 320,\n        maxWidth: 400,\n        bgcolor: theme === 'dark' ? '#1F2937' : '#FFFFFF',\n        color: theme === 'dark' ? '#F8FAFC' : '#1F2937',\n      }}\n      elevation={2}\n    >\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: primaryColor }}>\n              Home Secure\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Active Cameras: {activeCameras}\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Recent Alerts\n            </Typography>\n            <Stack spacing={0.5}>\n              {recentAlerts.slice(0, 3).map((alert, index) => (\n                <Chip\n                  key={index}\n                  label={`${alert.camera}: ${alert.motionDetected ? 'Motion Detected' : 'No Motion'}`}\n                  icon={<Info sx={{ color: accentColor }} />}\n                  sx={{\n                    fontSize: '11px',\n                    color: alert.motionDetected ? accentColor : 'text.secondary',\n                    bgcolor: theme === 'dark' ? '#374151' : '#F3F4F6',\n                    px: 1,\n                    py: 0.5,\n                  }}\n                />\n              ))}\n            </Stack>\n          </Box>\n\n          <Box>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Status: {status}\n            </Typography>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

@@ -1,0 +1,42 @@
+{
+  "description": "A project kanban widget showing task counts per column (Todo, In Progress, Done) with totals",
+  "ui_style": "Professional and corporate with structured layouts, neutral tones, and clear data hierarchy.",
+  "mock_data": {
+    "widget": {
+      "id": "kanban_tasks_001",
+      "app": "Project Manager",
+      "version": "1.0"
+    },
+    "data": {
+      "project": {
+        "name": "Website Redesign",
+        "totalTasks": 58
+      },
+      "taskCounts": [
+        {
+          "column": "Todo",
+          "count": 24
+        },
+        {
+          "column": "In Progress",
+          "count": 18
+        },
+        {
+          "column": "Done",
+          "count": 16
+        }
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#3B82F6",
+      "accentColor": "#F59E0B",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface TaskCount {\n  column: string;\n  count: number;\n}\n\ninterface ProjectData {\n  project: {\n    name: string;\n    totalTasks: number;\n  };\n  taskCounts: TaskCount[];\n}\n\nexport default function Widget() {\n  const projectData = response.data as ProjectData;\n  const { project, taskCounts } = projectData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 320, maxWidth: 450, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} color=\"primary\">\n              {project.name}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Total Tasks: {project.totalTasks}\n            </Typography>\n          </Box>\n\n          <Stack direction=\"row\" spacing={0.5}>\n            {taskCounts.map((task, index) => (\n              <Chip\n                key={index}\n                label={`${task.column}: ${task.count}`}\n                sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: '#F3F4F6' }}\n              />\n            ))}\n          </Stack>\n\n          <BarChart\n            height={120}\n            series={[\n              {\n                data: taskCounts.map(task => task.count),\n                color: '#3B82F6',\n              },\n            ]}\n            xAxis={[\n              {\n                data: taskCounts.map(task => task.column),\n                scaleType: 'band',\n                tickLabelStyle: {\n                  fontSize: 11,\n                  fill: '#6B7280',\n                },\n              }\n            ]}\n            margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n            sx={{\n              '& .MuiBarElement-root': {\n                rx: 4,\n              },\n            }}\n          />\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

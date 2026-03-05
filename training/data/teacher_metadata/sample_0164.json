@@ -1,0 +1,33 @@
+{
+  "description": "A recipe widget showing ingredients count, cooking time, and nutrition summary",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "recipe_widget_001",
+      "app": "CookBook Pro",
+      "version": "1.0"
+    },
+    "data": {
+      "recipe": {
+        "title": "Spaghetti Carbonara",
+        "ingredientsCount": 8,
+        "cookingTime": "25 minutes",
+        "nutrition": {
+          "calories": 450,
+          "protein": "15g",
+          "carbs": "55g",
+          "fat": "18g"
+        }
+      }
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "compact",
+      "layout": "minimal",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": []
+    }
+  },
+  "teacher_code": "import React from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport response from './response.json';\n\ninterface Nutrition {\n  calories: number;\n  protein: string;\n  carbs: string;\n  fat: string;\n}\n\ninterface RecipeData {\n  recipe: {\n    title: string;\n    ingredientsCount: number;\n    cookingTime: string;\n    nutrition: Nutrition;\n  };\n}\n\nexport default function Widget() {\n  const recipeData = response.data as RecipeData;\n  const { title, ingredientsCount, cookingTime, nutrition } = recipeData.recipe;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 280, maxWidth: 380, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1 }}>\n              {title}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              {ingredientsCount} Ingredients | {cookingTime}\n            </Typography>\n          </Box>\n\n          <Stack direction=\"row\" spacing={0.5}>\n            <Chip label={`Calories: ${nutrition.calories}`} sx={{ fontSize: '11px', px: 1, py: 0.5 }} />\n            <Chip label={`Protein: ${nutrition.protein}`} sx={{ fontSize: '11px', px: 1, py: 0.5 }} />\n            <Chip label={`Carbs: ${nutrition.carbs}`} sx={{ fontSize: '11px', px: 1, py: 0.5 }} />\n            <Chip label={`Fat: ${nutrition.fat}`} sx={{ fontSize: '11px', px: 1, py: 0.5 }} />\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

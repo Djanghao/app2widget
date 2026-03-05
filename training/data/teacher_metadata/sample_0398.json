@@ -1,0 +1,53 @@
+{
+  "description": "An API usage widget showing request count, average latency, and error rate bar chart",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "api_usage_001",
+      "app": "API Monitor",
+      "version": "1.0"
+    },
+    "data": {
+      "requestCount": 1523,
+      "averageLatency": 243,
+      "errorRate": 2.5,
+      "errorRateTrend": [
+        {
+          "time": "1AM",
+          "rate": 1.8
+        },
+        {
+          "time": "2AM",
+          "rate": 2.1
+        },
+        {
+          "time": "3AM",
+          "rate": 2.5
+        },
+        {
+          "time": "4AM",
+          "rate": 2.9
+        },
+        {
+          "time": "5AM",
+          "rate": 2.6
+        },
+        {
+          "time": "6AM",
+          "rate": 2.3
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#673AB7",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "bar"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { BarChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface ErrorRateTrend {\n  time: string;\n  rate: number;\n}\n\ninterface ApiUsageData {\n  requestCount: number;\n  averageLatency: number;\n  errorRate: number;\n  errorRateTrend: ErrorRateTrend[];\n}\n\nexport default function Widget() {\n  const apiUsageData = response.data as ApiUsageData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#1E1E1E' }} elevation={2}>\n      <CardContent sx={{ p: 2 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" sx={{ color: '#FFC107' }}>\n              API Monitor\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              <Chip label={`Requests: ${apiUsageData.requestCount}`} sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: '#673AB7', color: '#FFFFFF' }} />\n              <Chip label={`Latency: ${apiUsageData.averageLatency}ms`} sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: '#673AB7', color: '#FFFFFF' }} />\n              <Chip label={`Error Rate: ${apiUsageData.errorRate}%`} sx={{ fontSize: '11px', px: 1, py: 0.5, bgcolor: '#673AB7', color: '#FFFFFF' }} />\n            </Stack>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 200 }}>\n            <BarChart\n              height={140}\n              series={[\n                {\n                  data: apiUsageData.errorRateTrend.map(d => d.rate),\n                  color: '#FFC107',\n                },\n              ]}\n              xAxis={[\n                {\n                  data: apiUsageData.errorRateTrend.map(d => d.time),\n                  scaleType: 'band',\n                  tickLabelStyle: {\n                    fontSize: 11,\n                    fill: '#FFFFFF',\n                  },\n                }\n              ]}\n              margin={{ top: 10, bottom: 30, left: 40, right: 10 }}\n              sx={{\n                '& .MuiBarElement-root': {\n                  rx: 4,\n                },\n              }}\n            />\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

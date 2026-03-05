@@ -1,0 +1,56 @@
+{
+  "description": "A smart home widget showing connected devices count, energy usage, and room temperatures",
+  "ui_style": "Warm and friendly with rounded shapes, pastel colors, and playful typography. Approachable design.",
+  "mock_data": {
+    "widget": {
+      "id": "smarthome_status_001",
+      "app": "Smart Home Controller",
+      "version": "1.0"
+    },
+    "data": {
+      "connectedDevices": {
+        "total": 15,
+        "online": 12,
+        "offline": 3
+      },
+      "energyUsage": {
+        "current": 450,
+        "unit": "kWh",
+        "trend": [
+          420,
+          430,
+          440,
+          450,
+          460,
+          470,
+          450
+        ]
+      },
+      "roomTemperatures": [
+        {
+          "room": "Living Room",
+          "temp": 72
+        },
+        {
+          "room": "Bedroom",
+          "temp": 70
+        },
+        {
+          "room": "Kitchen",
+          "temp": 75
+        }
+      ]
+    },
+    "meta": {
+      "theme": "dark",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#FF5722",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack } from '@mui/material';\nimport { LineChart } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface ConnectedDevices {\n  total: number;\n  online: number;\n  offline: number;\n}\n\ninterface EnergyUsage {\n  current: number;\n  unit: string;\n  trend: number[];\n}\n\ninterface RoomTemperature {\n  room: string;\n  temp: number;\n}\n\ninterface WidgetData {\n  connectedDevices: ConnectedDevices;\n  energyUsage: EnergyUsage;\n  roomTemperatures: RoomTemperature[];\n}\n\ninterface MetaData {\n  theme: string;\n  dataMode: string;\n  layout: string;\n  primaryColor: string;\n  accentColor: string;\n  chartTypes: string[];\n}\n\nexport default function Widget() {\n  const data = response.data as WidgetData;\n  const meta = response.meta as MetaData;\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 450, bgcolor: '#2C2C2C' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"body2\" sx={{ color: '#BDBDBD' }}>\n              Energy Usage\n            </Typography>\n            <Typography variant=\"h4\" fontWeight={700} sx={{ color: meta.primaryColor }}>\n              {data.energyUsage.current} {data.energyUsage.unit}\n            </Typography>\n          </Box>\n\n          <LineChart\n            height={120}\n            series={[\n              {\n                data: data.energyUsage.trend,\n                color: meta.accentColor,\n                curve: 'natural',\n                showMark: false,\n              },\n            ]}\n            xAxis={[{ data: [0, 1, 2, 3, 4, 5, 6], hide: true }]}\n            margin={{ top: 10, bottom: 10, left: 10, right: 10 }}\n            sx={{\n              '& .MuiLineElement-root': {\n                strokeWidth: 2,\n              },\n            }}\n          />\n\n          <Stack direction=\"row\" spacing={3}>\n            <Box>\n              <Typography variant=\"caption\" color=\"text.secondary\">\n                Online Devices\n              </Typography>\n              <Typography variant=\"body2\" fontWeight={500}>\n                {data.connectedDevices.online}/{data.connectedDevices.total}\n              </Typography>\n            </Box>\n            <Box>\n              <Typography variant=\"caption\" color=\"text.secondary\">\n                Offline Devices\n              </Typography>\n              <Typography variant=\"body2\" fontWeight={500}>\n                {data.connectedDevices.offline}\n              </Typography>\n            </Box>\n          </Stack>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}

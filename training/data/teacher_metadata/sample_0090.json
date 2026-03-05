@@ -1,0 +1,46 @@
+{
+  "description": "A vaccination tracker widget showing doses received, next due date, and coverage percentage",
+  "ui_style": "Clean and minimal with soft shadows, rounded corners, and a light color palette. Use subtle gradients and ample whitespace.",
+  "mock_data": {
+    "widget": {
+      "id": "vaccination_tracker_001",
+      "app": "Health Guard",
+      "version": "1.0"
+    },
+    "data": {
+      "vaccinationStatus": {
+        "dosesReceived": 2,
+        "nextDueDate": "2023-11-15",
+        "coveragePercentage": 66
+      },
+      "doseHistory": [
+        {
+          "dose": 1,
+          "date": "2023-02-10"
+        },
+        {
+          "dose": 2,
+          "date": "2023-08-10"
+        }
+      ],
+      "coverageTrend": [
+        50,
+        55,
+        60,
+        62,
+        66
+      ]
+    },
+    "meta": {
+      "theme": "light",
+      "dataMode": "rich",
+      "layout": "detailed",
+      "primaryColor": "#4CAF50",
+      "accentColor": "#FFC107",
+      "chartTypes": [
+        "line"
+      ]
+    }
+  },
+  "teacher_code": "import React, { useId } from 'react';\nimport { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';\nimport { ResponsiveChartContainer, LinePlot, ChartsXAxis, ChartsYAxis, ChartsClipPath } from '@mui/x-charts';\nimport response from './response.json';\n\ninterface VaccinationStatus {\n  dosesReceived: number;\n  nextDueDate: string;\n  coveragePercentage: number;\n}\n\ninterface DoseHistory {\n  dose: number;\n  date: string;\n}\n\ninterface VaccinationData {\n  vaccinationStatus: VaccinationStatus;\n  doseHistory: DoseHistory[];\n  coverageTrend: number[];\n}\n\nexport default function Widget() {\n  const vaccinationData = response.data as VaccinationData;\n  const { vaccinationStatus, doseHistory, coverageTrend } = vaccinationData;\n  const clipPathId = useId();\n\n  return (\n    <Card sx={{ width: 'fit-content', minWidth: 350, maxWidth: 500, bgcolor: '#FFFFFF' }} elevation={2}>\n      <CardContent sx={{ p: 2.5 }}>\n        <Stack spacing={2}>\n          <Box>\n            <Typography variant=\"h6\" fontWeight={600} sx={{ mb: 1, color: '#4CAF50' }}>\n              Vaccination Tracker\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 0.5 }}>\n              Doses Received: {vaccinationStatus.dosesReceived}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\" sx={{ mb: 0.5 }}>\n              Next Due Date: {vaccinationStatus.nextDueDate}\n            </Typography>\n            <Typography variant=\"body2\" color=\"text.secondary\">\n              Coverage: {vaccinationStatus.coveragePercentage}%\n            </Typography>\n          </Box>\n\n          <Box>\n            <Typography variant=\"caption\" color=\"text.secondary\" sx={{ mb: 1 }}>\n              Dose History\n            </Typography>\n            <Stack direction=\"row\" spacing={0.5}>\n              {doseHistory.map((dose) => (\n                <Chip\n                  key={dose.dose}\n                  label={`Dose ${dose.dose}: ${dose.date}`}\n                  sx={{ fontSize: '11px', px: 1, py: 0.5 }}\n                />\n              ))}\n            </Stack>\n          </Box>\n\n          <Box sx={{ width: '100%', height: 150 }}>\n            <ResponsiveChartContainer\n              series={[\n                {\n                  type: 'line',\n                  data: coverageTrend,\n                  color: '#FFC107',\n                  label: 'Coverage Trend',\n                  curve: 'linear',\n                },\n              ]}\n              xAxis={[\n                {\n                  scaleType: 'linear',\n                  data: coverageTrend.map((_, i) => i),\n                },\n              ]}\n              yAxis={[\n                {\n                  id: 'coverage',\n                },\n              ]}\n            >\n              <g clipPath={`url(#${clipPathId})`}>\n                <LinePlot />\n              </g>\n              <ChartsXAxis\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsYAxis\n                axisId=\"coverage\"\n                tickLabelStyle={{ fontSize: 10, fill: '#6B7280' }}\n              />\n              <ChartsClipPath id={clipPathId} />\n            </ResponsiveChartContainer>\n          </Box>\n        </Stack>\n      </CardContent>\n    </Card>\n  );\n}"
+}
